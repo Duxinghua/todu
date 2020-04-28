@@ -1,0 +1,253 @@
+<template>
+  <div class="self-container">
+    <div style="display: flex">
+      <div class="self-box">
+        <div class="self-box-cn">
+          <div class="self-box-cn-title">任务管理</div>
+          <div class="self-box-list">
+            <div v-for="(menu,key) in menuData" :key="key" class="self-box-row">
+              <div class="self-box-row-icon">
+                <i class="el-icon-folder-opened" />
+              </div>
+              <div class="self-box-row-icon-text">{{ menu.name }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="self-box">
+        <div class="self-box-cn">
+          <div class="self-box-cn-title">工作日历</div>
+          <div style="display: flex;margin-top: 10px">
+            <div style="flex: 1">
+              <el-calendar :first-day-of-week="7">
+                <!-- 这里使用的是 2.5 slot 语法，对于新项目请使用 2.6 slot 语法-->
+                <template
+                  slot="dateCell"
+                  slot-scope="{date, data}"
+                >
+                  <!--                  <p :class="data.isSelected ? 'is-selected' : ''">-->
+                  <!--                    -->
+                  <!--                  </p>-->
+                  {{ data.day.split('-').slice(2).join('-') }}
+                </template>
+              </el-calendar>
+            </div>
+            <div style="flex: 1;box-sizing: border-box">
+              <div style="display: flex;justify-content: flex-start;align-items: center;margin-left:30px">
+                <i class="el-icon-warning" style="color: red" />
+                <span style="padding-left: 5px;font-size: 12px">待办事项</span>
+              </div>
+              <div style=";margin-left:30px">
+                <div class="self-button">
+                  <i class="el-icon-plus" /><span style="padding-left: 5px">新建日报</span>
+                </div>
+              </div>
+              <div style=";margin-left:30px">
+                <div class="self-button">
+                  <i class="el-icon-plus" /><span style="padding-left: 5px">新建周报</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex;flex:1">
+      <div class="self-box">
+        <div class="self-box-cn" style=" display: flex;flex-direction: column;">
+          <div class="self-box-cn-title">数据管理</div>
+          <div style="display: flex;flex-direction: column;flex: 1">
+            <div style="height: 50px">
+              <el-radio-group v-model="chartValue" size="mini" @change="changeChart">
+                <el-radio-button label="日报" />
+                <el-radio-button label="周报" />
+              </el-radio-group>
+            </div>
+            <div v-show="chartValue === '日报'" id="echart1" style="flex:1" />
+            <div v-show="chartValue === '周报'" id="echart2" style="flex:1" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import echarts from 'echarts'
+export default {
+  name: 'Home',
+  data() {
+    return {
+      chartValue: '日报',
+      chart2Load: false,
+      menuData: [{
+        id: 1,
+        name: '日报',
+        path: '/dayReport/index'
+      }, {
+        id: 2,
+        name: '周报',
+        path: '/'
+      }, {
+        id: 3,
+        name: '操作日志',
+        path: '/'
+      }, {
+        id: 4,
+        name: '公告',
+        path: '/'
+      }]
+    }
+  },
+  mounted() {
+    this.initCharts1()
+  },
+  methods: {
+    changeChart(value) {
+      if (value === '日报' || !this.chart2Load) {
+        this.initCharts2()
+      }
+    },
+    initCharts1() {
+      // 基于准备好的dom，初始化echarts实例
+      var myChart = echarts.init(document.getElementById('echart1'), 'light')
+
+      // 指定图表的配置项和数据
+      var option = {
+
+        title: {
+          text: ''
+        },
+        tooltip: {},
+        legend: {
+          data: ['销量']
+        },
+        xAxis: {
+          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+        },
+        yAxis: {},
+        series: [{
+          name: '销量',
+          type: 'bar',
+          data: [5, 20, 36, 10, 10, 20]
+        }]
+      }
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option)
+    },
+    initCharts2() {
+      // 基于准备好的dom，初始化echarts实例
+      var myChart = echarts.init(document.getElementById('echart2'), 'light')
+
+      // 指定图表的配置项和数据
+      var option = {
+
+        title: {
+          text: ''
+        },
+        tooltip: {},
+        legend: {
+          data: ['销量2']
+        },
+        xAxis: {
+          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+        },
+        yAxis: {},
+        series: [{
+          name: '销量2',
+          type: 'bar',
+          data: [5, 120, 6, 10, 10, 120]
+        }]
+      }
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option)
+    }
+  }
+
+}
+</script>
+<!--日历样式 自定义-->
+<style>
+  .el-calendar-day{
+    height: 35px!important;
+    text-align: center;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .el-calendar-table tr td{
+    border: none!important;
+  }
+</style>
+
+<style scoped>
+  .self-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: calc(100vh - 50px);
+    padding:0px 10px 10px 0;
+    box-sizing: border-box;
+  }
+  .self-box{
+    padding-top: 10px;
+    padding-left: 10px;
+    flex: 1;
+    display: flex;
+  }
+  .self-box:nth-child(2n+1){
+    padding-left: 0;
+  }
+  .self-box-cn{
+    padding: 20px;
+    flex: 1;
+    background: #ffffff;
+    box-sizing: border-box;
+  }
+  .self-box-cn-title{
+    margin-bottom: 20px;
+  }
+  .self-box-list{
+    display: flex;
+  }
+  .self-box-row{
+    padding-right: 40px;
+    cursor: pointer;
+  }
+  .self-box-row-icon{
+    width: 50px;
+    height: 50px;
+    background: aliceblue;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    color: rgb(42,106,240);
+  }
+  .self-box-row-icon-text{
+    font-size: 12px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .self-button{
+    width: 130px;
+    height: 40px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    border:1px solid black;
+    color: black;
+    cursor: pointer;
+  }
+  .self-button:hover{
+    color: #409EFF!important;
+    border: 1px solid #409EFF!important;
+  }
+</style>

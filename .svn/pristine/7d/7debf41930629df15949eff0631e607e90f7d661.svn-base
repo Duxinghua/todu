@@ -1,0 +1,14 @@
+import request from '@/utils/request'
+
+/**
+ * 普通用户 日报列表
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function dayReportList(params) {
+  return request({
+    url: '/daily/dateList/normal',
+    method: 'get',
+    params
+  })
+}

@@ -1,0 +1,230 @@
+<template>
+  <div class="self-container">
+    <div style="display: flex;flex: 1">
+      <div class="self-box">
+      </div>
+      <div class="self-box">
+        <div class="self-box-cn">
+          <div class="self-box-cn-title">工作日历</div>
+          <div class="self-box-list">
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</template>
+
+<script>
+export default {
+  name: 'Home',
+  data() {
+    return {
+      role: 'normal',
+      menubar: '',
+      direction: 'rtl',
+      dayVisible: false,
+      monthVisible: false,
+      chartValue: '日报',
+      chart2Load: false,
+      activeNames: ['0'],
+      editorHeight: 100,
+      weekList: [{
+        value: 52,
+        label: 52
+      }, {
+        value: 51,
+        label: 51
+      }, {
+        value: 50,
+        label: 50
+      }],
+      projectRole: {
+        1: '初测',
+        2: '初测'
+      },
+      projectList: [
+        {
+          value: '1',
+          label: '项目1'
+        },
+        {
+          value: '2',
+          label: '项目2'
+        }
+      ],
+      form: {
+        reportDate: '2020-01-01',
+        workContent: '',
+        planContent: '',
+        currentWeek: '52',
+        startDate: '2020-01-03',
+        endDate: '2020-01-07',
+        week: '',
+        projectMonthRole: '',
+        monthProjectName: ''
+      },
+      menuData: [{
+        id: 1,
+        name: '日报',
+        path: 'dayReport/index'
+      }, {
+        id: 2,
+        name: '周报',
+        path: '/monthReport/index'
+      }, {
+        id: 3,
+        name: '操作日志',
+        path: '/oplog/index'
+      }, {
+        id: 4,
+        name: '公告',
+        path: '/notice/index'
+      }]
+    }
+  },
+  mounted() {
+    // this.initCharts1()
+    // const role = localStorage.getItem('role')
+    // this.role = role
+    // if (role === 'admin') {
+    //   const adminMenuData = [{
+    //     id: 1,
+    //     name: '日报',
+    //     path: '/sDayReport/index'
+    //   }, {
+    //     id: 2,
+    //     name: '周报',
+    //     path: '/sMonthReport/index'
+    //   }, {
+    //     id: 3,
+    //     name: '操作日志',
+    //     path: '/oplog/index'
+    //   }, {
+    //     id: 4,
+    //     name: '公告',
+    //     path: '/notice/index'
+    //   }]
+    //   this.menuData = adminMenuData
+    // }
+  },
+  methods: {
+
+  }
+
+}
+</script>
+<!--日历样式 自定义-->
+<style>
+  .el-calendar-day{
+    height: 35px!important;
+    text-align: center;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .el-calendar-table tr td{
+    border: none!important;
+  }
+</style>
+
+<style scoped>
+  .self-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: calc(100vh - 50px);
+    padding:0px 10px 10px 0;
+    box-sizing: border-box;
+  }
+  .self-box{
+    padding-top: 10px;
+    padding-left: 10px;
+    flex: 1;
+    display: flex;
+  }
+  .self-box:nth-child(2n+1){
+    padding-left: 0;
+  }
+  .self-box-cn{
+    padding: 20px;
+    flex: 1;
+    background: #ffffff;
+    box-sizing: border-box;
+  }
+  .self-box-cn-title{
+    margin-bottom: 20px;
+  }
+  .self-box-list{
+    display: flex;
+  }
+  .self-box-row{
+    padding-right: 40px;
+    cursor: pointer;
+  }
+  .self-box-row-icon{
+    width: 50px;
+    height: 50px;
+    background: aliceblue;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    color: rgb(42,106,240);
+  }
+  .self-box-row-icon-text{
+    font-size: 12px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .self-button{
+    width: 130px;
+    height: 40px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    border:1px solid black;
+    color: black;
+    cursor: pointer;
+  }
+  .self-button:hover{
+    color: #409EFF!important;
+    border: 1px solid #409EFF!important;
+  }
+
+  .self-input-box{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #3333;
+  }
+  .self-title{
+    width: 90px;
+    text-align: center;
+    font-size: 14px;
+  }
+  .self-input{
+    flex: 1;
+  }
+  h3{
+    margin: 10px 0;
+  }
+</style>
+<style>
+  .self-input .el-input__inner{
+    flex: 1;
+    border: none;
+    border-left: 1px solid #3333;
+    border-radius: 0;
+  }
+  .self-drawer .el-drawer__header{
+    margin-bottom: 0px;
+  }
+</style>

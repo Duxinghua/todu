@@ -1,0 +1,450 @@
+<template>
+  <div class="self-container">
+    <div class="self-box">
+      <!-- 查询项 -->
+      <el-row style=" margin-top: 2px;">
+        <el-col :span="24">
+          <el-col>
+            <el-button style="float: right;" type="primary" size="mini" @click="handleAdd()"><i class="el-icon-plus" />添加角色</el-button>
+          </el-col>
+
+        </el-col>
+      </el-row>
+      <!-- 数据表格 -->
+      <el-table
+        :data="roleData"
+        style="width: 100%; margin-top:20px;"
+        max-height="800"
+        :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+      >
+        <el-table-column
+          type="expand"
+        >
+          <template slot-scope="props">
+            <el-row v-for="(item,key) in props.row.rights" :key="key">
+              <el-col :span="4">
+                <el-tag closable @close="deleteRight(props.row,item.id)">
+                  {{ item.label }}
+                </el-tag>
+                <i v-if="item.children" class="el-icon-arrow-right" />
+              </el-col>
+              <el-col :span="20">
+                <el-row v-for="(item1,key) in item.children" :key="key">
+                  <el-col :span="4">
+                    <el-tag closable type="success" @close="deleteRight(props.row,item1.id)">
+                      {{ item1.label }}
+                    </el-tag>
+                    <i v-if="item1.children" class="el-icon-arrow-right" />
+                  </el-col>
+                  <el-col :span="20">
+                    <el-row v-for="(item2,key) in item1.children" :key="key">
+                      <el-col :span="4">
+                        <el-tag closable type="warning" @close="deleteRight(props.row,item2.id)">
+                          {{ item2.label }}
+                        </el-tag>
+                      </el-col>
+                      <el-col :span="20" />
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+            <!--无分配权限提示-->
+            <div v-if="props.row.rights.length===0">
+              <el-link style="margin-right: 20px;font-size: 12px;" type="info" :underline="false" disabled>该角色未分配权限
+              </el-link>
+              <el-link style="font-size: 12px;" type="primary" :underline="false" @click="handleSetRights(props.row)"><i
+                class="el-icon-view el-icon-setting"
+              /> 设置
+              </el-link>
+            </div>
+
+          </template>
+        </el-table-column>
+        <el-table-column
+          type="index"
+          label="序号"
+          width="50"
+          align="center"
+        />
+        <el-table-column
+          prop="roleName"
+          label="角色名称"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          prop="remark"
+          label="角色描述"
+          width="180"
+          align="center"
+        />
+        <el-table-column
+          label="创建时间"
+          width="180"
+          align="center"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.operateTime | fmtdate }}
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" align="center">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.status"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              @change="changeStatus(scope.row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200" fixed="right" align="center">
+          <template slot-scope="scope">
+            <el-link
+              type="primary"
+              :underline="false"
+              icon="el-icon-edit"
+              style="font-size: 14px"
+              @click="handleEdit(scope.row)"
+            >编辑
+            </el-link>
+            <el-link
+              type="danger"
+              :underline="false"
+              icon="el-icon-delete"
+              style="font-size: 14px"
+              @click="handleDelete(scope.row)"
+            >删除
+            </el-link>
+            <el-link
+              type="info"
+              :underline="false"
+              icon="el-icon-setting"
+              style="font-size: 14px"
+              @click="handleSetRights(scope.row)"
+            >设置权限
+            </el-link>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 添加角色对话框 -->
+      <el-dialog
+        title="添加角色"
+        :visible.sync="RoleAddFormVisible"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :show-close="false"
+      >
+        <el-form ref="addForm" :model="roleForm" :rules="rules">
+          <el-form-item label="角色名称" label-width="80px" prop="roleName">
+            <el-input v-model="roleForm.roleName" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="角色类型" label-width="80px" prop="roleName">
+            <el-select>
+              <el-option v-for="roleTypeRow in rowTypeList" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="描述" label-width="80px" prop="remark">
+            <el-input
+              v-model="roleForm.remark"
+              type="textarea"
+              placeholder="请输入内容"
+              maxlength="30"
+              show-word-limit
+            />
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="RoleAddFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="commitRole()">确 定</el-button>
+        </div>
+      </el-dialog>
+      <!-- 编辑角色对话框 -->
+      <el-dialog
+        title="编辑角色"
+        :visible.sync="RoleEditFormVisible"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :show-close="false"
+      >
+        <el-form ref="addForm" :model="roleForm" :rules="rules">
+          <el-form-item label="角色名称" label-width="80px" prop="roleName">
+            <el-input v-model="roleForm.roleName" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="描述" label-width="80px" prop="remark">
+            <el-input
+              v-model="roleForm.remark"
+              type="textarea"
+              placeholder="请输入内容"
+              maxlength="30"
+              show-word-limit
+            />
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="RoleEditFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="commitEdit()">确 定</el-button>
+        </div>
+      </el-dialog>
+      <!-- 设置权限对话框 -->
+      <el-dialog title="设置角色权限" :visible.sync="dialogRightTreeVisible">
+        <el-tree
+          ref="setRightTree"
+          :data="rightTreeList"
+          show-checkbox
+          node-key="id"
+          default-expand-all
+          :default-checked-keys="rightCheckedKeys"
+          :props="defaultProps"
+        />
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogRightTreeVisible = false">取 消</el-button>
+          <el-button type="primary" @click="commitRightSet()">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div></div>
+</template>
+
+<script>
+import { roleList, roleAdd, roleUpdate, roleDelete, roleRight, roleRightDelete, roleUpdateStatus } from '@/api/role'
+import { authorityTeeList } from '@/api/authority'
+export default {
+  name: 'Roles',
+  data() {
+    return {
+      roleObj: {
+        1: '管理员',
+        0: '普通用户'
+      },
+      rowTypeList: [
+        { id: 0, label: '普通用户' },
+        { id: 1, label: '管理员' }
+      ],
+      currentRoleId: -1,
+      roleData: [],
+      rightTreeList: [],
+      roleForm: {},
+      dialogRightTreeVisible: false,
+      RoleAddFormVisible: false,
+      RoleEditFormVisible: false,
+      rightCheckedKeys: [],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      rules: {
+        roleName: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  created() {
+    this.getList()
+  },
+  methods: {
+
+    // 获取角色列表数据
+    async getList() {
+      roleList(0).then(res => {
+        const { data, msg, status } = res
+        if (status === 200) {
+          this.roleData = data
+        } else {
+          this.$message.warning(msg)
+        }
+      })
+    },
+    // 获取权限树形数据
+    async getTreeList() {
+      authorityTeeList().then(res => {
+        const { data, status, msg } = res
+        if (status === 200) {
+          this.rightTreeList = data
+        } else {
+          this.$message.warning(msg)
+        }
+      })
+    },
+    // 打开添加角色对话框
+    handleAdd() {
+      this.roleForm = {}
+      this.RoleAddFormVisible = true
+    },
+    async commitRole() {
+      this.RoleAddFormVisible = false
+      roleAdd(this.roleForm).then(res => {
+        const { status, msg } = res
+
+        if (status === 200) {
+          this.getList()
+          this.$message.success('添加成功！')
+        } else {
+          this.$message.warning(msg)
+        }
+      })
+    },
+    // 打开编辑角色对话框
+    handleEdit(row) {
+      this.roleForm = JSON.parse(JSON.stringify(row))
+      this.RoleEditFormVisible = true
+    },
+    async commitEdit() {
+      this.RoleEditFormVisible = false
+      roleUpdate(this.roleForm).then(res => {
+        const { status, msg } = res
+
+        if (status === 200) {
+          this.getList()
+          this.$message.success('修改成功！')
+        } else {
+          // this.getList();
+          this.$message.warning(msg)
+        }
+      })
+    },
+    // 打开删除角色对话框
+    handleDelete(row) {
+      this.$confirm('此操作将永久删除该角色,该角色下用户无法正常使用系统， 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        roleDelete(row.id).then(res => {
+          const { msg, status } = res
+          if (status === 200) {
+            this.getList()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          } else {
+            this.$message.warning(msg)
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    // 打开设置权限对话框
+    async handleSetRights(row) {
+      this.currentRoleId = row.id
+      this.getTreeList()
+      var arrtemp = []
+      row.rights.forEach(item1 => {
+        if (item1.children) {
+          item1.children.forEach(item2 => {
+            if (item2.children) {
+              item2.children.forEach(item3 => {
+                arrtemp.push(item3.id)
+              })
+            } else {
+              arrtemp.push(item2.id)
+            }
+          })
+        } else {
+          arrtemp.push(item1.id)
+        }
+      })
+      this.rightCheckedKeys = arrtemp
+      this.dialogRightTreeVisible = true
+    },
+    // 删除权限
+    async deleteRight(role, rightId) {
+      roleRightDelete(role.id, rightId).then(res => {
+        const { data, status, msg } = res
+        if (status === 200) {
+          role.rights = data
+        } else {
+          this.$message.warning(msg)
+        }
+      })
+    },
+    async commitRightSet() {
+      this.dialogRightTreeVisible = false
+      const checkedKeys = this.$refs.setRightTree.getCheckedKeys()
+      const halfCheckedKeys = this.$refs.setRightTree.getHalfCheckedKeys()
+      const rightKeys = [...checkedKeys, ...halfCheckedKeys]
+      const params = {
+        'roleId': this.currentRoleId,
+        'rids': rightKeys.join(',')
+      }
+      roleRight(params).then(res => {
+        const { status, msg } = res.data
+        if (status === 200) {
+          this.getList()
+        } else {
+          this.$message.warning(msg)
+        }
+      })
+    },
+    // 修改角色状态
+    async changeStatus(row) {
+      roleUpdateStatus(row.id, row.status).then(res => {
+        const { status, msg } = res.data
+        if (status === 200) {
+          if (row.status) {
+            this.$message.success(row.roleName + '角色已启用！')
+          } else {
+            this.$message.warning(row.roleName + '角色被禁用！')
+          }
+        } else {
+          this.$message.error(msg)
+        }
+      })
+    }
+
+  }
+}
+</script>
+
+<style scoped>
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+  .self-box{
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    padding: 0 30px;
+    box-sizing: border-box;
+  }
+  .self-box2{
+    position: relative;
+    padding: 20px 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-box3{
+    position: relative;
+    padding: 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-circle{
+    position: absolute;
+    background: rgb(32, 160, 255);
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    left: 0;
+  }
+  .self-icon{
+    font-weight: bold;font-size: 16px
+  }
+</style>

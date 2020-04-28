@@ -1,0 +1,140 @@
+<template>
+  <div class="self-container">
+    <div class="self-box">
+      <div class="self-box2">
+        <div class="self-circle" style="opacity: 0.5;" />
+        <div class="self-circle" style="left: 6px" />
+        <div style="padding-left: 30px;font-weight: bold">周报汇总</div>
+      </div>
+      <div class="self-box3" style="flex: 1;align-items: flex-start">
+        <el-table
+          :data="tableData"
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="projectName"
+            label="项目名称"
+          />
+          <el-table-column
+            prop="projectNo"
+            label="项目代码"
+          />
+          <el-table-column
+            label="12月20调度会内容"
+          >
+            <el-table-column
+              prop="prevWeekContent"
+              label="上周调度会内容落实情况"
+            >
+              <template slot-scope="scope">
+                <div class="self-input">
+                  <el-input v-model="scope.row.prevWeekContent" type="textarea" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="totalContent"
+              label="调度会提纲内容"
+            />
+          </el-table-column>
+          <el-table-column
+            prop="workTip"
+            label="工作重点提示"
+          />
+          <el-table-column
+            prop="prevTotalContent"
+            label="上周调度会提纲内容"
+          />
+          <el-table-column
+            prop="workQuestion"
+            label="工作情况"
+          >
+            <template slot-scope="scope">
+              <div v-html="scope.row.workQuestion" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="self-box3">
+        <el-button type="primary" size="narmal">导出</el-button>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'TotalReport',
+  data() {
+    return {
+      tableData: [{
+        projectName: '沪苏湖铁路',
+        projectNo: 'CT603201',
+        prevWeekContent: '',
+        totalContent: '因初步设计尚未批复，施工图时间暂推值月底',
+        workTip: '站前施工图，工管中心二次审查后结合咨询意见修改后',
+        prevTotalContent: '工管中心二次审查后修改12月20日完成',
+
+        workQuestion: '总体 张三 线路,勘测进度45%</br>专册 李四 轨道，文件审查;'
+      }]
+    }
+  },
+  methods: {
+
+  }
+}
+</script>
+
+<style scoped>
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+  .self-box{
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    padding: 0 30px;
+    box-sizing: border-box;
+  }
+  .self-box2{
+    position: relative;
+    padding: 20px 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-box3{
+    position: relative;
+    padding: 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-circle{
+    position: absolute;
+    background: rgb(32, 160, 255);
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    left: 0;
+  }
+</style>
+<style>
+  .self-input .el-textarea__inner{
+    flex: 1;
+    border: none;
+    border-radius: 0;
+  }
+  .self-drawer .el-drawer__header{
+    margin-bottom: 0px;
+  }
+</style>

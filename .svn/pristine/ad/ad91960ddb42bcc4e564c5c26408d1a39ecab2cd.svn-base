@@ -1,0 +1,491 @@
+<template>
+  <div class="self-container">
+    <div class="self-box">
+      <el-row style=" margin-top: 2px;">
+        <el-col>
+          <span style="font-size: 12px;">项目名称：</span>
+          <el-select
+            v-model="queryProId"
+            style="width:150px"
+            placeholder="请选择"
+            size="mini"
+          >
+            <el-option label="请选择" :value="-1" disabled />
+            <el-option
+              v-for="item in tableData"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <span style="font-size: 12px;margin-left: 2px;">参与人员：</span>
+          <el-input
+            style="width:150px"
+            placeholder="请输入内容"
+            clearable
+            size="mini"
+          />
+          <span style="font-size: 12px;margin-left: 2px;">关键字：</span>
+          <el-input
+            style="width:150px"
+            placeholder="请输入关键字"
+            clearable
+            size="mini"
+          />
+          <el-button type="primary" size="mini" icon="el-icon-search" @click="handleAdd()">查询</el-button>
+          <el-button style="float: right;" type="primary" size="mini" icon="el-icon-plus" @click="handleAdd()">新建项目</el-button>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col>
+          <div style="margin-top: 10px;">
+            <el-button style="cursor:pointer;" size="mini" type="info" effect="dark" @click="doExportData()">导出</el-button>
+            <el-button style="cursor:pointer;" size="mini" type="info" effect="dark" @click="handleBacthEdit()">编辑</el-button>
+          </div>
+
+        </el-col>
+      </el-row>
+      <!-- 数据表格 -->
+      <el-table
+        v-loading="loading"
+        :data="tableData"
+        style="width: 100%; margin-top:20px;"
+        tooltip-effect="dark"
+        :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          align="center"
+        />
+        <el-table-column
+          prop="proCode"
+          label="项目代码"
+          width="120"
+          align="center"
+        />
+        <el-table-column
+          prop="proName"
+          label="项目名称"
+          width="120"
+          align="center"
+        />
+        <el-table-column
+          label="项目类别"
+          width="80"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.proType===1">
+              自揽
+            </el-tag>
+            <el-tag
+              v-if="scope.row.proType===2"
+              type="success"
+            >
+              院控
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="项目状态" width="100" align="center">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.proStatus"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              @change="changeStatus(scope.row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="ztPersonName"
+          label="总体"
+          width="100"
+          align="center"
+        />
+        <el-table-column
+          prop="ftPersonName"
+          label="副总体"
+          width="100"
+          align="center"
+        />
+        <el-table-column
+          prop="zcPersonName"
+          label="专册"
+          width="100"
+          align="center"
+        />
+        <el-table-column
+          prop="fzcPersonName"
+          label="副专册"
+          width="100"
+          align="center"
+        />
+        <el-table-column
+          label="创建时间"
+          align="center"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.createTime | fmtdate }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="180" fixed="right" align="center">
+          <template slot-scope="scope">
+            <el-link
+              type="primary"
+              :underline="false"
+              style="font-size: 14px"
+              @click="handleEdit(scope.row)"
+            >编辑
+            </el-link>
+            <el-link
+              type="primary"
+              :underline="false"
+              style="font-size: 14px"
+              @click="handleDelete(scope.row)"
+            >删除
+            </el-link>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 表格分页组件 -->
+      <el-pagination
+        style="margin-top: 20px;"
+        :current-page="pageNum"
+        :page-sizes="[20, 50, 80, 200]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
+    <!-- 查询项 -->
+
+    <!-- 新建项目对话框 -->
+    <el-drawer
+      ref="addDrawer"
+      :visible.sync="addProjectFormVisible"
+      direction="rtl"
+      :show-close="false"
+      size="30%"
+    >
+      <span style="margin-left: 30px">新建项目</span>
+      <el-form :model="projectForm" style="margin:50px 20px 0 20px;">
+        <el-form-item prop="proCode">
+          <el-input v-model="projectForm.proCode" placeholder="请输入项目代码" style="width:300px;" />
+
+        </el-form-item>
+        <el-form-item prop="proName">
+          <el-input v-model="projectForm.proName" placeholder="请输入项目名称" style="width:300px;" />
+
+        </el-form-item>
+        <el-form-item prop="proType">
+          <el-select v-model="projectForm.proType" placeholder="请选择项目类型" style="width:300px;">
+            <el-option label="自揽" :value="1" />
+            <el-option label="院控" :value="2" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="projectForm.ztPersonId" placeholder="请选择总体" style="width:300px;">
+            <el-option label="请选择" value="-1" disabled />
+            <el-option
+              v-for="(item,key) in personList"
+              :key="key"
+              :label="item.deptName"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="projectForm.fztPersonId" placeholder="请选择副总体" style="width:300px;">
+            <el-option label="请选择" value="-1" disabled />
+            <el-option
+              v-for="(item,key) in personList"
+              :key="key"
+              :label="item.deptName"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="projectForm.zcPersonId" placeholder="请选择专册" style="width:300px;">
+            <el-option label="请选择" value="-1" disabled />
+            <el-option
+              v-for="(item,key) in personList"
+              :key="key"
+              :label="item.deptName"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="projectForm.fzcPersonId" placeholder="请选择副专册" style="width:300px;">
+            <el-option label="请选择" value="-1" disabled />
+            <el-option
+              v-for="(item,key) in personList"
+              :key="key"
+              :label="item.deptName"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="startDate"  >
+          <el-date-picker
+            v-model="projectForm.startDate"
+        style="width:300px;"
+          />
+        </el-form-item>
+      </el-form>
+      <div style="margin: 100px 0 0 50px;">
+        <el-button @click="cancelForm">取 消</el-button>
+        <el-button type="primary" :loading="loading" @click="$refs.addDrawer.closeDrawer()">{{ loading ? '提交中 ...' :
+          '确 定' }}
+        </el-button>
+      </div>
+    </el-drawer>
+    <!-- 编辑项目对话框 -->
+    <el-drawer
+      ref="editDrawer"
+      :visible.sync="editProjectFormVisible"
+      direction="rtl"
+      :show-close="false"
+      size="30%"
+    >
+      <span style="margin-left: 30px">编辑项目</span>
+      <el-form :model="projectForm" style="margin: 50px 0 0 50px">
+        <el-form-item prop="proCode">
+          <el-input v-model="projectForm.proCode" placeholder="请输入项目代码" style="width:300px;" />
+
+        </el-form-item>
+        <el-form-item prop="proName">
+          <el-input v-model="projectForm.proName" placeholder="请输入项目名称" style="width:300px;" />
+
+        </el-form-item>
+        <el-form-item prop="proType">
+          <el-select v-model="projectForm.proType" placeholder="请选择项目类型" style="width:300px;">
+            <el-option label="自揽" :value="1" />
+            <el-option label="院控" :value="2" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="projectForm.ztPersonId" placeholder="请选择总体" style="width:300px;">
+            <el-option label="请选择" value="-1" disabled />
+            <el-option
+              v-for="(item,key) in personList"
+              :key="key"
+              :label="item.deptName"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="projectForm.fztPersonId" placeholder="请选择副总体" style="width:300px;">
+            <el-option label="请选择" value="-1" disabled />
+            <el-option
+              v-for="(item,key) in personList"
+              :key="key"
+              :label="item.deptName"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="projectForm.zcPersonId" placeholder="请选择专册" style="width:300px;">
+            <el-option label="请选择" value="-1" disabled />
+            <el-option
+              v-for="(item,key) in personList"
+              :key="key"
+              :label="item.deptName"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="projectForm.fzcPersonId" placeholder="请选择副专册" style="width:300px;">
+            <el-option label="请选择" value="-1" disabled />
+            <el-option
+              v-for="(item,key) in personList"
+              :key="key"
+              :label="item.deptName"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item prop="startDate">
+          <el-date-picker
+            v-model="projectForm.startDate"
+          />
+        </el-form-item>
+      </el-form>
+      <div style="margin: 100px 0 0 50px;">
+        <el-button @click="cancelForm">取 消</el-button>
+        <el-button type="primary" :loading="loading" @click="$refs.editDrawer.closeDrawer()">{{ loading ? '提交中 ...' :
+          '确 定' }}
+        </el-button>
+      </div>
+    </el-drawer>
+  </div>
+
+</template>
+
+<script>
+export default {
+  name: 'ProjectList',
+  data() {
+    return {
+      // 项目数据列表
+      tableData: [{
+        proCode: '24380100',
+        proName: '工作日志系统',
+        proType: 1,
+        proStatus: true,
+        ztPersonId: 1,
+        fztPersonId: 1,
+        zcPersonId: 1,
+        ztPersonName: '王大锤',
+        fztPersonName: '王大锤',
+        zcPersonName: '王大锤',
+        createTime: '2016-05-02'
+      }],
+      // 人员选择列表
+      personList: [],
+      pageSize: 1,
+      pageNum: 1,
+      total: 0,
+      addProjectFormVisible: false,
+      editProjectFormVisible: false,
+      projectForm: {
+        proType: 1
+      },
+      queryProId: -1,
+      queryPersonName: '',
+      queryKeyWord: '',
+      multipleSelection: [],
+      loading: false
+    }
+  },
+  created() {
+    const breadData = {
+      level1: '项目管理'
+    }
+    console.log(breadData)
+    this.$emit('setBread', breadData)
+  },
+  methods: {
+    // 获取表格数据
+    getList() {
+
+    },
+    // 打开新增抽屉
+    handleAdd() {
+      this.addProjectFormVisible = true
+    },
+    // 执行新增
+    doAdd() {
+
+    },
+    // 打开修改抽屉
+    handleEdit(row) {
+      this.editProjectFormVisible = true
+    },
+    // 批量修改
+    handleBacthEdit() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.warning('请至少选择一个要编辑的项目!')
+        return
+      }
+      this.$router.push({
+        name: 'proBatchEdit',
+        query: {
+          projectForms: this.multipleSelection,
+          personList: this.personList
+        }
+      })
+    },
+    // 导出数据
+    doExportData() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.warning('请至少选择一个项目进行导出操作！')
+      }
+    },
+    // 执行修改
+    doEdit() {
+
+    },
+    // 执行删除
+    handleDelete(row) {
+      this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        // const res = await this.$http.delete(`admin/delete/${row.id}`);
+        // const {msg,status}=res.data;
+        // if(status===200){
+        //   this.getList();
+        //   this.$message({
+        //     type: 'success',
+        //     message: '删除成功!'
+        //   });
+        // }else{
+        //   this.$message.warning(msg)
+        // }
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.pageNum = 1
+      this.getList()
+
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.pageNum = val
+      this.getList()
+    },
+    // 修改项目状态
+    changeStatus(row) {
+
+    },
+    // 表格多选
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      console.log('multipleSelection', val)
+    },
+    // 取消并关闭抽屉
+    cancelForm() {
+      this.loading = false
+      this.editProjectFormVisible = false
+      clearTimeout(this.timer)
+    }
+  }
+
+}
+</script>
+
+<style scoped>
+  .self-box{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    box-sizing: border-box;
+  }
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+</style>

@@ -1,0 +1,82 @@
+import request from '@/utils/request'
+/** *
+ * 项目列表
+ * @returns {AxiosPromise}
+ */
+export function projectList(params) {
+  return request({
+    url: '/project/list',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 添加项目
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function projectAdd(data) {
+  return request({
+    url: '/project/add',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 更新项目
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function projectUpdate(data) {
+  return request({
+    url: '/project/update',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 删除项目
+ * @param id
+ * @returns {AxiosPromise}
+ */
+export function projectDelete(id) {
+  return request({
+    url: `/project/delete/${id}`,
+    method: 'delete'
+  })
+}
+
+/**
+ * 批量添加
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function projectBatchSave(data) {
+  return request({
+    url: '/project/batch',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 检查项目编号
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function personList() {
+  return request({
+    url: '/admin/selectList',
+    method: 'get'
+  })
+}
+export function checkCode(params) {
+  return request({
+    url: '/project/checkCode',
+    method: 'get',
+    params
+  })
+}

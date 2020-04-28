@@ -1,0 +1,530 @@
+<template>
+
+  <div class="self-container">
+    <div class="self-box">
+      <div class="self-box2">
+        <div class="self-circle" style="opacity: 0.5;" />
+        <div class="self-circle" style="left: 6px" />
+        <div style="padding-left: 30px;font-weight: bold">周报</div>
+      </div>
+      <div class="self-box3">
+        <div class="search-row">
+          <div class="search-text">时间</div>
+          <el-date-picker
+            v-model="form.searchDate"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            placeholder="请选择日期"
+          />
+        </div>
+        <div class="search-row">
+          <div class="search-text">项目</div>
+          <el-select v-model="form.searchProject" placeholder="请选择项目">
+            <el-option
+              v-for="project in projectList"
+              :key="project.value"
+              :label="project.label"
+              :value="project.value"
+            />
+          </el-select>
+        </div>
+        <div class="search-row">
+          <div class="search-text" style="width: 60px">关键词</div>
+          <el-input v-model="form.keyword" placeholder="请输入关键词" />
+        </div>
+        <div class="search-row">
+          <el-button type="primary" @click="searchForm">查询</el-button>
+        </div>
+      </div>
+
+      <div v-if="exportDisabled" class="self-box3">
+        <el-button type="info" :disabled="exportDisabled">导出</el-button>
+        <el-button type="info" :disabled="exportDisabled">删除</el-button>
+      </div>
+      <div v-else class="self-box3" style="flex: 1;flex-wrap: wrap;">
+        <el-button type="primary" :disabled="exportDisabled" @click="exportFile">导出</el-button>
+        <el-button type="primary" :disabled="exportDisabled" @click="deleteAllRow">删除</el-button>
+      </div>
+      <div class="self-box3" style="flex: 1;flex-wrap: wrap;">
+        <el-table
+          ref="personTable"
+          :data="tableData"
+          style="width: 100%"
+          height="100%"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column
+            header-align="center"
+            align="center"
+            type="selection"
+            width="55"
+          />
+          <el-table-column
+            fixed
+            prop="name"
+            label="姓名"
+            align="center"
+            header-align="center"
+          />
+          <el-table-column
+            fixed
+            prop="workNum"
+            label="工号"
+          />
+          <el-table-column
+            fixed
+            prop="major"
+            label="专业"
+
+            align="center"
+            header-align="center"
+          />
+          <el-table-column
+            fixed
+            prop="role"
+            label="角色"
+
+            align="center"
+            header-align="center"
+          />
+          <el-table-column
+            fixed
+            prop="workPlace"
+            label="地点"
+
+            align="center"
+            header-align="center"
+          />
+          <el-table-column
+            fixed
+            prop="projectName"
+            label="项目名称"
+
+            align="center"
+            header-align="center"
+          />
+          <el-table-column
+            fixed
+            prop="workContent"
+            label="工作内容"
+
+            align="center"
+            header-align="center"
+          />
+          <el-table-column
+            fixed
+            prop="nextPlan"
+            label="下步计划"
+            align="center"
+            header-align="center"
+          />
+          <el-table-column
+            fixed
+            prop="date"
+            label="日期"
+            align="center"
+            header-align="center"
+          />
+          <el-table-column
+            fixed
+            prop="date"
+            label="编辑"
+            align="center"
+            header-align="center"
+          >
+            <template slot-scope="scope">
+              <el-button type="text" size="small" @click="showReport(scope.row)">查看</el-button>
+              <el-button type="text" size="small" @click="deleteRow(scope.row.id)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="self-box2">
+        <div class="block">
+          <el-pagination
+            :current-page="currentPage"
+            :page-size="pageSize"
+            layout="total, prev, pager, next"
+            :total="pageTotal"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+        </div>
+      </div>
+    </div>
+    <el-drawer
+      :visible.sync="drawer"
+      :direction="direction"
+      size="45%"
+      :show-close="false"
+      :wrapper-closable="false"
+      custom-class="self-drawer"
+    >
+      <div slot="title">
+        <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;padding: 0 20px">
+          <div style="font-size: 18px;color: #000000">周报详情   </div>
+          <div><span style="font-size: 12px">第{{ form.currentWeek }}周</span><span style="font-size: 12px;color: #8f8f8f;margin-left: 10px">({{ dateFormat(form.startDate) + '-' + dateFormat(form.endDate) }})</span></div>
+        </div>
+      </div>
+      <div slot="default" style="padding: 0 30px">
+        <div style="position: absolute;left: 5px;top: 50%;width: 50px;height: 50px;cursor: pointer" @click="closeDrawer">
+          <el-icon class="el-icon-arrow-left" style="font-weight: bold" />
+        </div>
+        <div>
+          <div>
+            <el-row :gutter="20" style="display: flex;margin-bottom: 20px">
+              <el-col :span="12" class="self-input-box" style="margin-right: 10px">
+                <div class="self-title">项目名称</div>
+                <el-input v-model="form.projectName" :readonly="readonly" placeholder="请输入内容" size="small" class="self-input" />
+              </el-col>
+              <el-col :span="12" class="self-input-box" style="margin-left: 10px">
+                <div class="self-title">项目角色</div>
+                <el-input v-model="form.projectRole" :readonly="readonly" placeholder="请输入内容" size="small" class="self-input" />
+              </el-col>
+            </el-row>
+            <el-row :gutter="20" style="display: flex">
+              <el-col :span="12" class="self-input-box" style="margin-right: 10px">
+                <div class="self-title">时间（天）</div>
+                <el-input v-model="form.projectDate" :readonly="readonly" placeholder="请输入内容" size="small" class="self-input" />
+              </el-col>
+              <el-col :span="12" class="self-input-box" style="margin-left: 10px">
+                <div class="self-title">工作地点</div>
+                <el-input v-model="form.workPlace" :readonly="readonly" placeholder="请输入内容" size="small" class="self-input" />
+              </el-col>
+            </el-row>
+            <el-row style="margin-top: 10px">
+              <h3>工作情况</h3>
+              <div style="width: 100%;">
+                <div class="self-content" v-html="form.workContent" />
+              </div>
+            </el-row>
+            <el-row style="margin-top: 10px">
+              <h3>存在的问题</h3>
+              <div style="width: 100%;">
+                <div class="self-content" v-html="form.question" />
+              </div>
+            </el-row>
+            <el-row style="margin-top: 10px">
+              <h3>下步计划  /  工作重点提示</h3>
+              <div style="width: 100%;">
+                <div class="self-content" v-html="form.planContent" />
+              </div>
+            </el-row>
+          </div>
+        </div>
+      </div>
+
+    </el-drawer>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="300px"
+    >
+      <span>是否删除数据?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="deleteData">确 定</el-button>
+      </span>
+    </el-dialog>
+  </div>
+
+</template>
+
+<script>
+export default {
+  name: 'DayPersonList',
+  data() {
+    return {
+      tableData: [{
+        id: '1',
+        name: '王大锤',
+        workNum: '2000101',
+        major: '轨道',
+        role: '专册',
+        workPlace: '武汉',
+        projectName: '武广铁路',
+        workContent: '初测',
+        nextPlan: '暂无',
+        date: '2020-01-16'
+      },
+      {
+        id: '1',
+        name: '王大锤',
+        workNum: '2000101',
+        major: '轨道',
+        role: '专册',
+        workPlace: '武汉',
+        projectName: '武广铁路',
+        workContent: '初测',
+        nextPlan: '暂无',
+        date: '2020-01-16'
+      },
+      {
+        id: '1',
+        name: '王大锤',
+        workNum: '2000101',
+        major: '轨道',
+        role: '专册',
+        workPlace: '武汉',
+        projectName: '武广铁路',
+        workContent: '初测',
+        nextPlan: '暂无',
+        date: '2020-01-16'
+      },
+      {
+        id: '1',
+        name: '王大锤',
+        workNum: '2000101',
+        major: '轨道',
+        role: '专册',
+        workPlace: '武汉',
+        projectName: '武广铁路',
+        workContent: '初测',
+        nextPlan: '暂无',
+        date: '2020-01-16'
+      }],
+      menubar: '',
+      projectList: [
+        {
+          value: '1',
+          label: '项目1'
+        },
+        {
+          value: '2',
+          label: '项目2'
+        }
+      ],
+      taskList: [
+        {
+          date: '51',
+          dateLine: '12.30-1.05',
+          status: 0
+        },
+        {
+          date: '50',
+          dateLine: '12.30-1.05',
+          status: 1
+        },
+        {
+          date: '49',
+          dateLine: '12.30-1.05',
+          status: 1
+        },
+        {
+          date: '48',
+          dateLine: '12.30-1.05',
+          status: 1
+        },
+        {
+          date: '47',
+          dateLine: '12.30-1.05',
+          status: 1
+        },
+        {
+          date: '46',
+          dateLine: '12.30-1.05',
+          status: 1
+        }
+      ],
+      editorHeight: 100,
+      drawer: false,
+      direction: 'rtl',
+      currentDate: '2020-02-01',
+      buttonDisabled: false,
+      currentPage: 1,
+      pageTotal: 6,
+      pageSize: 20,
+      readonly: true,
+      exportDisabled: true,
+      dialogVisible: false,
+      selectData: [],
+      form: {
+        searchProject: '',
+        keyword: '',
+        currentWeek: '52',
+        startDate: '2020-01-03',
+        endDate: '2020-01-07',
+        workContent: '123123',
+        planContent: '1233132111',
+        projectName: '测试',
+        projectId: '',
+        projectRole: '初测',
+        projectDate: '30',
+        workPlace: '工作地点'
+
+      }
+    }
+  },
+  methods: {
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+    },
+    searchForm() {
+
+    },
+    closeDrawer() {
+      this.drawer = false
+    },
+    showReport(row) {
+      this.drawer = true
+    },
+    // 单行删除
+    deleteRow(id) {
+      this.dialogVisible = true
+    },
+    deleteAllRow() {
+      this.dialogVisible = true
+    },
+    // 删除全部
+    deleteData() {
+      this.dialogVisible = false
+    },
+    exportFile() {
+      this.$router.push('/sMonthReport/totalReport')
+    },
+    handleSelectionChange(rows) {
+      this.selectData = rows
+      if (rows.length === 0) {
+        this.exportDisabled = true
+      } else {
+        this.exportDisabled = false
+      }
+    },
+    dateFormat: function(time) {
+      const date = new Date(time)
+      /* 在日期格式中，月份是从0开始的，因此要加0
+       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+       * */
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+      // 拼接
+      return month + '月' + day + '日'
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+  .self-box{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    padding: 0 30px;
+    box-sizing: border-box;
+  }
+  .self-box2{
+    position: relative;
+    padding: 20px 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-box3{
+    position: relative;
+    padding: 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-circle{
+    position: absolute;
+    background: rgb(32, 160, 255);
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    left: 0;
+  }
+
+  .search-row{
+    display: flex;
+    margin-right: 20px;
+    align-items: center;
+  }
+  .search-text{
+    font-size: 12px;
+    text-align: right;
+    margin-right: 10px;
+  }
+
+  .self-card-container{
+    padding: 0 10px;
+    margin-bottom: 20px;
+    width: 25%;
+    min-width: 25%;
+    max-width: 25%;
+    flex: 1;
+    cursor: pointer;
+
+  }
+  .self-box-card{
+    border-top: 3px solid #20a0ff;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .self-card-body{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .self-cr-text{
+    font-size: 20px;
+    color: #20a0ff;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .self-cr-desc{
+    font-size: 12px;
+    color: #000000;
+  }
+
+  .self-input-box{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #3333;
+  }
+  .self-title{
+    width: 90px;
+    text-align: center;
+    font-size: 14px;
+  }
+  .self-input{
+    flex: 1;
+  }
+  .self-content{
+    height: 150px;
+    padding: 20px;
+    border: 1px solid #3333;
+  }
+
+  </style>
+<style>
+  .self-input .el-input__inner{
+    flex: 1;
+    border: none;
+    border-left: 1px solid #3333;
+    border-radius: 0;
+  }
+  .self-drawer .el-drawer__header{
+    margin-bottom: 0px;
+  }
+</style>

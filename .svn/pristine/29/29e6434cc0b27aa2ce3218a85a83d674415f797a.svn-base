@@ -1,0 +1,37 @@
+import request from '@/utils/request'
+
+/**
+ * 日报统计
+ * @param state
+ * @returns {AxiosPromise}
+ */
+export function dailyCount(state) {
+  return request({
+    url: '/statistics/daily',
+    method: 'get'
+  })
+}
+
+/**
+ * 周报统计
+ * @param state
+ * @returns {AxiosPromise}
+ */
+export function weekCount(state) {
+  return request({
+    url: '/statistics/daily',
+    method: 'get'
+  })
+}
+
+/**
+ * 项目列表
+ * @param state
+ * @returns {AxiosPromise}
+ */
+export function projectList(state) {
+  return request({
+    url: '/project/selectList/admin',
+    method: 'get'
+  })
+}

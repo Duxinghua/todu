@@ -1,0 +1,23 @@
+import request from '@/utils/request'
+
+export function deptAdd(data) {
+  return request({
+    url: '/admin/dept/add',
+    method: 'post',
+    data
+  })
+}
+export function deptList(data) {
+  return request({
+    url: '/admin/dept/list',
+    method: 'get',
+    data
+  })
+}
+export function deptTreeList(data) {
+  return request({
+    url: '/admin/dept/treeList',
+    method: 'get',
+    data
+  })
+}

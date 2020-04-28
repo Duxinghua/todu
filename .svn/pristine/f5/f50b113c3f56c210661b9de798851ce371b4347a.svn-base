@@ -1,0 +1,127 @@
+<template>
+
+  <el-card style=" height: 100%;">
+
+    <div slot="header">
+      <span>批量编辑</span>
+    </div>
+    <!-- 数据表格 -->
+    <el-table
+      :data="projectForms"
+      style="width: 100%; margin-top:20px;"
+      size="mini"
+      tooltip-effect="dark"
+      :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+    >
+      <el-table-column
+        prop="proCode"
+        label="项目代码"  width="100">
+      </el-table-column>
+      <el-table-column
+        prop="proName"
+        label="项目名称">
+      </el-table-column>
+      <el-table-column
+        label="项目类别"
+        width="150">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.proType" placeholder="请选择项目类别">
+            <el-option label="自揽" :value="1"></el-option>
+            <el-option label="院控" :value="2"></el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column label="项目状态"  width="150">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.proStatus" placeholder="请选择项目状态">
+            <el-option label="进行中" :value="true"></el-option>
+            <el-option label="停止" :value="false"></el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="总体"
+        width="150">
+        <template slot-scope="scope">
+        <el-select v-model="scope.row.ztPersonId" placeholder="请选择总体">
+          <el-option label="请选择" value="-1" disabled></el-option>
+          <el-option :label="item.deptName" :key="key" v-for="(item,key) in personList" :value="item.id"></el-option>
+        </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="副总体"
+        width="150">
+        <template slot-scope="scope">
+        <el-select v-model="scope.row.fztPersonId" placeholder="请选择副总体">
+          <el-option label="请选择" value="-1" disabled></el-option>
+          <el-option :label="item.deptName" :key="key" v-for="(item,key) in personList" :value="item.id"></el-option>
+        </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="专册"
+        width="150">
+        <template slot-scope="scope">
+        <el-select v-model="scope.row.zcPersonId" placeholder="请选择专册">
+          <el-option label="请选择" value="-1" disabled></el-option>
+          <el-option :label="item.deptName" :key="key" v-for="(item,key) in personList" :value="item.id"></el-option>
+        </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="副专册"
+        width="150">
+        <template slot-scope="scope">
+        <el-select v-model="scope.row.fzcPersonId" placeholder="请选择副专册">
+          <el-option label="请选择" value="-1" disabled></el-option>
+          <el-option :label="item.deptName" :key="key" v-for="(item,key) in personList" :value="item.id"></el-option>
+        </el-select>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div style="text-align: center;margin-top: 20px;">
+      <el-button @click="goBack()">返回</el-button>
+      <el-button type="primary" @click="doBatchEdit()" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+    </div>
+  </el-card>
+</template>
+
+<script>
+    export default {
+        name: "batchEdit",
+      data(){
+          return{
+            projectForms:[],
+            personList:[],
+            loading:false
+          }
+      },created(){
+        let breadData = {
+          level1: '项目管理',
+          level2:'批量编辑'
+        };
+        console.log(breadData)
+        this.$emit('setBread', breadData);
+      },
+      mounted(){
+          this.projectForms=this.$route.query.projectForms;
+          this.personList=this.$route.query.personList;
+      },
+      methods:{
+        goBack(){
+          this.$router.push({
+            name:'projectm'
+          });
+        },
+        doBatchEdit(){
+          //刷新父组件表格数据
+          this.$parent.getList();
+        }
+      }
+    }
+</script>
+
+<style scoped>
+
+</style>

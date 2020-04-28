@@ -1,0 +1,360 @@
+<template>
+
+  <div class="self-container">
+    <div class="self-box">
+      <div class="self-box2">
+        <div class="self-circle" style="opacity: 0.5;" />
+        <div class="self-circle" style="left: 6px" />
+        <div style="padding-left: 30px;font-weight: bold">数据统计</div>
+      </div>
+      <div class="self-box3" style="flex: 1;display: flex  ">
+        <div style="flex:1;height: 100%;padding: 0 10px;display: flex;flex-direction: column;">
+          <div class="self-count-title">
+            <div><el-icon class="el-icon-s-comment self-font-color" style="font-size: 30px" /></div>
+            <div>日报</div>
+          </div>
+          <div class="self-box2">
+            <div style="font-size: 14px;padding-right: 10px">时间</div>
+            <div><el-date-picker
+              v-model="dayDate"
+              type="date"
+              placeholder="请选择日期"
+            /></div>
+          </div>
+          <div class="self-box3">
+            <div class="self-card-box">
+              <div class="self-font-color self-count-num">216</div>
+              <div class="self-card-count-title">
+                已发人数
+                <el-icon class="el-icon-arrow-right self-font-color" />
+              </div>
+            </div>
+            <div class="self-card-box">
+              <div class="self-font-color self-count-num">0</div>
+              <div class="self-card-count-title">
+                未发人数
+                <el-icon class="el-icon-arrow-right self-font-color" />
+              </div>
+            </div>
+            <div class="self-card-box">
+              <div class="self-font-color self-count-num">216</div>
+              <div class="self-card-count-title">
+                日报份数
+                <el-icon class="el-icon-arrow-right self-font-color" />
+              </div>
+            </div>
+
+          </div>
+          <div class="self-box2 self-font-color" style="padding-top: 40px;">日报数据</div>
+          <div class="self-chart-box">
+            <div style="height: 50px">
+              <el-radio-group v-model="dayChartValue" size="mini" @change="changeDayChart">
+                <el-radio-button label="一月" />
+                <el-radio-button label="半年" />
+                <el-radio-button label="一年" />
+              </el-radio-group>
+            </div>
+            <div v-show="dayChartValue === '一月'" id="dayChart" style="flex:1;width: 100%" />
+            <div v-show="dayChartValue === '半年'" id="dayChart2" style="flex:1;width: 100%" />
+            <div v-show="dayChartValue === '一年'" id="dayChart3" style="flex:1;width: 100%" />
+          </div>
+        </div>
+        <div style="flex:1;height: 100%;padding: 0 10px;display: flex;flex-direction: column;">
+          <div class="self-count-title">
+            <div><el-icon class="el-icon-s-comment self-font-color" style="font-size: 30px" /></div>
+            <div>周报</div>
+          </div>
+          <div class="self-box2">
+            <div style="font-size: 14px;padding-right: 10px">时间</div>
+            <div>
+              <el-date-picker
+                v-model="monthDate"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                placeholder="请选择日期"
+              />
+            </div>
+          </div>
+          <div class="self-box3">
+            <div class="self-card-box" @click="showDetail">
+              <div class="self-font-color self-count-num">216</div>
+              <div class="self-card-count-title">
+                已发人数
+                <el-icon class="el-icon-arrow-right self-font-color" />
+              </div>
+            </div>
+            <div class="self-card-box">
+              <div class="self-font-color self-count-num">0</div>
+              <div class="self-card-count-title">
+                未发人数
+                <el-icon class="el-icon-arrow-right self-font-color" />
+              </div>
+            </div>
+            <div class="self-card-box">
+              <div class="self-font-color self-count-num">216</div>
+              <div class="self-card-count-title">
+                周报份数
+                <el-icon class="el-icon-arrow-right self-font-color" />
+              </div>
+            </div>
+
+          </div>
+          <div class="self-box2 self-font-color" style="padding-top: 40px;">月报数据</div>
+          <div class="self-chart-box">
+            <div style="height: 50px">
+              <el-radio-group v-model="monthChartValue" size="mini" @change="changeMonthChart">
+                <el-radio-button label="一月" />
+                <el-radio-button label="半年" />
+                <el-radio-button label="一年" />
+              </el-radio-group>
+            </div>
+            <div v-show="monthChartValue === '一月'" id="monthChart" style="flex:1;width: 100%" />
+            <div v-show="monthChartValue === '半年'" id="monthChart2" style="flex:1;width: 100%" />
+            <div v-show="monthChartValue === '一年'" id="monthChart3" style="flex:1;width: 100%" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <el-drawer
+      :visible.sync="drawer"
+      :direction="direction"
+      size="30%"
+      :wrapper-closable="false"
+      custom-class="self-drawer"
+    >
+      <div slot="title">
+        <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;padding: 0 20px">
+          <div style="font-size: 18px;color: #000000">已发人数列表 </div>
+        </div>
+      </div>
+      <div slot="default" style="padding: 0 30px">
+        <el-table
+          :data="tableData"
+          style="width: 100%">
+          <el-table-column
+            prop="name"
+            label="状态"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="type"
+            label="类型"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="status"
+            label="状态">
+          </el-table-column>
+          <el-table-column
+            prop="date"
+            label="提交时间">
+          </el-table-column>
+        </el-table>
+      </div>
+
+    </el-drawer>
+
+  </div>
+
+</template>
+
+<script>
+import echarts from 'echarts'
+
+export default {
+  name: 'CountReport',
+  data() {
+    return {
+      drawer: false,
+      direction: 'rtl',
+      dayDate: '',
+      monthDate: '',
+      dayChartValue: '一月',
+      dayChart2Load: false,
+      dayChart3Load: false,
+      monthChartValue: '一月',
+      monthChart2Load: false,
+      monthChart3Load: false,
+      tableData:[{
+        name: '张三',
+        type:'周报',
+        status:'已发',
+        date:'2020-01-01'
+      }]
+    }
+  },
+  mounted() {
+    this.initDayCharts()
+    this.initMonthCharts()
+  },
+  methods: {
+    showDetail(){
+      this.drawer = true
+    },
+    changeDayChart(value) {
+      if (value === '半年' && !this.dayChart2Load) {
+        this.initDayCharts2()
+        this.dayChart2Load = true
+      }
+      if (value === '一年' && !this.dayChart3Load) {
+        this.initDayCharts3()
+        this.dayChart3Load = true
+      }
+    },
+    changeMonthChart(value) {
+      if (value === '半年' && !this.monthChart2Load) {
+        this.initMonthCharts2()
+        this.monthChart2Load = true
+      }
+      if (value === '一年' && !this.monthChart3Load) {
+        this.initMonthCharts3()
+        this.monthChart3Load = true
+      }
+    },
+    initDayCharts() {
+      this.initCharts('dayChart')
+    },
+    initDayCharts2() {
+      this.initCharts('dayChart2')
+    },
+    initDayCharts3() {
+      this.initCharts('dayChart3')
+    },
+    initMonthCharts() {
+      this.initCharts('monthChart')
+    },
+    initMonthCharts2() {
+      this.initCharts('monthChart2')
+    },
+    initMonthCharts3() {
+      this.initCharts('monthChart3')
+    },
+    initCharts(elementId) {
+      // 基于准备好的dom，初始化echarts实例
+      var myChart = echarts.init(document.getElementById(elementId), 'light')
+
+      // 指定图表的配置项和数据
+      var option = {
+
+        title: {
+          text: ''
+        },
+        tooltip: {},
+        legend: {
+          data: ['销量']
+        },
+        xAxis: {
+          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+        },
+        yAxis: {},
+        series: [{
+          name: '销量',
+          type: 'bar',
+          data: [5, 20, 36, 10, 10, 20]
+        }]
+      }
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option)
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+  .self-box{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    padding: 0 30px;
+    box-sizing: border-box;
+  }
+  .self-box2{
+    position: relative;
+    padding: 20px 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-box3{
+    position: relative;
+    padding: 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-circle{
+    position: absolute;
+    background: rgb(32, 160, 255);
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    left: 0;
+  }
+
+  .self-count-title{
+    background: rgba(32, 160, 255,0.1);
+    height: 50px;display: flex;
+    justify-content: flex-start;
+    align-content: center;
+    margin-bottom: 20px;
+    border-radius: 6px;
+  }
+  .self-count-title>div{
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #20a0ff;
+    padding-left: 10px;
+  }
+  .self-card-box{
+    display: flex;
+    flex-direction: column;
+    background:rgba(32, 160, 255,0.1);
+    border-radius: 6px;
+    flex: 1;
+    padding: 10px;
+    margin: 0 10px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .self-count-num{
+    font-size: 50px;
+    padding-bottom: 5px;
+  }
+  .self-card-count-title{
+    font-size: 12px;
+  }
+  .self-chart-box{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    align-items: flex-start;
+  }
+
+</style>
+<style>
+  .self-input .el-input__inner{
+    flex: 1;
+    border: none;
+    border-left: 1px solid #3333;
+    border-radius: 0;
+  }
+  .self-drawer .el-drawer__header{
+    margin-bottom: 0px;
+  }
+</style>

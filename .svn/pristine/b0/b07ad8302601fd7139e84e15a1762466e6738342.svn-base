@@ -1,0 +1,224 @@
+<template>
+  <div class="navbar">
+    <breadcrumb class="breadcrumb-container" />
+
+    <div class="right-menu" style="width: 240px">
+      <div class="user-box">
+        <div class="user-row">
+          <div class="user-img">
+            <el-icon class="el-icon-user-solid self-font-color" />
+          </div>
+          <div class="user-text">{{ name }}</div>
+        </div>
+        <div class="user-row" @click="logout">
+          <div class="user-img">
+            <el-icon class="el-icon-switch-button self-font-color" />
+          </div>
+          <div class="user-text">退出</div>
+        </div>
+        <!--        <div class="user-row" @click="showMessageList">-->
+        <!--          <div class="user-img">-->
+        <!--            <el-icon class="el-icon-message-solid self-font-color" />-->
+        <!--            <div class="self-msg-tip" />-->
+        <!--          </div>-->
+        <!--          <div class="user-text">消息</div>-->
+        <!--        </div>-->
+      </div>
+    </div>
+    <el-drawer
+      :visible.sync="drawer"
+      :direction="direction"
+    >
+      <div slot="title">
+        我的提醒
+      </div>
+      <div style="padding: 0 20px">
+
+        <el-table :data="messageData" style="width: 100%">
+          <el-table-column
+            header-align="center"
+            prop="content"
+            label="内容"
+          />
+          <el-table-column
+            header-align="center"
+            align="right"
+            prop="time"
+            label="时间"
+            width="150"
+          />
+        </el-table>
+      </div>
+    </el-drawer>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import Breadcrumb from '@/components/Breadcrumb'
+
+export default {
+  components: {
+    Breadcrumb
+  },
+  data() {
+    return {
+      drawer: false,
+      direction: 'rtl',
+      messageData: [{
+        content: '您1月7号的日报没有提交，请补交',
+        time: '2019-01-08 14:40'
+      },
+      {
+        content: '您1月7号的日报没有提交，请补交',
+        time: '2019-01-08 14:40'
+      },
+      {
+        content: '您1月7号的日报没有提交，请补交',
+        time: '2019-01-08 14:40'
+      }]
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'sidebar',
+      'avatar',
+      'name'
+    ])
+  },
+
+  methods: {
+    toggleSideBar() {
+      this.$store.dispatch('app/toggleSideBar')
+    },
+    async logout() {
+      await this.$store.dispatch('user/logout')
+      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    showMessageList() {
+      this.drawer = true
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.navbar {
+  height: 50px;
+  overflow: hidden;
+  position: relative;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+
+  .hamburger-container {
+    line-height: 46px;
+    height: 100%;
+    float: left;
+    cursor: pointer;
+    transition: background .3s;
+    -webkit-tap-highlight-color:transparent;
+
+    &:hover {
+      background: rgba(0, 0, 0, .025)
+    }
+  }
+
+  .breadcrumb-container {
+    float: left;
+  }
+
+  .right-menu {
+    float: right;
+    height: 100%;
+    line-height: 50px;
+
+    &:focus {
+      outline: none;
+    }
+
+    .right-menu-item {
+      display: inline-block;
+      padding: 0 8px;
+      height: 100%;
+      font-size: 18px;
+      color: #5a5e66;
+      vertical-align: text-bottom;
+
+      &.hover-effect {
+        cursor: pointer;
+        transition: background .3s;
+
+        &:hover {
+          background: rgba(0, 0, 0, .025)
+        }
+      }
+    }
+
+    .avatar-container {
+      margin-right: 30px;
+
+      .avatar-wrapper {
+        margin-top: 5px;
+        position: relative;
+
+        .user-avatar {
+          cursor: pointer;
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+        }
+
+        .el-icon-caret-bottom {
+          cursor: pointer;
+          position: absolute;
+          right: -20px;
+          top: 25px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
+  .user-box{
+    display: flex;
+  }
+ .user-row{
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex: 1;
+   cursor: pointer;
+ }
+  .user-img{
+    width: 30px;
+    height: 30px;
+    border-radius: 20px;
+    background: aliceblue;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+    position: relative;
+  }
+  .self-msg-tip{
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+    background: red;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+  }
+  .user-text{
+    font-size: 12px;
+  }
+
+</style>
+<style>
+  .el-icon-close{
+    border-radius: 20px;
+    border: 1px solid;
+  }
+</style>

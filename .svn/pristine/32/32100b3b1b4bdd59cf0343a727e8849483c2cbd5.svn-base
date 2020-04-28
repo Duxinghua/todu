@@ -1,0 +1,182 @@
+<template>
+  <div class="self-container">
+    <div class="self-box">
+      <div class="self-box2">
+        <div class="self-circle" style="opacity: 0.5;" />
+        <div class="self-circle" style="left: 6px" />
+        <div style="padding-left: 30px;font-weight: bold">周报汇总</div>
+      </div>
+      <div class="self-box3" style="flex: 1;align-items: flex-start">
+        <el-table
+          :data="tableData"
+          style="width: 100%"
+        >
+          <el-table-column
+            prop="proName"
+            label="项目名称"
+          />
+          <el-table-column
+            prop="proCode"
+            label="项目代码"
+          />
+          <el-table-column
+            label="12月20调度会内容"
+          >
+            <el-table-column
+              prop="prevWeekContent"
+              label="上周调度会内容落实情况"
+            >
+              <template slot-scope="scope">
+                <div class="self-input">
+                  <el-input v-model="scope.row.prevWeekContent" type="textarea" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="problem"
+              label="调度会提纲内容"
+            >
+              <template slot-scope="scope">
+                <span v-html="scope.row.problem" />
+              </template>
+            </el-table-column>
+          </el-table-column>
+          <el-table-column
+            prop="keyPoint"
+            label="工作重点提示"
+          >
+            <template slot-scope="scope">
+              <span v-html="scope.row.keyPoint" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="prevTotalContent"
+            label="上周调度会提纲内容"
+          />
+          <el-table-column
+            prop="content"
+            label="工作情况"
+          >
+            <template slot-scope="scope">
+              <span v-html="scope.row.content" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="self-box3">
+        <el-button type="primary" size="normal" @click="handleDownload">导出</el-button>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+import { weeklySummary } from '@/api/sMonthReport'
+export default {
+  name: 'TotalReport',
+  data() {
+    return {
+      ids: '',
+      tableData: []
+    }
+  },
+  mounted() {
+    this.ids = this.$route.query.ids
+    this.getList()
+  },
+  methods: {
+    getList() {
+      weeklySummary(this.ids).then(res => {
+        const { status, data } = res
+        if (status === 200) {
+          this.tableData = data
+        }
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        debugger
+        return this.toText(v[j])
+      }))
+    },
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const filterVal = ['proCode', 'proName', 'prevWeekContent', 'problem', 'keyPoint', 'prevTotalContent', 'content']
+        const tHeader = ['项目代码', '项目名称', '上周调度会内容落实情况', '调度会提纲内容', '工作重点提示', '上周调度会提纲内容', '工作情况']
+        const data = this.formatJson(filterVal, this.tableData)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    toText(HTML) {
+      const input = HTML
+      if (input !== null && input !== undefined && input !== '') {
+        return input.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ')
+      } else {
+        return ''
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+  .self-box{
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    padding: 0 30px;
+    box-sizing: border-box;
+  }
+  .self-box2{
+    position: relative;
+    padding: 20px 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-box3{
+    position: relative;
+    padding: 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-circle{
+    position: absolute;
+    background: rgb(32, 160, 255);
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    left: 0;
+  }
+</style>
+<style>
+  .self-input .el-textarea__inner{
+    flex: 1;
+    border: none;
+    border-radius: 0;
+  }
+  .self-drawer .el-drawer__header{
+    margin-bottom: 0px;
+  }
+</style>

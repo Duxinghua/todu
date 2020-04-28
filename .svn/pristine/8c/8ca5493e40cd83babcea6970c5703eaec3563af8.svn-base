@@ -1,0 +1,182 @@
+<template>
+  <div :class="{'has-logo':false}">
+    <logo v-if="false" :collapse="true" />
+    <div class="logo-box">
+      <div class="logo-img" />
+      <div class="logo-text">企秀网络科技有限公司</div>
+    </div>
+    <el-scrollbar wrap-class="scrollbar-wrapper" style="padding-right: 0">
+      <el-menu
+        :collapse="true"
+        :background-color="variables.menuBg"
+        :text-color="variables.menuText"
+        :unique-opened="false"
+        :active-text-color="variables.menuActiveText"
+        :collapse-transition="false"
+        mode="vertical"
+      >
+        <sidebar-item v-for="route in routes" :key="route.id" :item="route" :base-path="route.path" />
+      </el-menu>
+    </el-scrollbar>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import Logo from './Logo'
+import SidebarItem from './SidebarItem'
+import variables from '@/styles/variables.scss'
+import { authorityTree } from '@/api/authority'
+export default {
+  components: { SidebarItem, Logo },
+
+  computed: {
+    ...mapGetters([
+      'sidebar'
+    ]),
+    routes() {
+      return this.selfRoute
+    },
+    activeMenu() {
+      const route = this.$route
+      const { meta, path } = route
+      // if set path, the sidebar will highlight the path you set
+      if (meta.activeMenu) {
+        return meta.activeMenu
+      }
+      return path
+    },
+    showLogo() {
+      return this.$store.state.settings.sidebarLogo
+    },
+    variables() {
+      return variables
+    },
+    isCollapse() {
+      return !this.sidebar.opened
+    }
+  },
+  data() {
+    return {
+      selfRoute: []
+    }
+  },
+
+  mounted() {
+    authorityTree().then(res => {
+      // 用户权限 默认有首页
+      const userRoute = [{
+        id: 1,
+        name: '首页',
+        icon: 'example',
+        path: '/'
+      }]
+      const { status, data } = res
+      if (status === 200) {
+        data.forEach((item, index) => {
+          const row = {
+            id: item.id,
+            name: item.label,
+            path: item.path,
+            icon: 'example'
+          }
+          userRoute.push(row)
+        })
+        this.selfRoute = userRoute
+      }
+    })
+    // // 路由配置
+    // if (true) {
+    //   const routes = [{
+    //     id: 1,
+    //     name: '首页',
+    //     icon: 'example',
+    //     path: '/'
+    //   }, {
+    //     id: 2,
+    //     name: '日报',
+    //     icon: 'example',
+    //     path: '/sDayReport/index'
+    //   }, {
+    //     id: 3,
+    //     name: '周报',
+    //     icon: 'example',
+    //     path: '/sMonthReport/index'
+    //   }, {
+    //     id: 4,
+    //     name: '通讯录',
+    //     icon: 'example',
+    //     path: '/mailList/index'
+    //   }, {
+    //     id: 5,
+    //     name: '数据统计',
+    //     icon: 'example',
+    //     path: '/countReport/index'
+    //   }, {
+    //     id: 6,
+    //     name: '个人资料',
+    //     icon: 'example',
+    //     path: '/personData/index'
+    //   }, {
+    //     id: 7,
+    //     name: '公司公告',
+    //     icon: 'example',
+    //     path: '/notice/index'
+    //   }, {
+    //     id: 8,
+    //     name: '操作日志',
+    //     icon: 'example',
+    //     path: '/oplog/index'
+    //   }, {
+    //     id: 9,
+    //     name: '账号管理',
+    //     icon: 'example',
+    //     path: '/account/index'
+    //   }, {
+    //     id: 10,
+    //     name: '项目管理',
+    //     icon: 'example',
+    //     path: '/projects/index'
+    //   }, {
+    //     id: 11,
+    //     name: '角色管理',
+    //     icon: 'example',
+    //     path: '/system/roles'
+    //   }, {
+    //     id: 12,
+    //     name: '权限管理',
+    //     icon: 'example',
+    //     path: '/system/authority'
+    //   }]
+    //   this.selfRoute = routes
+    // }
+  }
+}
+</script>
+<style scoped>
+  .logo-box{
+    height: 100px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 10px;
+  }
+  .logo-img{
+    width: 60px;
+    height: 60px;
+    background: #20a0ff;
+    margin-bottom: 20px;
+    border-radius: 50px;
+  }
+  .logo-text{
+    height: 20px;
+    width: 100%;
+    color: #000000;
+    font-size: 14px;
+    text-align: center;
+    font-weight: bold;
+  }
+</style>

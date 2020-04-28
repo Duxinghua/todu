@@ -1,0 +1,12 @@
+import request from '@/utils/request'
+/** *
+ * 公告列表
+ * @returns {AxiosPromise}
+ */
+export function logList(params) {
+  return request({
+    url: '/log/list',
+    method: 'get',
+    params
+  })
+}

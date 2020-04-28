@@ -1,0 +1,465 @@
+<template>
+  <div class="self-container">
+    <div class="self-box">
+      <!-- 查询项 -->
+      <el-row style=" margin-top: 2px;">
+        <el-col :span="16">
+          <span>权限类型：</span>
+          <el-radio-group v-model="typeSearch" style="margin-right: 10px" size="small" @change="byauthTypeSearch()">
+            <el-radio-button label="-1">全部</el-radio-button>
+            <el-radio-button label="1">菜单</el-radio-button>
+            <el-radio-button label="2">按钮</el-radio-button>
+            <el-radio-button label="3">其它</el-radio-button>
+          </el-radio-group>
+          <span>权限状态：</span>
+          <el-radio-group v-model="stateSearch" size="mini" @change="byStateSearch()">
+            <el-radio-button label="-1">全部</el-radio-button>
+            <el-radio-button label="1">正常</el-radio-button>
+            <el-radio-button label="0">禁用</el-radio-button>
+          </el-radio-group>
+        </el-col>
+        <el-col :span="8">
+          <el-button style="float: right;" type="primary" size="mini" @click="handleAdd()"><i class="el-icon-plus" />添加权限</el-button>
+        </el-col>
+      </el-row>
+      <!-- 数据表格 -->
+      <el-table
+        max-height="750px"
+        :data="rightData"
+        style="width: 100%; margin-top:20px;"
+        highlight-current-row
+        :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+        @current-change="handleCurrentRowChange"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+          width="50"
+          align="center"
+        />
+        <el-table-column
+          prop="authName"
+          label="权限名称"
+          align="center"
+          fit
+        />
+        <el-table-column
+          label="类型"
+          width="80"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.authType===1">
+              菜单
+            </el-tag>
+            <el-tag
+              v-if="scope.row.authType===2"
+              type="success"
+            >
+              按钮
+            </el-tag>
+            <el-tag
+              v-if="scope.row.authType===3"
+              type="info"
+            >
+              其它
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="创建时间"
+          align="center"
+          width="180"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.operateTime | fmtdate }}
+          </template>
+        </el-table-column>
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.status"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              @change="changeStatus(scope.row)"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="150" fixed="right" align="center">
+          <template slot-scope="scope">
+            <el-link
+              type="primary"
+              :underline="false"
+              icon="el-icon-edit"
+              style="font-size: 14px"
+              @click="handleEdit(scope.row)"
+            >编辑
+            </el-link>
+            <el-link
+              type="danger"
+              :underline="false"
+              icon="el-icon-delete"
+              style="font-size: 14px"
+              @click="handleDelete(scope.row)"
+            >删除
+            </el-link>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 表格分页组件 -->
+      <el-pagination
+        style="margin-top: 20px"
+        :current-page="pageNum"
+        :page-sizes="[15,20, 50, 80, 200]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+      <!-- 添加权限对话框 -->
+      <el-dialog
+        title="添加权限"
+        :visible.sync="rightAddFormVisible"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :show-close="false"
+      >
+        <el-form ref="addRightForm" :model="rightForm" :rules="rules">
+          <el-form-item label="上级" :label-width="labelwidth" prop="pid">
+            <el-cascader
+              v-model="rightForm.pid"
+              :options="rightTreeList"
+              :show-all-levels="showAllLevels"
+              :disabled="cascaderDisabled"
+              :props="{ checkStrictly: true,emitPath:false,expandTrigger:'hover',value:'id',label:'label'}"
+              clearable
+            />
+          </el-form-item>
+
+          <el-form-item label="权限名称" :label-width="labelwidth" prop="authName">
+            <el-input v-model="rightForm.authName" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="访问路径" :label-width="labelwidth" prop="path">
+            <el-input v-model="rightForm.path" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="排序" :label-width="labelwidth" prop="seq">
+            <el-input-number v-model="rightForm.seq" controls-position="right" :min="1" />
+
+          </el-form-item>
+          <el-form-item label="权限类型" :label-width="labelwidth" prop="authType">
+
+            <el-radio-group v-model="rightForm.authType" size="small">
+              <el-radio :label="1" border>菜单</el-radio>
+              <el-radio :label="2" border>按钮</el-radio>
+              <el-radio :label="3" border>其它</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="描述" :label-width="labelwidth" prop="remark">
+            <el-input
+              v-model="rightForm.remark"
+              type="textarea"
+              placeholder="请输入内容"
+              maxlength="30"
+              show-word-limit
+            />
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="rightAddFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="commitRight()">确 定</el-button>
+        </div>
+      </el-dialog>
+      <!-- 编辑权限对话框 -->
+      <el-dialog
+        title="编辑权限"
+        :visible.sync="rightEditFormVisible"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :show-close="false"
+      >
+        <el-form ref="editRightForm" :model="rightForm" :rules="rules">
+          <el-form-item label="上级" :label-width="labelwidth" prop="pid">
+            <el-cascader
+              v-model="rightForm.pid"
+              placeholder="顶级权限"
+              :options="rightTreeList"
+              :show-all-levels="showAllLevels"
+              :disabled="cascaderDisabled"
+              :props="{ checkStrictly: true,emitPath:false,expandTrigger:'hover',value:'id',label:'label'}"
+              clearable
+            />
+          </el-form-item>
+
+          <el-form-item label="权限名称" :label-width="labelwidth" prop="authName">
+            <el-input v-model="rightForm.authName" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="访问路径" :label-width="labelwidth" prop="path">
+            <el-input v-model="rightForm.path" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="排序" :label-width="labelwidth" prop="seq">
+            <el-input v-model="rightForm.seq" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="权限类型" :label-width="labelwidth">
+            <el-radio-group v-model="rightForm.authType" size="small">
+              <el-radio :label="1" border>菜单</el-radio>
+              <el-radio :label="2" border>按钮</el-radio>
+              <el-radio :label="3" border>其它</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="描述" :label-width="labelwidth" prop="remark">
+            <el-input
+              v-model="rightForm.remark"
+              type="textarea"
+              placeholder="请输入内容"
+              maxlength="30"
+              show-word-limit
+            />
+          </el-form-item>
+        </el-form>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="rightEditFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editRight()">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div></div>
+</template>
+
+<script>
+import { authorityTeeList, authorityList, authorityDelete, authorityAdd, authorityUpdate, authorityUpdateStatus } from '@/api/authority'
+export default {
+  name: 'Authority',
+  data() {
+    return {
+      typeSearch: '-1',
+      stateSearch: '-1',
+      rightData: [],
+      rightTreeList: [],
+      pageNum: 1,
+      pageSize: 15,
+      total: 0,
+      labelwidth: '80px',
+      rightAddFormVisible: false,
+      rightEditFormVisible: false,
+      rightForm: {
+        authType: 1,
+        seq: 1
+      },
+      cascaderDisabled: false,
+      showAllLevels: false,
+      currentRow: null,
+
+      rules: {
+        authName: [
+          { required: true, message: '请输入权限名称', trigger: 'blur' }
+        ],
+        path: [
+          { message: '菜单权限，请输入页面访问路径', trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  created() {
+    const breadData = {
+      level1: '系统管理',
+      level2: '权限管理'
+    }
+    this.$emit('setBread', breadData)
+    this.getList()
+    this.getTreeList()
+  },
+  methods: {
+    // 根据权限类型查询
+    byauthTypeSearch() {
+      this.getList()
+    },
+    // 根据状态查询
+    byStateSearch() {
+      this.getList()
+    },
+    // 获取表格列表数据
+    async getList() {
+      authorityList(this.typeSearch, this.stateSearch, this.pageNum, this.pageSize).then(res => {
+        const { data, msg, status, count } = res
+        if (status === 200) {
+          this.rightData = data
+          this.total = count
+        } else {
+          this.$message.warning(msg)
+        }
+      })
+    },
+    // 获取树形数据
+    async getTreeList() {
+      await authorityTeeList().then(res => {
+        const { data, status, msg } = res
+        if (status === 200) {
+          this.rightTreeList = data
+        } else {
+          this.$message.warning(msg)
+        }
+      })
+    },
+    // 本页显示记录数
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.pageNum = 1
+      this.getList()
+    },
+    // 当前页码
+    handleCurrentChange(val) {
+      this.pageNum = val
+      this.getList()
+    },
+    // 当前选中的行
+    handleCurrentRowChange(val) {
+      this.currentRow = val
+    },
+    // 打开添加权限对话框
+    handleAdd() {
+      this.rightForm = {
+        authType: 1,
+        seq: 1
+      }
+      this.rightAddFormVisible = true
+    },
+    // 打开编辑权限对话框
+    handleEdit(row) {
+      console.log(row)
+      this.rightForm = row
+      this.rightEditFormVisible = true
+      // this.cascaderDisabled=true;
+    },
+    // 执行删除权限操作
+    handleDelete(row) {
+      this.$confirm('此操作将永久删除该权限及其子权限, 请谨慎操作，是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        this.loading = true
+        await authorityDelete(row.id).then(res => {
+          const { msg, status } = res
+          if (status === 200) {
+            this.getList()
+            this.getTreeList()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          } else {
+            this.$message.warning(msg)
+          }
+        })
+        this.loading = false
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    // 执行添加权限操作
+    async commitRight() {
+      this.rightAddFormVisible = false
+      if (this.rightForm.pid === '' || this.rightForm.pid === undefined) {
+        this.rightForm.pid = 0
+      }
+      await authorityAdd(this.rightForm).then(res => {
+        const { msg, status } = res
+        if (status === 200) {
+          this.getList()
+          this.getTreeList()
+          this.$message.success('添加成功！')
+        } else {
+          this.$message.warning(msg)
+        }
+      })
+    },
+    // 执行编辑权限操作
+    async editRight() {
+      this.rightEditFormVisible = false
+      if (this.rightForm.pid === '' || this.rightForm.pid === undefined || this.rightForm.pid === null) {
+        this.rightForm.pid = 0
+      }
+      await authorityUpdate(this.rightForm).then(res => {
+        const { msg, status } = res
+        if (status === 200) {
+          this.getList()
+          this.getTreeList()
+          this.$message.success('修改成功！')
+        } else {
+          this.$message.warning(msg)
+        }
+      })
+    },
+    // 修改权限状态
+    async changeStatus(row) {
+      await authorityUpdateStatus(row.id, row.status).then(res => {
+        const { msg, status } = res
+        if (status === 200) {
+          if (row.status) {
+            this.$message.success(row.authName + '权限已启用！')
+          } else {
+            this.$message.warning(row.authName + '权限被禁用！')
+          }
+        } else {
+          this.$message.error(msg)
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+  span {
+    font-size: 12px;
+  }
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+  .self-box{
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    padding: 0 30px;
+    box-sizing: border-box;
+    padding-top: 30px;
+  }
+  .self-box2{
+    position: relative;
+    padding: 20px 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-box3{
+    position: relative;
+    padding: 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-circle{
+    position: absolute;
+    background: rgb(32, 160, 255);
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    left: 0;
+  }
+  .self-icon{
+    font-weight: bold;font-size: 16px
+  }
+</style>

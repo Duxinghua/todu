@@ -1,0 +1,104 @@
+<template>
+  <div class="self-container">
+    <div class="self-box">
+      <div class="self-box2">
+        <div class="self-circle" style="opacity: 0.5;" />
+        <div class="self-circle" style="left: 6px" />
+        <div style="padding-left: 30px;font-weight: bold">公司公告</div>
+      </div>
+      <div class="self-box3" style="flex: 1;align-items: flex-start;width: 100%">
+        <el-collapse v-model="activeNames" @change="handleChange" style="width: 100%">
+          <el-collapse-item name="1">
+            <div slot="title" style="display: flex;">
+              <div style="padding-right: 10px;"><el-icon class="el-icon-arrow-right self-font-color self-icon"></el-icon></div>
+              <div>一致性 Consistency</div>
+            </div>
+            <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+            <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+          </el-collapse-item>
+          <el-collapse-item name="2">
+            <div slot="title" style="display: flex;">
+              <div style="padding-right: 10px;"><el-icon class="el-icon-arrow-right self-font-color self-icon"></el-icon></div>
+              <div>Feedback</div>
+            </div>
+            <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
+            <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'NoticeIndex',
+  data() {
+    return {
+      activeNames: ['0']
+    }
+  },
+  methods: {
+    handleChange(val) {
+      console.log(val)
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+  .self-box{
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    padding: 0 30px;
+    box-sizing: border-box;
+  }
+  .self-box2{
+    position: relative;
+    padding: 20px 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-box3{
+    position: relative;
+    padding: 0 ;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .self-circle{
+    position: absolute;
+    background: rgb(32, 160, 255);
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    left: 0;
+  }
+  .self-icon{
+    font-weight: bold;font-size: 16px
+  }
+</style>
+<style>
+  .self-input .el-textarea__inner{
+    flex: 1;
+    border: none;
+    border-radius: 0;
+  }
+  .self-drawer .el-drawer__header{
+    margin-bottom: 0px;
+  }
+</style>

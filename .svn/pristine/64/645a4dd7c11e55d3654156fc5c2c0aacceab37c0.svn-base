@@ -1,0 +1,459 @@
+<template>
+  <div class="self-container">
+    <div class="self-box">
+      <!--查询项-->
+      <el-row>
+        <el-col>
+          <span style="font-size: 12px">用户名</span>
+          <el-input v-model="queryUserName" placeholder="请输入用户名关键字" style="width: 200px" size="mini" />
+          <span style="font-size: 12px;margin: 20px 0 0 10px">工号</span>
+          <el-input v-model="queryWorkNumber" placeholder="请输入工号关键字" style="width: 200px" size="mini" />
+          <span style="font-size: 12px;margin: 20px 0 0 10px">手机号</span>
+          <el-input v-model="queryContactInfo" placeholder="请输入手机号关键字" style="width: 200px" size="mini" />
+          <el-button size="mini" type="primary">查询</el-button>
+          <el-button size="mini" type="primary" icon="el-icon-plus" style="float:right" @click="handleAddAccount()">新建账号
+          </el-button>
+        </el-col>
+      </el-row>
+      <!--操作-->
+      <el-row>
+        <el-col>
+          <div style="margin-top: 10px;">
+            <el-button style="cursor:pointer;" size="mini" type="info" effect="dark" @click="doExportData()">导出</el-button>
+          </div>
+        </el-col>
+      </el-row>
+      <!--数据表格-->
+      <div style="padding: 20px 0;flex: 1;display: flex;max-height: 580px">
+        <el-table
+          :data="tableData"
+          style="width: 100%;margin-top: 20px;"
+          :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column
+            align="center"
+            header-align="center"
+            type="selection"
+            width="55"
+          />
+          <el-table-column
+            prop="userName"
+            label="用户名"
+            width="180"
+            align="center"
+          />
+          <el-table-column
+            prop="workNumber"
+            label="工号"
+            width="180"
+            align="center"
+          />
+          <el-table-column
+            prop="contactInfo"
+            label="手机号"
+            align="center"
+            width="180"
+          />
+          <el-table-column
+            label="创建时间"
+            align="center"
+          >
+            <template slot-scope="scope">
+              {{ scope.row.createTime | fmtdate }}
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" width="180" align="center">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="scope.row.userStatus"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                @change="changeUserStatus(scope.row)"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" fixed="right" align="center">
+            <template slot-scope="scope">
+              <el-link type="primary" :underline="false" style="font-size: 14px" @click="handleResetPwd(scope.row)">重置密码</el-link>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <!--分页-->
+      <el-pagination
+        :current-page="pageNum"
+        :page-sizes="[20, 50, 80, 200]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        style="padding: 30px 0"
+      />
+      <!--新建账号-->
+      <el-drawer
+        ref="addAccountDrawer"
+        :visible.sync="dialog"
+        direction="rtl"
+        :show-close="false"
+        :wrapper-closable="false"
+        size="30%"
+        class="self-drawer"
+      >
+        <div slot="title" style="font-size: 20px">新建账号</div>
+        <el-form ref="addAccountForm" :model="userForm" :rules="rules">
+          <el-form-item prop="workNumber" title="工号">
+            <el-input v-model="userForm.workNumber" size="normal" placeholder="工号" @blur="validateWorkNum" />
+          </el-form-item>
+          <el-form-item size="normal" prop="userName" title="姓名">
+            <el-input v-model="userForm.userName" placeholder="姓名" />
+          </el-form-item>
+          <el-form-item size="normal" prop="contactInfo" title="手机号">
+            <el-input v-model="userForm.contactInfo" placeholder="手机号" @blur="validateContactInfo" />
+          </el-form-item>
+          <el-form-item title="部门">
+            <el-cascader
+              v-model="userForm.deptId"
+              size="normal"
+              :options="deptTreeList"
+              :show-all-levels="showAllLevels"
+              :disabled="cascaderDisabled"
+              :props="{ checkStrictly: true,emitPath:false,expandTrigger:'hover',value:'id',label:'label'}"
+              placeholder="请选择所属部门"
+              clearable
+            />
+          </el-form-item>
+          <el-form-item prop="contactInfo" title="密码">
+            <el-input v-model="userForm.password" size="normal" placeholder="请输入用户密码/默认密码为123456" />
+          </el-form-item>
+        </el-form>
+        <div style="text-align: left;margin-left: 25px;margin-top: 50px;">
+          <el-button size="normal" @click="cancelForm">取 消</el-button>
+          <el-button size="normal" type="primary" :loading="loading" @click="doCommitAccount()">{{ loading ? '提交中 ...' : '确定'
+          }}
+          </el-button>
+        </div>
+      </el-drawer>
+      <!--重置密码-->
+      <el-drawer
+        ref="resetDrawer"
+        :visible.sync="resetDialog"
+        direction="rtl"
+        size="30%"
+        :wrapper-closable="false"
+        class="self-drawer"
+      >
+        <span style="margin-left: 50px;margin-top: 30px">重置密码</span>
+        <div>
+          <el-form :model="passwordForm">
+            <el-form-item prop="userName">
+              <el-input v-model="passwordForm.userName" size="normal" placeholder="姓名" readonly />
+            </el-form-item>
+            <el-form-item prop="deptName">
+              <el-input v-model="passwordForm.deptName" size="normal" placeholder="未分配部门" readonly />
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input v-model="passwordForm.password" size="normal" placeholder="请输入密码" />
+            </el-form-item>
+          </el-form>
+          <div style="text-align: left;margin-left: 25px;margin-top: 50px;">
+            <el-button size="normal" @click="cancelResetForm">取 消</el-button>
+            <el-button size="normal" type="primary" :loading="loading" @click="doResetPwd()">{{ loading ? '提交中 ...' :
+              '确定' }}
+            </el-button>
+          </div>
+        </div>
+      </el-drawer>
+    </div>
+  </div>
+</template>
+
+<script>
+import { deptTreeList, deptList, checkContactInfo, checkWorkNumber } from '@/api/dept'
+import { accountList, accountAdd, updateAccountStatus, resetPwd } from '@/api/account'
+export default {
+  data() {
+    return {
+      queryUserName: '',
+      queryWorkNumber: '',
+      queryContactInfo: '',
+      pageNum: 1,
+      pageSize: 20,
+      total: 0,
+      tableData: [
+        {
+          workNumber: '13589768987',
+          userName: '王小虎',
+          contactInfo: '13589768987',
+          createTime: '2019-08-19',
+          userStatus: true
+        }
+      ],
+      rules: {
+        workNumber: [
+          { required: true, message: '请输入用户工号', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'change' }
+        ],
+        userName: [
+          { required: true, message: '请输入用户姓名', trigger: 'blur' }
+        ],
+        deptId: [
+          { required: true, message: '请选择用户所属部门', trigger: 'blur' }
+        ],
+        contactInfo: [
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { min: 11, max: 11, message: '长度为11位数字', trigger: 'change' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 5, max: 12, message: '请输入 5 到 位数的密码', trigger: 'change' }
+        ]
+
+      },
+      deptTreeList: [],
+      deptList: [],
+      multipleSelection: [],
+      table: false,
+      dialog: false,
+      resetDialog: false,
+      loading: false,
+      cascaderDisabled: false,
+      showAllLevels: false,
+      userForm: {
+        workNumber: '',
+        userName: '',
+        password: '',
+        contactInfo: '',
+        deptId: '-1'
+      },
+      passwordForm: {
+        userName: '王大锤',
+        deptName: '',
+        password: '123456'
+
+      },
+      formLabelWidth: '80px',
+      timer: null
+    }
+  },
+  created() {
+
+  },
+  mounted() {
+    this.getList()
+    this.getDeptTreeList()
+    this.getDeptList()
+  },
+  methods: {
+    // 加载用户列表
+    async getList() {
+      accountList({
+        queryUserName: this.queryUserName,
+        queryWorkNumber: this.queryWorkNumber,
+        queryContactInfo: this.queryContactInfo,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }).then(res => {
+        const {
+          data, msg, status, count
+        } = res
+        if (status === 200) {
+          this.tableData = data
+          this.total = count
+        } else {
+          this.$message.warning(msg)
+        }
+        this.loading = false
+      })
+    },
+    validateContactInfo() {
+      if (this.userForm.contactInfo !== '') {
+        checkContactInfo({ contactInfo: this.userForm.contactInfo }).then(res => {
+          if (res.data) {
+            this.userForm.contactInfo === ''
+            this.$message.warning('该手机号码已被使用')
+          }
+        })
+      }
+    },
+    validateWorkNum(val) {
+      if (this.userForm.workNumber !== '') {
+        checkWorkNumber({ workNumber: this.userForm.workNumber }).then(res => {
+          if (res.data) {
+            this.userForm.workNumber === ''
+            this.$message.warning('该工号已被使用')
+          }
+        })
+      }
+    },
+    // 加载部门列表
+    async getDeptTreeList() {
+      await deptTreeList().then(res => {
+        this.deptTreeList = res.data
+      })
+    },
+    async getDeptList() {
+      deptList().then(res => {
+        const {
+          data, status
+        } = res
+        if (status === 200) {
+          this.deptList = data
+        }
+      })
+    },
+    // 打开新建账号对话框
+    handleAddAccount() {
+      this.userForm = {}
+      this.dialog = true
+    },
+    // 新建账号
+    async doCommitAccount() {
+      this.$refs.addAccountForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          const deptId = this.userForm.deptId
+          const roleId = this.userForm.roleId
+          if (deptId) {
+            const deptObj = this.deptList.find((item) => { // 这里的userList就是上面遍历的数据源
+              return item.id === deptId// 筛选出匹配数据
+            })
+            this.userForm.deptName = deptObj.deptName
+          }
+          if (roleId) {
+            const roleObj = this.roleList.find((item) => { // 这里的userList就是上面遍历的数据源
+              return item.id === roleId// 筛选出匹配数据
+            })
+            this.userForm.roleName = roleObj.roleName
+          }
+          accountAdd(this.userForm).then(res => {
+            const { msg, status } = res
+            if (status === 200) {
+              this.getList()
+            } else {
+              this.$message.warning(msg)
+            }
+            this.loading = false
+            this.$refs.addAccountDrawer.closeDrawer()
+          })
+        }
+      })
+    },
+    // 修改用户状态
+    async changeUserStatus(user) {
+      this.loading = true
+      updateAccountStatus(user).then(res => {
+        const { msg, status } = res
+        if (status === 200) {
+          if (user.userStatus) {
+            this.$message.success(user.userName + '用户已启用！')
+          } else {
+            this.$message.warning(user.userName + '用户已禁用！')
+          }
+        } else {
+          user.userStatus = false
+          this.$message.error(msg)
+        }
+        this.loading = false
+      })
+    },
+    doExportData() {
+
+    },
+    cancelForm() {
+      this.loading = false
+      this.dialog = false
+      clearTimeout(this.timer)
+    },
+    cancelResetForm() {
+      this.loading = false
+      this.resetDialog = false
+      clearTimeout(this.timer)
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.pageNum = 1
+      this.getList()
+
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange(val) {
+      this.pageNum = val
+      this.getList()
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    // 打开重置密码对话框
+    handleResetPwd(row) {
+      console.log(row)
+      this.passwordForm = JSON.parse(JSON.stringify(row))
+      this.resetDialog = true
+    },
+    // 重置密码
+    async doResetPwd() {
+      this.loading = true
+      resetPwd(this.passwordForm).then(res => {
+        const { data, msg, status } = res
+
+        if (status === 200) {
+          this.$message.success(data)
+          this.getList()
+        }
+        if (status === 500) {
+          this.$message.warning(msg)
+        }
+        this.loading = false
+        this.$refs.resetDrawer.closeDrawer()
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .self-box{
+
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    box-sizing: border-box;
+    padding: 20px;
+  }
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+</style>
+<style>
+  .el-drawer .el-form-item{
+    padding: 10px 20px;
+    border: 1px solid #3333;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+  }
+  /*.el-drawer .el-form-item__label{*/
+  /*  width: 80px;*/
+  /*}*/
+  .el-drawer .el-form-item__content{
+    margin-left: 0!important;
+    flex: 1;
+  }
+  .el-drawer .el-input__inner{
+    border: none;
+  }
+  .el-drawer .el-form{
+
+    padding: 20px ;box-sizing: border-box
+  }
+
+  .el-drawer .el-cascader{
+    width: 100%;
+  }
+</style>

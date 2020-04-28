@@ -1,0 +1,160 @@
+<template>
+
+  <div class="self-container">
+    <div class="self-box">
+
+      <div slot="header">
+        <span>批量编辑</span>
+      </div>
+      <!-- 数据表格 -->
+      <el-table
+        :data="projectForms"
+        style="width: 100%; margin-top:20px;"
+        size="mini"
+        tooltip-effect="dark"
+        :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+      >
+        <el-table-column
+          prop="proCode"
+          label="项目代码"
+        />
+        <el-table-column
+          prop="proName"
+          label="项目名称"
+        />
+        <el-table-column
+          label="项目类别"
+        >
+          <template slot-scope="scope">
+            <el-select v-model="scope.row.proType" placeholder="请选择项目类别">
+              <el-option label="自揽" :value="1" />
+              <el-option label="院控" :value="2" />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="项目状态">
+          <template slot-scope="scope">
+            <el-select v-model="scope.row.proStatus" placeholder="请选择项目状态">
+              <el-option label="进行中" :value="1" />
+              <el-option label="停止" :value="0" />
+            </el-select>
+          </template>
+        </el-table-column>
+        <!--        <el-table-column-->
+        <!--          label="总体"-->
+        <!--          width="150"-->
+        <!--        >-->
+        <!--          <template slot-scope="scope">-->
+        <!--            <el-select v-model="scope.row.ztPersonId" placeholder="请选择总体">-->
+        <!--              <el-option label="请选择" value="-1" disabled />-->
+        <!--              <el-option v-for="(item,key) in personList" :key="key" :label="item.label" :value="item.id" />-->
+        <!--            </el-select>-->
+        <!--          </template>-->
+        <!--        </el-table-column>-->
+        <!--        <el-table-column-->
+        <!--          label="副总体"-->
+        <!--          width="150"-->
+        <!--        >-->
+        <!--          <template slot-scope="scope">-->
+        <!--            <el-select v-model="scope.row.fztPersonId" placeholder="请选择副总体">-->
+        <!--              <el-option label="请选择" value="-1" disabled />-->
+        <!--              <el-option v-for="(item,key) in personList" :key="key" :label="item.label" :value="item.id" />-->
+        <!--            </el-select>-->
+        <!--          </template>-->
+        <!--        </el-table-column>-->
+        <!--        <el-table-column-->
+        <!--          label="专册"-->
+        <!--          width="150"-->
+        <!--        >-->
+        <!--          <template slot-scope="scope">-->
+        <!--            <el-select v-model="scope.row.zcPersonId" placeholder="请选择专册">-->
+        <!--              <el-option label="请选择" value="-1" disabled />-->
+        <!--              <el-option v-for="(item,key) in personList" :key="key" :label="item.label" :value="item.id" />-->
+        <!--            </el-select>-->
+        <!--          </template>-->
+        <!--        </el-table-column>-->
+        <!--        <el-table-column-->
+        <!--          label="副专册"-->
+        <!--          width="150"-->
+        <!--        >-->
+        <!--          <template slot-scope="scope">-->
+        <!--            <el-select v-model="scope.row.fzcPersonId" placeholder="请选择副专册">-->
+        <!--              <el-option label="请选择" value="-1" disabled />-->
+        <!--              <el-option v-for="(item,key) in personList" :key="key" :label="item.label" :value="item.id" />-->
+        <!--            </el-select>-->
+        <!--          </template>-->
+        <!--        </el-table-column>-->
+      </el-table>
+      <div style="text-align: center;margin-top: 20px;">
+        <el-button @click="goBack()">返回</el-button>
+        <el-button type="primary" :loading="loading" @click="doBatchEdit()">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+      </div></div></div>
+</template>
+
+<script>
+import { projectBatchSave, personList } from '@/api/project'
+export default {
+  name: 'ProjectBatchEdit',
+  data() {
+    return {
+      projectForms: [],
+      personList: [],
+      loading: false
+    }
+  },
+  created() {
+    // this.getPersonList()
+  },
+  mounted() {
+    this.personList = JSON.parse(localStorage.getItem('personList'))
+    this.projectForms = JSON.parse(localStorage.getItem('projectForms'))
+  //   console.log(this.personList, 'personlist')
+  //   console.log(this.projectForms, 'projectForms')
+  },
+  methods: {
+    goBack() {
+      this.$router.push({
+        path: '/projects/index'
+      })
+    },
+    doBatchEdit() {
+      projectBatchSave(this.projectForms).then(res => {
+        const { status } = res
+        if (status === 200) {
+          // 刷新父组件表格数据
+          this.$message.success('修改成功')
+        } else {
+          this.$message.warning('修改成功')
+        }
+      })
+    },
+    getPersonList() {
+      personList().then(res => {
+        if (res.status === 200) {
+          this.personList = res.data
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .self-box{
+    padding: 20px;
+    display: flex;
+    display: inline-block;
+    width:100%;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    position: relative;
+    box-sizing: border-box;
+  }
+  .self-container{
+    padding: 10px 10px 10px 0;
+    display: flex;
+    min-height: calc(100vh - 50px);
+    box-sizing: border-box;
+  }
+</style>
