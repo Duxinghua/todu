@@ -4,12 +4,12 @@
       <div class="self-box2">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">日报</div>
+        <div style="padding-left: 30px;font-weight: bold">配施日志</div>
       </div>
-      <div class="self-box2">
+      <div class="self-box2 self-box2-fixed">
         <div class="search-row">
-          <div class="search-text">时间</div>
-          <el-date-picker v-model="form.searchDate" type="date" :picker-options="pickerOptions" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="listChange" />
+          <div class="search-text" style="width:40px">时间</div>
+          <el-date-picker v-model="form.searchDate" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="listChange" />
         </div>
         <!-- <div class="search-row">
           <div class="search-text">项目</div>
@@ -35,19 +35,17 @@
         </div>
 
         <div class="search-row search-row-btn-right">
-          <el-button type="primary" icon="el-icon-plus" @click="showReport">新建日报</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="showReport">新建配施日志</el-button>
         </div>
       </div>
 
       <div class="self-box2 self-box2-fix-b">
-        <div v-for="(task,index) in taskList" :key="index" class="self-card-container" @click="showReportDetail(task.logDate)">
+        <div v-for="(task,index) in taskList" :key="index" class="self-card-container" @click="showReportDetail(task,1)">
           <el-card class="self-box-card" :body-style="{ width: '100%' }">
             <div slot="default" class="self-card-body">
               <div class="self-cr-text">
-                <span v-if="task.today">今天</span>
-                <span v-else>{{ task.logDate }}</span>
+                <span>{{ task.logTime }}</span>
               </div>
-              <div class="self-cr-desc"><span v-if="task.lackDaily">有待写的日报</span></div>
             </div>
           </el-card>
         </div>
@@ -80,7 +78,7 @@
     >
       <div slot="title">
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">新建日报 </div>
+          <div style="font-size: 18px;color: #000000">{{ newText }} </div>
           <!-- <div style="font-size: 12px;padding:5px 0 0 2px">22:00后将不能修改</div> -->
         </div>
 
@@ -93,7 +91,8 @@
           <div>
             <el-row class="daytitle">
               <h3>时间（天）</h3>
-              <el-date-picker v-model="reportForm.logTimeStr" type="date" :picker-options="pickerOptions" format="yyyy-MM-dd" class="ep-timer" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="listChange" />
+              <!-- :picker-options="pickerOptions" -->
+              <el-date-picker v-model="reportForm.logTimeStr" :picker-options="pickerOptions" type="date" format="yyyy-MM-dd" class="ep-timer" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeChange" />
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>当日工作内容</h3>
@@ -115,7 +114,7 @@
 
 <script>
 import EditorBar from '@/components/Edit.vue'
-import { dayReportList, projectList, projectRoleList, reportAdd } from '@/api/dayReportList'
+import { dayReportList, projectList, projectRoleList, reportAdd, dailyAddStatus, dailyUpdate } from '@/api/dayReportList'
 // import Tinymce from '@/components/Tinymce'
 export default {
   name: 'DayReport',
@@ -141,9 +140,32 @@ export default {
       pageNum: 1,
       pageSize: 10,
       total: 0,
-      pickerOptions: {
+      flag: false,
+      // pickerOptions: {
+      //   disabledDate(time) {
+      //     if (this.flag) {
+      //       return time.getTime() < Date.now() - 604800000 || time.getTime() > Date.now()
+      //     } else {
+      //       return time.getTime() < Date.now() - 604800000 || time.getTime() > Date.now() - 86400000
+      //     }
+      //   }
+      // }
+      logTimeStr: '',
+      newText: '新建配施日志',
+      type: false,
+      id: ''
+    }
+  },
+  computed: {
+    pickerOptions() {
+      var _this = this
+      return {
         disabledDate(time) {
-          return time.getTime() < Date.now() - 604800000 || time.getTime() > Date.now()
+          if (_this.flag) {
+            return time.getTime() < Date.now() - 604800000 || time.getTime() > Date.now()
+          } else {
+            return time.getTime() < Date.now() - 604800000 || time.getTime() > Date.now() - 86400000
+          }
         }
       }
     }
@@ -169,7 +191,24 @@ export default {
       this.getList()
     },
     listChange(e) {
+      console.log(e)
       this.form.searchDate = e
+    },
+    timeChange(e) {
+      dailyAddStatus({ logTimeStr: this.reportForm.logTimeStr }).then((res) => {
+        if (res.code === 200) {
+          if (!res.data) {
+            this.$alert('您选择的日期已写过配施日志，请重新选择', '提示', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.reportForm.logTimeStr = ''
+              }
+            })
+          } else {
+            this.reportForm.logTimeStr = e
+          }
+        }
+      })
     },
     change(val) {
       this.reportForm.content = val
@@ -182,12 +221,29 @@ export default {
       this.getList()
     },
     showReport() {
-      this.reportForm = {}
       this.reportForm.logTimeStr = this.dateFormat(new Date())
+      this.reportForm.content = ''
+      this.type = false
+      var that = this
       this.addDrawer = true
+      dailyAddStatus({ logTimeStr: this.reportForm.logTimeStr }).then((res) => {
+        if (res.code === 200) {
+          that.flag = res.data
+          if (that.flag === false) {
+            that.reportForm.logTimeStr = ''
+          }
+          this.addDrawer = true
+        }
+      })
     },
-    showReportDetail(date) {
-      this.$router.push({ path: '/dayReport/projectList', query: { date: date }})
+    showReportDetail(data) {
+      // this.$router.push({ path: '/dayReport/projectList', query: { date: date }})
+      this.type = true
+      this.newText = '修改配施日志'
+      this.id = data.id
+      this.reportForm.logTimeStr = this.dateFormat(data.logTime)
+      this.reportForm.content = data.content
+      this.addDrawer = true
     },
     closeDrawer() {
       this.addDrawer = false
@@ -198,9 +254,15 @@ export default {
     },
     getList() {
       dayReportList({ logTimeStr: this.form.searchDate, pageNum: this.pageNum, pageSize: this.pageSize }).then(res => {
-        const { status, data } = res
+        const { status, data, count } = res
         if (status === 200) {
-          this.taskList = data
+          var list = []
+          data.map((item) => {
+            item.logTime = this.dateFormat(item.logTime)
+            list.push(item)
+          })
+          this.taskList = list
+          this.total = count
         }
       })
     },
@@ -237,17 +299,31 @@ export default {
         this.$message.warning('请输入工作工作情况')
         return false
       }
-      reportAdd(this.reportForm).then(res => {
-        const { status } = res
-        if (status === 200) {
-          this.$message.success('保存成功')
-          this.addDrawer = false
-          // 刷新列表
-          this.getList()
-        } else {
-          this.$message.success('保存失败')
-        }
-      })
+      if (!this.type) {
+        reportAdd(this.reportForm).then(res => {
+          const { status } = res
+          if (status === 200) {
+            this.$message.success('保存成功')
+            this.addDrawer = false
+            // 刷新列表
+            this.getList()
+          } else {
+            this.$message.success('保存失败')
+          }
+        })
+      } else {
+        dailyUpdate({ id: this.id, content: this.reportForm.content }).then((res) => {
+          const { status } = res
+          if (status === 200) {
+            this.$message.success('修改成功')
+            this.addDrawer = false
+            // 刷新列表
+            this.getList()
+          } else {
+            this.$message.success('修改失败')
+          }
+        })
+      }
     },
     dateFormat: function(time) {
       const date = new Date(time)
@@ -275,6 +351,7 @@ export default {
   }
   .daytitle h3{
     width:100px;
+    float:left\9;
   }
   .self-container{
     padding: 10px 10px 10px 0;
@@ -311,6 +388,7 @@ export default {
     display: inline-block\9;
     margin-right: 20px;
     align-items: center;
+    width:20%;
   }
   .search-text{
     font-size: 12px;
@@ -329,6 +407,7 @@ export default {
     max-width: 25%;
     flex: 1;
     cursor: pointer;
+    float: left;
 
   }
   .self-box-card{
@@ -389,13 +468,15 @@ export default {
     display: inline-block\9;
     margin-bottom: 20px
   }
-
+  .self-box2-fixed{
+    margin-bottom: 0px;
+  }
 </style>
 <style>
   .self-input .el-input__inner{
     flex: 1;
     border: none;
-    border-left: 1px solid #3333;
+    border-left: 1px solid #333;
     border-radius: 0;
     height:32px;
     line-height:32px;
@@ -407,8 +488,13 @@ export default {
     height:48px;
     line-height:48px;
   }
+  .daytitle .el-input__inner {
+    border:1px solid #DCDFE6!important;
+  }
   .daytitle .ep-timer{
-    width:calc(100% - 100px)
+    width:calc(100% - 100px);
+    float:left;
+    /* border:1px solid #DCDFE6; */
   }
   .self-drawer-fix .el-dialog__header{
     padding:30px 20px 20px 30px
@@ -418,14 +504,22 @@ export default {
   }
   .self-box2-fix-b{
    flex: 1;
+   display: inline-block\9;
    flex-wrap: wrap;
+   align-items:flex-start!important;
+   padding-top:0px!important;
    width:100%;
    min-height:500px;
   }
   .search-row-btn-right{
     flex:1;
     display: flex;
+    display: inline-block\9;
     justify-content: flex-end;
+    margin-left:calc(40% - 100px);
+  }
+  .search-row-btn-right button{
+    margin-left:calc(100%- 80px);
   }
   .tasknodata{
     display: flex;
@@ -433,6 +527,7 @@ export default {
     align-items:center;
     flex:1;
     width:100%;
+    margin-top:100px;
     font-size:14px;
     color:#999;
   }

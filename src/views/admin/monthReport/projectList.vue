@@ -5,7 +5,7 @@
       <div class="self-box2">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">日报</div>
+        <div style="padding-left: 30px;font-weight: bold">配施日志</div>
       </div>
       <div class="self-box3">
         <div class="search-row">
@@ -178,7 +178,7 @@
     >
       <div slot="title">
         <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;padding: 0 20px">
-          <div style="font-size: 18px;color: #000000">日报详情 </div>
+          <div style="font-size: 18px;color: #000000">配施日志详情 </div>
         </div>
       </div>
       <div slot="default" style="padding: 0 30px">

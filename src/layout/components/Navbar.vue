@@ -66,15 +66,15 @@ export default {
       drawer: false,
       direction: 'rtl',
       messageData: [{
-        content: '您1月7号的日报没有提交，请补交',
+        content: '您1月7号的配施日志没有提交，请补交',
         time: '2019-01-08 14:40'
       },
       {
-        content: '您1月7号的日报没有提交，请补交',
+        content: '您1月7号的配施日志没有提交，请补交',
         time: '2019-01-08 14:40'
       },
       {
-        content: '您1月7号的日报没有提交，请补交',
+        content: '您1月7号的配施日志没有提交，请补交',
         time: '2019-01-08 14:40'
       }]
     }

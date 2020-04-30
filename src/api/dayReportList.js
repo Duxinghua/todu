@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 /**
- * 普通用户 日报列表
+ * 普通用户 配施日志列表
  * @param params
  * @returns {AxiosPromise}
  */
@@ -21,7 +21,7 @@ export function dayReportListOnDate(params) {
 }
 
 /**
- * 查看日报
+ * 查看配施日志
  * @param params
  * @returns {AxiosPromise}
  */
@@ -34,7 +34,7 @@ export function reportView(params) {
 }
 
 /**
- * 添加日报
+ * 添加配施日志
  * @param data
  * @returns {AxiosPromise}
  */
@@ -47,7 +47,7 @@ export function reportAdd(data) {
 }
 
 /**
- * 更新日报
+ * 更新配施日志
  * @param data
  * @returns {AxiosPromise}
  */
@@ -95,6 +95,32 @@ export function projectReportList(params) {
     url: '/daily/projectList/pid',
     method: 'get',
     params
+  })
+}
+
+/**
+ * 查看配施日志
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function dailyAddStatus(params) {
+  return request({
+    url: '/daily/add/status',
+    method: 'post',
+    params
+  })
+}
+
+/**
+ * 修改配施日志
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function dailyUpdate(data) {
+  return request({
+    url: '/daily/update',
+    method: 'post',
+    data
   })
 }
 

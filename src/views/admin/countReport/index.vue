@@ -11,7 +11,7 @@
         <div class="self-box3-wrap-fix">
           <div class="self-count-title">
             <div><el-icon class="el-icon-s-comment self-font-color" style="font-size: 30px" /></div>
-            <div>日报</div>
+            <div>配施日志</div>
           </div>
           <div class="self-box2 self-box2-fix2">
             <div class="self-box2-title" style="font-size: 14px;padding-right: 10px">项目名称</div>
@@ -42,7 +42,7 @@
             <div class="self-card-box">
               <div class="self-font-color self-count-num">{{ dailyTotal }}</div>
               <div class="self-card-count-title">
-                日报份数
+                配施日志份数
               </div>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default {
       commitDrawer: false,
       lackDrawer: false,
       direction: 'rtl',
-      reportType: '日报',
+      reportType: '配施日志',
       statusText: '',
       projectList: [],
       weekProjectId: '',
@@ -210,13 +210,13 @@ export default {
     dailyCommitDetail() {
       this.commitDrawer = true
       this.tableData = this.dailyCommit.list
-      this.reportType = '日报'
+      this.reportType = '配施日志'
       this.statusText = '已发'
     },
     dailyLackDetail() {
       this.lackDrawer = true
       this.tableData = this.dailyLack.list
-      this.reportType = '日报'
+      this.reportType = '配施日志'
       this.statusText = '未发'
     },
     weekCommitDetail() {
@@ -338,8 +338,11 @@ export default {
   .self-count-title{
     background: rgba(32, 160, 255,0.1);
     height: 50px;
+    line-height: 50px;
     display: flex;
-    display: block\9;
+    display: inline-block\9;
+    vertical-align: middle\9;
+    width:100%\9;
     justify-content: flex-start;
     align-content: center;
     margin-bottom: 20px;
@@ -347,11 +350,17 @@ export default {
   }
   .self-count-title>div{
     display: flex;
+    display: inline-block\9;
+    vertical-align: middle\9;
+    float:left\9;
     align-items: center;
     font-size: 16px;
     font-weight: bold;
     color: #20a0ff;
     padding-left: 10px;
+  }
+  .self-count-title>div>i{
+    margin-top:11px;
   }
   .self-card-box{
     display: flex;

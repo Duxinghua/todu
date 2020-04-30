@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 /**
- * 日报统计
+ * 配施日志统计
  * @param state
  * @returns {AxiosPromise}
  */

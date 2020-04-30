@@ -61,7 +61,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'DayReport',
       component: () => import('@/views/self/dayReport/index'),
-      meta: { title: '日报', icon: 'dashboard' }
+      meta: { title: '配施日志', icon: 'dashboard' }
     },
     {
       path: 'projectList',
@@ -107,7 +107,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'SDayReport',
       component: () => import('@/views/admin/dayReport/index'),
-      meta: { title: '日报', icon: 'dashboard' }
+      meta: { title: '配施日志', icon: 'dashboard' }
     },
     {
       path: 'personList',
@@ -123,7 +123,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'SMonthReport',
       component: () => import('@/views/admin/monthReport/index'),
-      meta: { title: '日报', icon: 'dashboard' }
+      meta: { title: '配施日志', icon: 'dashboard' }
     },
     {
       path: 'personList',

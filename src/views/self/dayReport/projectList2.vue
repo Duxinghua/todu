@@ -4,7 +4,7 @@
       <div class="self-box2">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">日报</div>
+        <div style="padding-left: 30px;font-weight: bold">配施日志</div>
       </div>
       <div class="self-box2">
         <div class="search-row">
@@ -31,7 +31,7 @@
           <el-button type="primary" @click="searchForm">查询</el-button>
         </div>
         <div class="search-row">
-          <el-button type="primary" icon="el-icon-plus" @click="addReport">新建日报</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="addReport">新建配施日志</el-button>
         </div>
       </div>
       <div class="self-box2" style="flex: 1;flex-wrap: wrap;">
@@ -51,7 +51,7 @@
                     <div style="font-size: 12px">{{ task.proCode }}</div>
                   </div>
                   <div>
-                    <el-button type="primary" plain>查看日报</el-button>
+                    <el-button type="primary" plain>查看配施日志</el-button>
                     <div style="font-size: 12px;padding-top: 5px;text-align: center">{{ dateFormat(task.logTime) }}</div>
                   </div>
                 </div>
@@ -74,7 +74,7 @@
     >
       <div slot="title">
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 5px 0 0 2px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">新建日报</div>
+          <div style="font-size: 18px;color: #000000">新建配施日志</div>
           <div style="font-size: 12px;padding:5px  2px  0 2px">22:00后将不能修改</div>
         </div>
       </div>
@@ -138,7 +138,7 @@
     >
       <div slot="title">
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 5px 0 0 2px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">新建日报</div>
+          <div style="font-size: 18px;color: #000000">新建配施日志</div>
           <div style="font-size: 12px;padding:5px  2px  0 2px">22:00后将不能修改</div>
         </div>
       </div>
@@ -217,7 +217,7 @@
     >
       <div v-if="operateType === 2" slot="title">
         <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;padding: 0 20px">
-          <div style="font-size: 18px;color: #000000"> 日报详情 </div>
+          <div style="font-size: 18px;color: #000000"> 配施日志详情 </div>
           <div>
             <el-button icon="el-icon-edit-outline" type="primary" :disabled="buttonDisabled">修改</el-button>
           </div>
@@ -226,7 +226,7 @@
       </div>
       <div v-else slot="title">
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 5px 0 0 2px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">日报详情 </div>
+          <div style="font-size: 18px;color: #000000">配施日志详情 </div>
           <div style="font-size: 12px;padding:5px  2px  0 2px">22:00后将不能修改</div>
         </div>
       </div>
@@ -353,7 +353,7 @@ export default {
     showReportDetail(isCreate, task) {
       this.reportForm = {}
       if (isCreate) {
-        // 创建日报
+        // 创建配施日志
         this.reportForm.projectId = task.projectId
         this.reportForm.proName = task.proName
         this.reportForm.logTimeStr = this.form.searchDate
@@ -361,8 +361,8 @@ export default {
         this.reportForm.proRole = task.proRole
         this.addDrawer2 = true
       } else {
-        // 预览日报
-        // 查询日报
+        // 预览配施日志
+        // 查询配施日志
         // 判断时间 是否可以修改
         const currentTime = new Date().getTime()
         const taskTime = new Date(task.logTimeStr + ' 22:00:00').getTime()

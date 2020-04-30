@@ -42,7 +42,7 @@
       </el-row>
       <el-row>
         <el-col>
-          <div class="person-button-fix" style="display:flex;justify-content: space-between;margin-top: 20px;">
+          <div class="person-button-fix p-b-f-x">
             <div v-if="batchEdit" class="self-box3">
               <el-button type="info" :disabled="true">导出</el-button>
               <el-button type="info" :disabled="true">删除</el-button>
@@ -496,6 +496,21 @@ export default {
     flex: 1;
     width:100%;
   }
+  .p-b-f-x{
+    display:flex;
+    display: inline-block;
+    width:100%;
+    justify-content:space-between;
+    margin-top:20px;
+  }
+  .self-box3{
+    width:30%;
+    float: left;
+  }
+  .el-button-self{
+    width:152px;
+    float:right;
+  }
 </style>
 <style>
   .self-drawer .el-dialog__body{
@@ -525,6 +540,5 @@ export default {
   }
   .person-button-fix div:last-child{
     float:right;
-    margin-left:80%;
   }
 </style>

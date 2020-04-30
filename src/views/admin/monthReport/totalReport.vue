@@ -9,11 +9,6 @@
       <div class="self-box2 self-box2-fix" style="justify-content: space-between">
         <div class="search-row-fix">
           <div class="search-row">
-            <!-- <el-button-group>
-              <el-button type="primary" @click="prevWeek">上一周</el-button>
-              <el-button type="primary" @click="currentWeek">本周</el-button>
-              <el-button type="primary" :disabled="!nextWeekBtnEdit" @click="nextWeek">下一周</el-button>
-            </el-button-group> -->
             <div class="search-text" style="width:40px;text-align:left">时间</div>
             <el-date-picker
               v-model="searchWeekStr"
@@ -24,7 +19,7 @@
               @change="listChange"
             />
           </div>
-          <div class="search-row search-row-type">
+          <div class="search-row search-row-type search-row-sel">
             <div class="search-text" style="width: 70px">项目类型</div>
             <el-select v-model="searchForm.proType" :clearable="true">
               <el-option key="1" value="1" label="自揽">自控</el-option>
@@ -39,13 +34,13 @@
             <div class="search-text" style="width: 70px">项目名称</div>
             <el-input v-model="searchForm.proNameKeyWord" :clearable="true" />
           </div>
-          <div class="search-row">
+          <div class="search-row search-row-s">
             <el-button type="primary" @click="search">查询</el-button>
           </div>
         </div>
         <div class="search-button-fix">
-          <el-button type="primary" size="small" @click="saveList">保存</el-button>
-          <el-button type="primary" size="small" @click="handleDownload">导出</el-button>
+          <el-button type="primary" @click="saveList">保存</el-button>
+          <el-button type="primary" @click="handleDownload">导出</el-button>
         </div>
       </div>
       <!--style="flex:1;flex-basis: auto"  -->
@@ -114,7 +109,7 @@
 </template>
 
 <script>
-import { weeklySummary, summaryListAdd, excelDownloadSummary } from '@/api/sMonthReport'
+import { weeklySummary, summaryListAdd } from '@/api/sMonthReport'
 export default {
   name: 'TotalReport',
   data() {
@@ -415,7 +410,13 @@ export default {
   }
   .search-row-fix{
     display: flex;
+    width:85%;
     display: inline-block\9;
+  }
+  .search-row-s{
+    padding-left:20px;
+    box-sizing: border-box;
+    width:15%!important;
   }
   .search-button-fix{
     width:15%;
@@ -426,8 +427,12 @@ export default {
   .search-row{
     display: flex;
     display: inline-block\9;
-    margin-right: 20px;
+    vertical-align: middle;
+    width:20%;
     align-items: center;
+  }
+  .search-row-sel{
+    width:20%;
   }
   .el-input__inner{
     width:80%;
@@ -451,14 +456,24 @@ export default {
   }
   .search-row-type{
     width:20%;
-    width:280px\9;
-    vertical-align:middle\9;
+    /* width:280px\9; */
+    /* vertical-align:middle; */
   }
   .search-row-type .el-input__inner{
     width:100%\9;
   }
-  .search-row-type .el-input{
+  .search-row .el-input{
     float:left\9;
-    width:200px\9;
+    width:calc(100% - 80px);
+  }
+  .search-row .el-select{
+    float:left\9;
+    width:calc(100% - 80px);
+  }
+  .search-button-fix button{
+    float:left;
+  }
+  .search-button-fix button:last-child{
+    float:right;
   }
 </style>

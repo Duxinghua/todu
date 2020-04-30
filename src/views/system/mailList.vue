@@ -43,7 +43,7 @@
             </el-row>
             <el-row class="self-box2 self-box2-fix2">
               <div class="search-row">
-                <div class="search-text">室所</div>
+                <div class="search-text" style="width:40px">室所</div>
                 <el-select v-model="searchDeptId" placeholder="请选择项目" :clearable="true" @clear="clearDept">
                   <el-option label="请选择室所" :value="0" disabled />
                   <el-option
@@ -54,7 +54,6 @@
                   />
                 </el-select>
               </div>
-
               <div class="search-row">
                 <div class="search-text" style="width: 40px">工号</div>
                 <el-input v-model="workNumberKeyWord" :clearable="true" />
@@ -68,8 +67,8 @@
               </div>
             </el-row>
             <el-row>
-              <el-col :span="14">
-                <div style="margin-top: 10px;margin-left: 30px">
+              <el-col :span="12">
+                <div style="margin-top: 10px;margin-left: 20px">
                   <div v-if="batchEdit" class="self-box3">
                     <el-button type="info" :disabled="true">导出</el-button>
                     <el-button type="info" :disabled="true">删除</el-button>
@@ -83,8 +82,8 @@
 
                 </div>
               </el-col>
-              <el-col :span="10">
-                <div class="el-button-fix" style="display:flex;margin-top: 10px;margin-right: 30px;    justify-content: flex-end;">
+              <el-col :span="12">
+                <div class="el-button-fix">
                   <el-button style="cursor:pointer;margin-right:5px;" size="mini" type="primary" @click="downloadTemp()">下载导入模板</el-button>
                   <el-upload
                     v-loading.fullscreen.lock="fullscreenLoading"
@@ -101,7 +100,7 @@
                     <el-button size="mini" type="primary" style=";margin-right:5px;">批量导入</el-button>
                   </el-upload>
                   <!--            <el-button style="cursor:pointer;" size="mini" type="primary" @click="batchExport()">批量导入</el-button>-->
-                  <el-button style="float: right;margin-right:5px;" type="primary" size="mini" icon="el-icon-plus" @click="handleAdd()">添加成员</el-button>
+                  <el-button style="float: right;" type="primary" size="mini" icon="el-icon-plus" @click="handleAdd()">添加成员</el-button>
                 </div>
                 <!--                <div style="margin-top: 10px;margin-right: 30px">-->
                 <!--                  <el-button style="float:right;" type="primary" size="mini" icon="el-icon-plus" @click="handleAdd()">添加成员</el-button>-->
@@ -110,7 +109,7 @@
               </el-col>
             </el-row>
             <!-- 数据表格 -->
-            <div class="self-box3" style="flex:1;flex-basis: auto">
+            <div ref="queryHeight" class="self-box3">
               <el-table
                 v-loading="loading"
                 class="userTable"
@@ -557,7 +556,8 @@ export default {
     window.onresize = () => {
       return (() => {
         window.tableHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-        that.tableHeight = window.tableHeight - that.$refs.queryHeight.offsetHeight - 150
+        // that.tableHeight = window.tableHeight - that.$refs.queryHeight.offsetHeight
+        that.tableHeight = that.$refs.queryHeight.offsetHeight - 50
       })()
     }
   },
@@ -1078,7 +1078,7 @@ export default {
 
   .self-box2{
     position: relative;
-    padding: 10px 40px ;
+    padding: 10px 20px ;
     box-sizing: border-box;
     display: flex;
     display: inline-block\9;
@@ -1087,8 +1087,17 @@ export default {
   .self-box2-fix2{
     width:100%\9;
   }
+  .self-box2-fix2 .search-row{
+    width:16.7%;
+  }
   .el-button-fix{
+    display:flex;
+    margin-top: 10px;
+    margin-right: 20px;
+    justify-content: flex-end;
     display: inline-block\9;
+    width:300px;
+    margin-left:calc(100% - 310px);
   }
   .el-button-fix .el-button{
     float:left\9;

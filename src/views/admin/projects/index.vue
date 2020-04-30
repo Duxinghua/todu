@@ -87,7 +87,7 @@
         </el-col>
       </el-row>
       <!-- 数据表格 -->
-      <div class="self-box3" style="flex:1;flex-basis: auto">
+      <div ref="queryHeight" class="self-box3">
         <el-table
           v-loading="loading"
           :data="tableData"
@@ -371,7 +371,7 @@ export default {
     window.onresize = () => {
       return (() => {
         window.tableHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-        that.tableHeight = window.tableHeight - that.$refs.queryHeight.offsetHeight - 150
+        that.tableHeight = that.$refs.queryHeight.offsetHeight - 50
       })()
     }
   },
@@ -703,8 +703,8 @@ export default {
     flex: 1;
   }
   .userTable {
-    width: 98%;
-    margin: 20px 0 0 20px;
+    width:99%;
+    margin: 20px 0 0 0;
   }
 </style>
 <style>
@@ -776,7 +776,7 @@ export default {
   .button-fix-wrap{
     display: inline-block\9;
     width:100%\9;
-    margin-top: 30px;
+    margin-top: 20px;
     display: flex;
     justify-content: space-between
   }

@@ -20,7 +20,7 @@
                   name="username"
                   type="text"
                   tabindex="1"
-                  auto-complete="on"
+                  autocomplete="off"
                 />
 
               </div>
@@ -36,7 +36,7 @@
                   placeholder="请输入密码"
                   name="password"
                   tabindex="2"
-                  auto-complete="on"
+                  autocomplete="off"
                   @keyup.enter.native="handleLogin"
                 />
 
@@ -75,8 +75,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],

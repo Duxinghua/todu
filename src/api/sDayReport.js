@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 /**
- * 日报列表
+ * 配施日志列表
  * @param params
  * @returns {AxiosPromise}
  */
@@ -14,7 +14,7 @@ export function dayReportList(params) {
 }
 
 /**
- * 日报人员列表
+ * 配施日志人员列表
  * @param params
  * @returns {AxiosPromise}
  */
@@ -27,7 +27,7 @@ export function dailyPersonList(params) {
 }
 
 /**
- * 删除日报
+ * 删除配施日志
  * @param id
  * @returns {AxiosPromise}
  */
@@ -47,5 +47,31 @@ export function dailyBatchDelete(ids) {
   return request({
     url: `/daily/batchDelete/${ids}`,
     method: 'DELETE'
+  })
+}
+
+/**
+ * 配施日志列表 /admin/dept/list
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function admindeptlist(params) {
+  return request({
+    url: '/admin/dept/list',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 管理员查询日志// GET /daily/list/admin
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function dailyListAdmin(params) {
+  return request({
+    url: '/daily/list/admin',
+    method: 'get',
+    params
   })
 }

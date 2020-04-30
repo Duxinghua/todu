@@ -40,7 +40,7 @@
               <div v-if="role === 'admin'">
                 <div style=";margin-left:30px" @click="lookDayReport">
                   <div class="self-button">
-                    <i class="el-icon-plus" /><span style="padding-left: 5px">查看日报</span>
+                    <i class="el-icon-plus" /><span style="padding-left: 5px">查看配施日志</span>
                   </div>
                 </div>
                 <div style=";margin-left:30px" @click="lookMonthReport">
@@ -52,7 +52,7 @@
               <div v-else>
                 <div style=";margin-left:30px" @click="addDayReport">
                   <div class="self-button">
-                    <i class="el-icon-plus" /><span style="padding-left: 5px">新建日报</span>
+                    <i class="el-icon-plus" /><span style="padding-left: 5px">新建配施日志</span>
                   </div>
                 </div>
                 <div style=";margin-left:30px" @click="addMonthReport">
@@ -73,11 +73,11 @@
           <div style="display: flex;flex-direction: column;flex: 1">
             <div style="height: 50px">
               <el-radio-group v-model="chartValue" size="mini" @change="changeChart">
-                <el-radio-button label="日报" />
+                <el-radio-button label="配施日志" />
                 <el-radio-button label="周报" />
               </el-radio-group>
             </div>
-            <div v-show="chartValue === '日报'" id="echart1" style="flex:1" />
+            <div v-show="chartValue === '配施日志'" id="echart1" style="flex:1" />
             <div v-show="chartValue === '周报'" id="echart2" style="flex:1" />
           </div>
         </div>
@@ -95,7 +95,7 @@
     >
       <div slot="title">
         <div style="display: flex;align-items: center;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">新建日报</div>
+          <div style="font-size: 18px;color: #000000">新建配施日志</div>
           <div style="font-size: 12px;padding-top:5px">22:00后将不能修改</div>
         </div>
 
@@ -258,7 +258,7 @@ export default {
       direction: 'rtl',
       dayVisible: false,
       monthVisible: false,
-      chartValue: '日报',
+      chartValue: '配施日志',
       chart2Load: false,
 
       editorHeight: 100,
@@ -299,7 +299,7 @@ export default {
       },
       menuData: [{
         id: 1,
-        name: '日报',
+        name: '配施日志',
         path: 'dayReport/index'
       }, {
         id: 2,
@@ -323,7 +323,7 @@ export default {
     if (role === 'admin') {
       const adminMenuData = [{
         id: 1,
-        name: '日报',
+        name: '配施日志',
         path: '/sDayReport/index'
       }, {
         id: 2,
@@ -370,7 +370,7 @@ export default {
       this.form.projectMonthRole = this.projectRole[val]
     },
     changeChart(value) {
-      if (value === '日报' || !this.chart2Load) {
+      if (value === '配施日志' || !this.chart2Load) {
         this.initCharts2()
       }
     },
@@ -390,7 +390,7 @@ export default {
         },
         yAxis: {},
         series: [{
-          name: '日报',
+          name: '配施日志',
           type: 'bar',
           data: [5, 20, 36, 10, 10, 50, 10, 20, 60, 70, 56, 70, 50, 30, 24, 54, 32, 25, 67, 70, 10, 20, 10]
         }]

@@ -186,7 +186,7 @@
     >
       <div slot="title">
         <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;padding: 0 20px">
-          <div style="font-size: 18px;color: #000000">日报详情 </div>
+          <div style="font-size: 18px;color: #000000">配施日志详情 </div>
         </div>
       </div>
       <div slot="default" style="padding: 0 30px">

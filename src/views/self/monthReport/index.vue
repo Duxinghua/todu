@@ -744,6 +744,7 @@ export default {
    .self-card-item-fix{
     display:flex;
     flex:1;
+    width:100%\9;
     display: inline-block\9;
    }
    .self-font-color-fix{
@@ -903,9 +904,9 @@ export default {
   }
   .self-card-item-ss{
     display:flex;
-    flex:1;
-    width:calc(100% - 50px)\9;
     display: inline-block\9;
+    flex:1;
+    width:calc(100% - 60px);
     justify-content:space-between;
   }
   .self-card-item-ss1{
@@ -961,6 +962,11 @@ export default {
   }
   .btns-fix .el-row{
     margin-left:0px!important;
+  }
+  .self-card-item-ss2 .el-button{
+    width:100%;
+    font-size: 11px!important;
+    padding:6px 0px!important;
   }
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) { /* 3. */
     .self-font-color-fix{
