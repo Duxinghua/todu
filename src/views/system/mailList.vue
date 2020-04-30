@@ -294,16 +294,19 @@
       </el-dialog>
 
       <!-- todo 编辑用户对话框 -->
-      <el-drawer
+      <el-dialog
         ref="editUserDrawer"
         :visible.sync="dialogFormVisibleEdit"
         direction="rtl"
+        center
         :show-close="false"
         :wrapper-closable="false"
+        title="编辑资料"
         size="30%"
-        class="self-drawer"
+        width="30%"
+        class="self-drawer self-drawer-wrap"
       >
-        <div slot="title" style="font-size: 20px">编辑资料</div>
+        <!-- <div slot="title" style="font-size: 20px">编辑资料</div> -->
         <el-form
           ref="editForm"
           :model="userForm"
@@ -393,12 +396,12 @@
             <el-input v-model="userForm.password" size="normal" placeholder="请输入重置密码" class="self-input" />
           </el-form-item>
         </el-form>
-        <div style="margin: 100px 0 0 50px;">
+        <div slot="footer" style="text-align: left;margin-left: 25px;margin-top: 25px;">
           <el-button size="normal" @click="cancelEditForm">取 消</el-button>
           <el-button size="normal" type="primary" :loading="loading" :disabled="editBtnDisabled" @click="updateUser()">{{ loading ? '提交中...' : '确 定' }}
           </el-button>
         </div>
-      </el-drawer>
+      </el-dialog>
 
       <!-- 新增部门对话框 -->
       <!--      <el-drawer-->

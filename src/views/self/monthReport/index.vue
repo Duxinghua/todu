@@ -913,6 +913,23 @@ export default {
     width:70%;
     float:left;
   }
+  .self-card-item-ss1 > div:first-child{
+     text-overflow: -o-ellipsis-lastline;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     display: -webkit-box;
+     -webkit-line-clamp: 2;
+     -webkit-box-orient: vertical;
+     float: left;
+     word-break: break-all;
+    height: 40px;
+    line-height: 20px;
+    overflow: hidden;
+  }
+  .self-card-item-ss1 > div:last-child{
+    width:100%;
+    float:left
+  }
   .self-card-item-ss2{
     width:30%;
     float:right;
