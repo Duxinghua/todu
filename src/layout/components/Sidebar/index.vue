@@ -70,13 +70,15 @@ export default {
       const { status, data } = res
       if (status === 200) {
         data.forEach((item, index) => {
-          const row = {
-            id: item.id,
-            name: item.label,
-            path: item.path,
-            icon: 'example'
+          if (item.id !== 12) {
+            const row = {
+              id: item.id,
+              name: item.label,
+              path: item.path,
+              icon: 'example'
+            }
+            userRoute.push(row)
           }
-          userRoute.push(row)
         })
         this.selfRoute = userRoute
       }
