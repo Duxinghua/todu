@@ -87,14 +87,14 @@
         </el-col>
       </el-row>
       <!-- 数据表格 -->
-      <div ref="queryHeight" class="self-box3">
+      <div ref="queryHeight" class="self-box3 self-box3-table" style="position:relative" :style="{height:tableHeight+'px'}">
         <el-table
           v-loading="loading"
           :data="tableData"
           :height="tableHeight"
           :fit="true"
           class="userTable"
-          tooltip-effect="dark"
+          style="position:absolute"
           :header-cell-style="{background:'#eef1f6',color:'#606266'}"
           @selection-change="handleSelectionChange"
         >
@@ -782,6 +782,9 @@ export default {
   }
   .button-fix-wrap .self-box3{
     float:left\9;
+  }
+  .self-box3-table{
+    width: 100%;
   }
   .button-fix-wrap .button-fix{
     float:right\9;

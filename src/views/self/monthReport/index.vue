@@ -165,7 +165,7 @@
                 <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
               </div>
             </el-row>
-            <el-row style="margin-top: 10px">
+            <el-row v-if="proTypeFlag == 1" style="margin-top: 10px">
               <h3>需要室所领导、处领导、总工解决的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
@@ -391,7 +391,8 @@ export default {
       weekForm: {
         projectRoleId: ''
       },
-      isClear: false
+      isClear: false,
+      proTypeFlag: ''
     }
   },
   mounted() {
@@ -557,6 +558,8 @@ export default {
     },
     handleTableChange(row) {
       console.log(row)
+      this.proTypeFlag = row.proType
+      console.log(this.proTypeFlag)
       this.selectedProject = row
     },
     cellClick() {

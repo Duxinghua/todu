@@ -81,6 +81,14 @@
             </el-table-column>
           </el-table-column>
           <el-table-column
+            prop="toBeSolve"
+            label="需要室所领导、处领导、总工解决的问题"
+          >
+            <template slot-scope="scope">
+              <span v-html="scope.row.toBeSolve" />
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="keyPoint"
             label="工作重点提示"
           >

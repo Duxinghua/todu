@@ -42,6 +42,7 @@ const actions = {
   },
   // user login
   login({ commit }, userInfo) {
+    removeToken()
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ loginName: username.trim(), password: password }).then(response => {

@@ -18,7 +18,7 @@
               :disabled="formDisabled"
             >
               <el-form-item label="工号" :label-width="labelwidth" prop="workNumber">
-                <el-input v-model="userForm.workNumber" autocomplete="off" size="normal" style="width: 500px" />
+                <el-input v-model="userForm.workNumber" disabled autocomplete="off" size="normal" style="width: 500px" />
               </el-form-item>
               <el-form-item label="用户姓名" :label-width="labelwidth">
                 <el-input v-model="userForm.userName" autocomplete="off" size="normal" style="width: 500px" />

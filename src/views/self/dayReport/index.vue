@@ -221,6 +221,7 @@ export default {
       this.getList()
     },
     showReport() {
+      this.newText = '新建配施日志'
       this.reportForm.logTimeStr = this.dateFormat(new Date())
       this.reportForm.content = ''
       this.type = false

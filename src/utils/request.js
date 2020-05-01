@@ -15,7 +15,16 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-
+    var getTimestamp = new Date().getTime()
+    var url = config.url
+    if (url) {
+      if (url.indexOf('?') > -1) {
+        url = url + '×tamp=' + getTimestamp
+      } else {
+        url = url + '?timestamp=' + getTimestamp
+      }
+    }
+    config.url = url
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
