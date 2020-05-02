@@ -3,7 +3,7 @@
     <logo v-if="false" :collapse="true" />
     <div class="logo-box">
       <div class="logo-img" />
-      <div class="logo-text">企秀网络科技有限公司</div>
+      <div class="logo-text">铁四院线站处</div>
     </div>
     <el-scrollbar wrap-class="scrollbar-wrapper" style="padding-right: 0">
       <el-menu
