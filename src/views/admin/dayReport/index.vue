@@ -19,7 +19,7 @@
         </div>
         <div class="search-row">
           <div class="search-text">部门</div>
-          <el-select v-model="form.searchProject" placeholder="请选择部门" class="el-select-f">
+          <el-select v-model="form.searchProject" clearable placeholder="请选择部门" class="el-select-f">
             <el-option
               v-for="project in projectList"
               :key="project.id"

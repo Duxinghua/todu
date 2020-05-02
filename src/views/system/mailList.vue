@@ -109,12 +109,13 @@
               </el-col>
             </el-row>
             <!-- 数据表格 -->
-            <div ref="queryHeight" class="self-box3">
+            <div ref="queryHeight" class="self-box3" style="position:relative" :style="{height:tableHeight+'px'}">
               <el-table
                 v-loading="loading"
                 class="userTable"
                 :data="tableData"
                 :height="tableHeight"
+                style="position:absolute"
                 :fit="true"
                 :header-cell-style="{background:'#eef1f6',color:'#606266'}"
                 @selection-change="handleSelectionChange"
