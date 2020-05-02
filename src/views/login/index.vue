@@ -20,6 +20,8 @@
                   name="username"
                   type="text"
                   tabindex="1"
+                  trigger-on-focus="false"
+                  autofocus
                   autocomplete="off"
                 />
 
@@ -36,7 +38,9 @@
                   placeholder="请输入密码"
                   name="password"
                   tabindex="2"
+                  autofocus
                   autocomplete="off"
+                  trigger-on-focus="false"
                   @keyup.enter.native="handleLogin"
                 />
 
@@ -95,6 +99,12 @@ export default {
       immediate: true
     }
   },
+  mounted() {
+    this.$nextTick(() => {
+      // this.$refs.input.$el.querySelector('input').focus()
+      console.log(this.$refs.loginForm.$el)
+    })
+  },
   methods: {
     showPwd() {
       if (this.passwordType === 'password') {
@@ -131,7 +141,7 @@ export default {
 
 $bg:#283443;
 $light_gray:#fff;
-$cursor: #fff;
+$cursor: #333;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
