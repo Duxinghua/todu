@@ -210,6 +210,11 @@ $cursor: #333;
     color: #454545;
   }
 }
+.login-container .el-input input:-webkit-autofill{
+  -webkit-box-shadow: 0 0 0 1000px white inset!important;
+  box-shadow: inset 0 0 0 1000px white!important;
+  -webkit-text-fill-color: white!important;
+}
 </style>
 
 <style lang="scss" scoped>

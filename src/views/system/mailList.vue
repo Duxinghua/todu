@@ -115,7 +115,7 @@
                 class="userTable"
                 :data="tableData"
                 :height="tableHeight"
-                style="position:absolute"
+                style="position:absolute;top:0"
                 :fit="true"
                 :header-cell-style="{background:'#eef1f6',color:'#606266'}"
                 @selection-change="handleSelectionChange"
