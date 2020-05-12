@@ -73,9 +73,9 @@
       width="30%"
       size="30%"
       :show-close="false"
-      :wrapper-closable="false"
       custom-class="self-drawer self-drawer-fix"
     >
+      <!--  :wrapper-closable="false"  -->
       <div slot="title">
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;flex-direction: column">
           <div style="font-size: 18px;color: #000000">{{ newText }} </div>
