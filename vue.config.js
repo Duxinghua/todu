@@ -1,6 +1,8 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -13,6 +15,7 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // For example, Mac: sudo npm run
 // You can change the port by the following methods:
 // port = 9528 npm run dev OR npm run dev --port = 9528
+const Timestamp = new Date().getTime()
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
@@ -46,7 +49,18 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    }
+    },
+    output: {
+      filename: `static/js/[name].${process.env.VUE_APP_Version}.${Timestamp}.js`,
+      chunkFilename: `static/js/[name].${process.env.VUE_APP_Version}.${Timestamp}.js`
+    },
+    plugins: [
+      new MiniCssExtractPlugin({
+        // 修改打包后css文件名
+        filename: `static/css/[name].${process.env.VUE_APP_Version}.${Timestamp}.css`,
+        chunkFilename: `static/css/[name].${process.env.VUE_APP_Version}.${Timestamp}.css`
+      })
+    ]
   },
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test

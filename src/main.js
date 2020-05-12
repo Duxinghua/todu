@@ -20,6 +20,7 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 import moment from 'moment'
+ElementUI.Dialog.props.closeOnClickModal.default = false;
 Vue.use(mavonEditor)
 Vue.use(ElementUI, { size: 'mini', zIndex: 3000 })
 /**
