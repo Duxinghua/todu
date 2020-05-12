@@ -70,8 +70,8 @@
       ref="addDrawer"
       :visible.sync="addDrawer"
       :direction="direction"
-      width="30%"
-      size="30%"
+      width="45%"
+      size="45%"
       :show-close="false"
       custom-class="self-drawer self-drawer-fix"
     >
