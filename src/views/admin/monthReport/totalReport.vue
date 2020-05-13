@@ -298,7 +298,7 @@ export default {
     },
     handleDownload3() {
       //  dateStr: this.searchWeekStr, proType: this.searchForm.proType, proNameKeyWord: this.searchForm.proNameKeyWord, proCodeKeyWord: this.searchForm.proCodeKeyWord
-      window.open('http://121.40.86.153:8999/excel/downloadSummary?dateStr=' + this.searchWeekStr + '&proType=' + this.searchForm.proType) + '&proNameKeyWord=' + this.searchForm.proNameKeyWord + '&proCodeKeyWord=' + this.searchForm.proCodeKeyWord
+      window.open(process.env.VUE_APP_BASE_API + 'excel/downloadSummary?dateStr=' + this.searchWeekStr + '&proType=' + this.searchForm.proType) + '&proNameKeyWord=' + this.searchForm.proNameKeyWord + '&proCodeKeyWord=' + this.searchForm.proCodeKeyWord
     },
     async handleDownload2() {
       // 校验数据

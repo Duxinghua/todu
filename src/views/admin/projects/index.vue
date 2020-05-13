@@ -299,7 +299,7 @@ export default {
   name: 'ProjectList',
   data() {
     return {
-      uploadIp: 'http://121.40.86.153:8999',
+      uploadIp: process.env.VUE_APP_BASE_API,
       // uploadIp: 'http://92game.xicp.net',
       // 项目数据列表
       tableData: [],
@@ -463,7 +463,7 @@ export default {
     // 导出模板
     downloadTemp(type) {
       console.log(type)
-      window.open('http://121.40.86.153:8999/excel/download?templateType=' + type)
+      window.open(process.env.VUE_APP_BASE_API + 'excel/download?templateType=' + type)
     },
     // 批量导入
     batchExport() {

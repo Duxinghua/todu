@@ -587,7 +587,7 @@ export default {
       this.getMajorList({ deptId: val })
     },
     downloadTemp() {
-      window.open('http://121.40.86.153:8999/excel/download?templateType=3')
+      window.open(process.env.VUE_APP_BASE_API + 'excel/download?templateType=3')
     },
     uploadSuccess(response, file, fileList) {
       if (response.status === 500) {
