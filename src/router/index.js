@@ -84,7 +84,13 @@ export const constantRoutes = [
       path: 'index',
       name: 'MonthReport',
       component: () => import('@/views/self/monthReport/index'),
-      meta: { title: '周报', icon: 'dashboard' }
+      meta: { title: '院控周报', icon: 'dashboard' }
+    },
+    {
+      path: 'index',
+      name: 'MonthReport',
+      component: () => import('@/views/self/monthReport/selfindex'),
+      meta: { title: '自控周报', icon: 'dashboard' }
     },
     {
       path: 'projectList',
@@ -135,8 +141,15 @@ export const constantRoutes = [
       path: 'totalReport',
       name: 'TotalReport',
       component: () => import('@/views/admin/monthReport/totalReport'),
-      meta: { title: '周报汇总', icon: 'dashboard' }
-    }]
+      meta: { title: '院控周报', icon: 'dashboard' }
+    },
+    {
+      path: 'SelfTotalReport',
+      name: 'SelfTotalReport',
+      component: () => import('@/views/admin/monthReport/selfTotalReport'),
+      meta: { title: '自控周报', icon: 'dashboard' }
+    }
+    ]
   },
   {
     path: '/notice',

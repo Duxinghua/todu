@@ -17,7 +17,7 @@
             placeholder="请选择日期"
           />
         </div>
-        <div class="search-row">
+        <div class="search-row search-row-dep">
           <div class="search-text">部门</div>
           <el-select v-model="form.searchProject" clearable placeholder="请选择部门" class="el-select-f">
             <el-option
@@ -353,18 +353,18 @@ export default {
     display: flex;
     display: inline-block\9;
     align-items: center;
-    width:16.7%;
+    width:20%;
   }
   .search-row-btn-s{
     padding-left:20px;
-    width:15%
+    width:10%
   }
   .search-row-btn-fix{
     display: flex;
     display: inline-block\9;
     float:right\9;
     justify-content: flex-end;
-    width:16%;
+    width:10%;
   }
   .search-row-btn-fix button{
     margin-left:calc(100% - 70px)
@@ -427,8 +427,9 @@ export default {
     flex: 1;
   }
   .search-row .el-input.el-date-editor, .search-row .el-input__inner.el-date-editor,.search-row .el-input{
-    width:calc(100% - 80px);
+    width:calc(100% - 50px);
   }
+
 </style>
 <style>
   .self-input .el-input__inner{
@@ -441,10 +442,12 @@ export default {
     margin-bottom: 0px;
   }
   .search-row .el-select-f{
-      width:calc(100% - 80px);
+      width:calc(100% - 40px);
   }
   /* .search-row .el-select-f  .el-input{
     width:calc(100% - 80px);
   } */
-
+  .search-row-dep .el-select,.search-row-dep .el-input{
+     width:calc(100% - 40px) !important;
+  }
 </style>

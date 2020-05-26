@@ -70,7 +70,7 @@ export default {
       const { status, data } = res
       if (status === 200) {
         data.forEach((item, index) => {
-          if (item.id !== 12) {
+          if (item.id !== -1) {
             const row = {
               id: item.id,
               name: item.label,

@@ -639,7 +639,7 @@ export default {
       projectList({
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        proType: 2,
+        proType: 1,
         proCodeKeyWord: this.projectForm.searchProjectNo,
         proNameKeyWord: this.projectForm.searchProjectName
       }).then(res => {

@@ -89,6 +89,17 @@
         </div> -->
         <div>
           <div>
+            <el-row class="daytitle dayproName">
+              <el-col :span="12" class="prowrap" style="margin-right: 10px">
+                <h3>项目</h3>
+                <el-input v-model="reportForm.proName" :readonly="readonly" size="small" />
+                <el-button type="primary" class="self-button" @click.stop="searchProjectList">查询</el-button>
+              </el-col>
+              <el-col :span="12" class="prowrap prowrapfix">
+                <h3>项目编码</h3>
+                <el-input v-model="reportForm.proCode" :readonly="readonly" size="small" />
+              </el-col>
+            </el-row>
             <el-row class="daytitle">
               <h3>时间（天）</h3>
               <!-- :picker-options="pickerOptions" -->
@@ -108,6 +119,79 @@
         </div>
       </div>
 
+    </el-dialog>
+    <!-- 选择项目 -->
+    <el-dialog
+      title="项目列表"
+      :show-close="false"
+      :visible.sync="projectDialogVisible"
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div class="self-box2" style="margin: 0">
+        <div class="search-row">
+          <div class="search-text" style="width: 80px">项目名称</div>
+          <el-input v-model="projectForm.searchProjectName" placeholder="请输入项目名称" :clearable="true" />
+        </div>
+        <div class="search-row">
+          <div class="search-text" style="width: 80px">项目编码</div>
+          <el-input v-model="projectForm.searchProjectNo" placeholder="请输入项目编码" :clearable="true" />
+        </div>
+        <div class="search-row">
+          <el-button type="primary" @click="getProjectList">查询</el-button>
+        </div>
+      </div>
+      <el-table
+        :data="projectDataList"
+        highlight-current-row
+        @current-change="handleTableChange"
+        @cell-click="cellClick"
+      >
+        <el-table-column
+          width="50"
+        >
+          <template slot-scope="scope">
+            <el-radio v-model="radio" :label="scope.$index">&nbsp;</el-radio>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="序号"
+          type="index"
+          width="50"
+        />
+        <el-table-column property="proCode" label="项目编码" width="150" />
+        <el-table-column property="proName" label="项目名称" width="200" />
+        <el-table-column property="proType" label="项目类型">
+          <template slot-scope="scope">
+            {{ proTypeObj[scope.row.proType] }}
+          </template>
+        </el-table-column>
+        <el-table-column property="proStatus" label="项目状态">
+          <template slot-scope="scope">
+            {{ proStatusObj[scope.row.proStatus] }}
+          </template>
+        </el-table-column>
+        <el-table-column property="createTime" label="创建时间">
+          <template slot-scope="scope">
+            {{ scope.row.createTime | fmtdate }}
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        :current-page="pageNum"
+        :page-sizes="[20, 50, 80, 200]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        style="padding: 30px 0"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+      <div style="text-align: right;">
+        <el-button type="primary" @click="confirmPersonTable">确定</el-button>
+        <el-button @click="closePersonTable">取消</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -133,7 +217,9 @@ export default {
       },
       reportForm: {
         logTimeStr: '',
-        content: ''
+        content: '',
+        proName: '',
+        proCode: ''
       },
       content: '',
       isClear: false,
@@ -153,7 +239,19 @@ export default {
       logTimeStr: '',
       newText: '新建配施日志',
       type: false,
-      id: ''
+      id: '',
+      projectDialogVisible: false,
+      projectDataList: [],
+      pageTotal: 0,
+      projectpageNum: 1,
+      projectpageSize: 10,
+      projectForm: {
+        searchProjectNo: '',
+        searchProjectName: ''
+      },
+      selectedProject: null,
+      radio: -1,
+      readonly: false
     }
   },
   computed: {
@@ -178,6 +276,52 @@ export default {
     // this.getProjectList()
   },
   methods: {
+    cellClick() {
+
+    },
+    // 确定
+    confirmPersonTable() {
+      if (this.selectedProject === null) {
+        this.$message.warning('请选择项目')
+        return false
+      }
+      this.reportForm.proName = this.selectedProject.proName
+      this.reportForm.proCode = this.selectedProject.proCode
+      this.projectDialogVisible = false
+    },
+    // 取消
+    closePersonTable() {
+      this.selectedProject = null
+      this.projectDialogVisible = false
+      this.radio = -1
+    },
+    handleTableChange(row) {
+      console.log(row)
+      this.proTypeFlag = row.proType
+      console.log(this.proTypeFlag)
+      this.selectedProject = row
+    },
+    // 新增查询
+    searchProjectList() {
+      this.selectedProject = null
+      this.radio = -1
+      this.projectDialogVisible = true
+      this.getProjectList()
+    },
+    getProjectList() {
+      // 搜索条件
+      projectList({
+        pageNum: this.projectpageNum,
+        pageSize: this.projectpageSize,
+        proCodeKeyWord: this.projectForm.searchProjectNo,
+        proNameKeyWord: this.projectForm.searchProjectName
+      }).then(res => {
+        if (res.status === 200) {
+          this.projectDataList = res.data
+          this.pageTotal = res.count
+        }
+      })
+    },
     handleSizeChange(val) {
       this.pageSize = val
       this.pageNum = 1
@@ -222,20 +366,18 @@ export default {
     },
     showReport() {
       this.newText = '新建配施日志'
-      this.reportForm.logTimeStr = this.dateFormat(new Date())
       this.reportForm.content = ''
       this.type = false
-      var that = this
       this.addDrawer = true
-      dailyAddStatus({ logTimeStr: this.reportForm.logTimeStr }).then((res) => {
-        if (res.code === 200) {
-          that.flag = res.data
-          if (that.flag === false) {
-            that.reportForm.logTimeStr = ''
-          }
-          this.addDrawer = true
-        }
-      })
+      // dailyAddStatus({ logTimeStr: this.reportForm.logTimeStr }).then((res) => {
+      //   if (res.code === 200) {
+      //     that.flag = res.data
+      //     if (that.flag === false) {
+      //       that.reportForm.logTimeStr = ''
+      //     }
+      //     this.addDrawer = true
+      //   }
+      // })
     },
     showReportDetail(data) {
       // this.$router.push({ path: '/dayReport/projectList', query: { date: date }})
@@ -272,17 +414,13 @@ export default {
       // this.reportForm.projectRoleId = ''
       this.projectRoleList(val)
     },
-    getProjectList() {
-      // if (!this.form.proCodeKeyWord) {
-      //   this.$message.warning('请输入项目编号')
-      //   return false
-      // }
-      projectList({ proCodeKeyWord: this.form.proCodeKeyWord, proNameKeyWord: this.form.proNameKeyWord, pageNum: this.pageNum, pageSize: this.pageSize }).then(res => {
-        if (res.status === 200) {
-          this.projectList = res.data
-        }
-      })
-    },
+    // getProjectList() {
+    //   projectList({ proCodeKeyWord: this.form.proCodeKeyWord, proNameKeyWord: this.form.proNameKeyWord, pageNum: this.pageNum, pageSize: this.pageSize }).then(res => {
+    //     if (res.status === 200) {
+    //       this.projectList = res.data
+    //     }
+    //   })
+    // },
     projectRoleList(val) {
       projectRoleList({ projectId: this.reportForm.projectId }).then(res => {
         const { status, data } = res
@@ -343,6 +481,22 @@ export default {
 </script>
 
 <style scoped>
+  .prowrapfix{
+    justify-content: center;
+    text-align: center;
+  }
+  .prowrap{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .prowrap .self-button{
+    position: absolute;
+    top:50%;
+    right:10px;
+    transform: translateY(-50%)
+  }
   .daytitle{
     display: flex;
     flex-direction: row;
@@ -496,6 +650,10 @@ export default {
     width:calc(100% - 100px);
     float:left;
     /* border:1px solid #DCDFE6; */
+  }
+  .dayproName .el-input{
+    width:calc(100% - 100px);
+    float:left;
   }
   .self-drawer-fix .el-dialog__header{
     padding:30px 20px 20px 30px

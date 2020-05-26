@@ -8,7 +8,7 @@
       </div>
       <div class="self-box2 self-box2-fix" style="justify-content: space-between">
         <div class="search-row-fix">
-          <div class="search-row search-row-date">
+          <div class="search-row">
             <div class="search-text" style="width:40px;text-align:left">时间</div>
             <el-date-picker
               v-model="searchWeekStr"
@@ -80,14 +80,14 @@
               </template>
             </el-table-column>
           </el-table-column>
-          <!-- <el-table-column
+          <el-table-column
             prop="toBeSolve"
             label="需要室所领导、处领导、总工解决的问题"
           >
             <template slot-scope="scope">
               <span v-html="scope.row.toBeSolve" />
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column
             prop="keyPoint"
             label="工作重点提示"
@@ -125,7 +125,7 @@ export default {
       ids: '',
       tableData: [],
       searchForm: {
-        proType: 2,
+        proType: 1,
         proNameKeyWord: '',
         proCodeKeyWord: '',
         dateStr: ''
@@ -431,9 +431,6 @@ export default {
     float:right \9;
     display: flex;
     justify-content: flex-end;
-  }
-  .search-row-date{
-    width:30%!important;
   }
   .search-row{
     display: flex;

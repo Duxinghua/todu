@@ -1124,6 +1124,7 @@ export default {
     height:28px\9;
     line-height: 28px\9;
   }
+
 </style>
 <style>
   .el-row-fixw{
@@ -1198,5 +1199,8 @@ export default {
   }
   .self-input-box  .el-form-item__label{
     line-height:40px!important;
+  }
+  .search-row .el-select .el-input{
+    width:100%!important;
   }
 </style>
