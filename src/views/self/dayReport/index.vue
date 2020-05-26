@@ -60,8 +60,8 @@
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          @size-change="proSizeChange"
+          @current-change="proCurrentChange"
         />
       </div>
     </div>
@@ -97,13 +97,13 @@
               </el-col>
               <el-col :span="12" class="prowrap prowrapfix">
                 <h3>项目编码</h3>
-                <el-input v-model="reportForm.proCode" :readonly="readonly" size="small" />
+                <el-input v-model="reportForm.proCode" :readonly="readonly" size="small" @input="proCodeFocus" @focus="proCodeFocus" />
               </el-col>
             </el-row>
             <el-row class="daytitle">
               <h3>时间（天）</h3>
               <!-- :picker-options="pickerOptions" -->
-              <el-date-picker v-model="reportForm.logTimeStr" :picker-options="pickerOptions" type="date" format="yyyy-MM-dd" class="ep-timer" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeChange" />
+              <el-date-picker v-model="reportForm.logTimeStr" :picker-options="pickerOptions" type="date" format="yyyy-MM-dd" class="ep-timer" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeChange" @focus="timeFocus" />
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>当日工作内容</h3>
@@ -155,13 +155,14 @@
             <el-radio v-model="radio" :label="scope.$index">&nbsp;</el-radio>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           label="序号"
           type="index"
           width="50"
-        />
-        <el-table-column property="proCode" label="项目编码" width="150" />
-        <el-table-column property="proName" label="项目名称" width="200" />
+        /> -->
+        <el-table-column property="id" label="序号" />
+        <el-table-column property="proCode" label="项目编码" width="100" />
+        <el-table-column property="proName" label="项目名称" width="300" />
         <el-table-column property="proType" label="项目类型">
           <template slot-scope="scope">
             {{ proTypeObj[scope.row.proType] }}
@@ -172,21 +173,21 @@
             {{ proStatusObj[scope.row.proStatus] }}
           </template>
         </el-table-column>
-        <el-table-column property="createTime" label="创建时间">
+        <el-table-column property="createTime" label="创建时间" width="200">
           <template slot-scope="scope">
             {{ scope.row.createTime | fmtdate }}
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
-        :current-page="pageNum"
+        :current-page="projectpageNum"
         :page-sizes="[20, 50, 80, 200]"
-        :page-size="pageSize"
+        :page-size="projectpageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
+        :total="propageTotal"
         style="padding: 30px 0"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
+        @size-change="proSizeChange"
+        @current-change="proCurrentChange"
       />
       <div style="text-align: right;">
         <el-button type="primary" @click="confirmPersonTable">确定</el-button>
@@ -198,7 +199,8 @@
 
 <script>
 import EditorBar from '@/components/Edit.vue'
-import { dayReportList, projectList, projectRoleList, reportAdd, dailyAddStatus, dailyUpdate } from '@/api/dayReportList'
+import { dayReportList, projectRoleList, reportAdd, dailyAddStatus, dailyUpdate } from '@/api/dayReportList'
+import { projectSelectListNormalps } from '@/api/project'
 // import Tinymce from '@/components/Tinymce'
 export default {
   name: 'DayReport',
@@ -245,13 +247,18 @@ export default {
       pageTotal: 0,
       projectpageNum: 1,
       projectpageSize: 10,
+      propageTotal: 0,
       projectForm: {
         searchProjectNo: '',
         searchProjectName: ''
       },
       selectedProject: null,
       radio: -1,
-      readonly: false
+      readonly: false,
+      proTypeObj: { 1: '自揽', 2: '院控' },
+      proStatusObj: { 0: '停止', 1: '进行中' },
+      proIndex: 1,
+      proSize: 10
     }
   },
   computed: {
@@ -273,9 +280,28 @@ export default {
   mounted() {
     this.form.searchDate = this.dateFormat(new Date())
     this.getList()
-    // this.getProjectList()
   },
   methods: {
+    proCodeFocus(e) {
+      var newTimer = this.dateFormat(new Date())
+      var that = this
+      dailyAddStatus({ logTimeStr: newTimer, proCode: this.reportForm.proCode }).then((res) => {
+        if (res.code === 200) {
+          if (!res.data) {
+            that.reportForm.logTimeStr = ''
+            that.flag = res.data
+          } else {
+            that.reportForm.logTimeStr = newTimer
+            that.flag = res.data
+          }
+        } else {
+          this.reportForm.logTimeStr = ''
+        }
+      })
+    },
+    projectNoChange(e) {
+      this.flag = false
+    },
     cellClick() {
 
     },
@@ -285,6 +311,21 @@ export default {
         this.$message.warning('请选择项目')
         return false
       }
+      var newTimer = this.dateFormat(new Date())
+      var that = this
+      dailyAddStatus({ logTimeStr: newTimer, proCode: this.selectedProject.proCode }).then((res) => {
+        if (res.code === 200) {
+          if (!res.data) {
+            that.reportForm.logTimeStr = ''
+            that.flag = res.data
+          } else {
+            that.reportForm.logTimeStr = newTimer
+            that.flag = res.data
+          }
+        } else {
+          this.reportForm.logTimeStr = ''
+        }
+      })
       this.reportForm.proName = this.selectedProject.proName
       this.reportForm.proCode = this.selectedProject.proCode
       this.projectDialogVisible = false
@@ -310,7 +351,7 @@ export default {
     },
     getProjectList() {
       // 搜索条件
-      projectList({
+      projectSelectListNormalps({
         pageNum: this.projectpageNum,
         pageSize: this.projectpageSize,
         proCodeKeyWord: this.projectForm.searchProjectNo,
@@ -318,7 +359,7 @@ export default {
       }).then(res => {
         if (res.status === 200) {
           this.projectDataList = res.data
-          this.pageTotal = res.count
+          this.propageTotal = res.count
         }
       })
     },
@@ -334,12 +375,36 @@ export default {
       this.pageNum = val
       this.getList()
     },
+    proSizeChange(val) {
+      this.projectpageSize = val
+      this.projectpageNum = 1
+      this.getProjectList()
+
+      console.log(`每页 ${val} 条`)
+    },
+    proCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.projectpageNum = val
+      this.getProjectList()
+    },
     listChange(e) {
       console.log(e)
       this.form.searchDate = e
     },
+    timeFocus(e) {
+
+    },
     timeChange(e) {
-      dailyAddStatus({ logTimeStr: this.reportForm.logTimeStr }).then((res) => {
+      if (!this.reportForm.proCode && !this.reportForm.proName) {
+        this.$alert('您选择项目或者填写项目', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.reportForm.logTimeStr = ''
+          }
+        })
+        return
+      }
+      dailyAddStatus({ logTimeStr: this.reportForm.logTimeStr, proCode: this.reportForm.proCode }).then((res) => {
         if (res.code === 200) {
           if (!res.data) {
             this.$alert('您选择的日期已写过配施日志，请重新选择', '提示', {
@@ -351,6 +416,8 @@ export default {
           } else {
             this.reportForm.logTimeStr = e
           }
+        } else {
+          this.reportForm.logTimeStr = ''
         }
       })
     },
@@ -366,7 +433,10 @@ export default {
     },
     showReport() {
       this.newText = '新建配施日志'
+      this.reportForm.proName = ''
+      this.reportForm.proCode = ''
       this.reportForm.content = ''
+      this.reportForm.logTimeStr = ''
       this.type = false
       this.addDrawer = true
       // dailyAddStatus({ logTimeStr: this.reportForm.logTimeStr }).then((res) => {

@@ -159,3 +159,16 @@ export function deleteProjectUser(data) {
     data
   })
 }
+
+/**
+ * 可以选择的人员
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function projectSelectListNormalps(params) {
+  return request({
+    url: '/project/selectList/normal/ps',
+    method: 'get',
+    params
+  })
+}

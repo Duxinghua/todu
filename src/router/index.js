@@ -116,6 +116,12 @@ export const constantRoutes = [
       meta: { title: '配施日志', icon: 'dashboard' }
     },
     {
+      path: 'report',
+      name: 'dayReport',
+      component: () => import('@/views/admin/dayReport/report'),
+      meta: { title: '填报率', icon: 'dashboard' }
+    },
+    {
       path: 'personList',
       name: 'SDayPersonList',
       component: () => import('@/views/admin/dayReport/personList'),
@@ -189,6 +195,16 @@ export const constantRoutes = [
       name: 'PersonData',
       component: () => import('@/views/self/persondata/index'),
       meta: { title: '个人资料', icon: 'dashboard' }
+    }]
+  },
+  {
+    path: '/staffing',
+    component: Layout,
+    children: [{
+      path: 'index',
+      name: 'Staffing',
+      component: () => import('@/views/system/staffing'),
+      meta: { title: '配施人员管理', icon: 'dashboard' }
     }]
   },
   {

@@ -113,7 +113,7 @@ export default {
     margin: 10px 0;
   }
   .self-item{
-    width: 110px;
+    width: 140px;
     height: 30px;
     line-height: 30px;
     border-radius: 20px;
@@ -123,7 +123,7 @@ export default {
     color: #000000;
   }
   .is-active .self-item{
-    width: 110px;
+    width: 140px;
     background: aliceblue;
     height: 30px;
     border-radius: 20px;

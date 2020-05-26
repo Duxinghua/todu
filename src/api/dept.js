@@ -136,3 +136,29 @@ export function batchSavePerson(data) {
   })
 }
 
+// 配施   GET /admin/list/ps
+/**
+ *批量添加用户
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function AdminListPs(params) {
+  return request({
+    url: 'admin/list/ps',
+    method: 'get',
+    params
+  })
+}
+
+// 删除 DELETE /admin/ps/{id}
+/**
+ * 批量删除人员
+ * @param id
+ * @returns {AxiosPromise}
+ */
+export function adminPsDel(id) {
+  return request({
+    url: 'admin/ps/' + id,
+    method: 'delete'
+  })
+}

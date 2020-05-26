@@ -19,7 +19,7 @@ service.interceptors.request.use(
     var url = config.url
     if (url) {
       if (url.indexOf('?') > -1) {
-        url = url + '×tamp=' + getTimestamp
+        url = url + '&timestamp=' + getTimestamp
       } else {
         url = url + '?timestamp=' + getTimestamp
       }
