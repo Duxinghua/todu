@@ -168,7 +168,7 @@ export default {
     }
   },
   mounted() {
-    this.getList()
+    // this.getList()
     this.getDep()
     const that = this
     window.onresize = () => {
@@ -371,19 +371,19 @@ export default {
           })
         }
       })
-    },
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.pageNum = 1
-      this.getList()
-
-      console.log(`每页 ${val} 条`)
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
-      this.pageNum = val
-      this.getList()
     }
+    // handleSizeChange(val) {
+    //   this.pageSize = val
+    //   this.pageNum = 1
+    //   this.getList()
+
+    //   console.log(`每页 ${val} 条`)
+    // },
+    // handleCurrentChange(val) {
+    //   console.log(`当前页: ${val}`)
+    //   this.pageNum = val
+    //   this.getList()
+    // }
   }
 }
 </script>
