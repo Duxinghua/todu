@@ -78,6 +78,10 @@
             label="姓名"
           />
           <el-table-column
+            prop="proName"
+            label="项目"
+          />
+          <el-table-column
             prop="content"
             label="日志内容"
           >

@@ -40,7 +40,7 @@
       </div>
 
       <div class="self-box2 self-box2-fix-b">
-        <div v-for="(task,index) in taskList" :key="index" class="self-card-container" @click="showReportDetail(task,1)">
+        <!-- <div v-for="(task,index) in taskList" :key="index" class="self-card-container" @click="showReportDetail(task,1)">
           <el-card class="self-box-card" :body-style="{ width: '100%' }">
             <div slot="default" class="self-card-body">
               <div class="self-cr-text">
@@ -49,7 +49,61 @@
             </div>
           </el-card>
         </div>
-        <div v-if="taskList.length == 0" class="tasknodata">暂无数据</div>
+        <div v-if="taskList.length == 0" class="tasknodata">暂无数据</div> -->
+
+        <el-table
+          :data="taskList"
+          border
+          style="width: 100%"
+          :height="tableHeight"
+          :fit="true"
+          :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
+        >
+          <el-table-column
+            prop="deptName"
+            label="部门"
+          />
+          <el-table-column
+            prop="workNumber"
+            label="工号"
+          />
+          <el-table-column
+            prop="userName"
+            label="姓名"
+          />
+          <el-table-column
+            prop="proCode"
+            label="项目代码"
+          />
+          <el-table-column
+            prop="proName"
+            label="项目"
+          />
+          <el-table-column
+            prop="content"
+            label="日志内容"
+          >
+            <template slot-scope="scope">
+              <span v-html="scope.row.content" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="logTime"
+            label="日期"
+          />
+          <el-table-column label="操作" width="180" fixed="right" align="center">
+            <template slot-scope="scope">
+              <el-link
+                type="primary"
+                :underline="false"
+                style="font-size: 14px"
+                @click="handleEdit(scope.row)"
+              >编辑
+              </el-link>
+            </template>
+          </el-table-column>
+        </el-table>
+
       </div>
       <!-- 表格分页组件 -->
       <div style="padding: 20px 0 ">
@@ -229,6 +283,7 @@ export default {
       pageSize: 10,
       total: 0,
       flag: false,
+      tableHeight: 500,
       // pickerOptions: {
       //   disabledDate(time) {
       //     if (this.flag) {
@@ -282,6 +337,9 @@ export default {
     this.getList()
   },
   methods: {
+    handleEdit(e) {
+      this.showReportDetail(e)
+    },
     proCodeFocus(e) {
       var newTimer = this.dateFormat(new Date())
       var that = this

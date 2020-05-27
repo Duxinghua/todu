@@ -22,7 +22,6 @@
                   tabindex="1"
                   trigger-on-focus="false"
                   autofocus
-                  autocomplete="off"
                 />
 
               </div>
@@ -39,7 +38,6 @@
                   name="password"
                   tabindex="2"
                   autofocus
-                  autocomplete="off"
                   trigger-on-focus="false"
                   @keyup.enter.native="handleLogin"
                 />
@@ -213,7 +211,7 @@ $cursor: #333;
 .login-container .el-input input:-webkit-autofill{
   -webkit-box-shadow: 0 0 0 1000px white inset!important;
   box-shadow: inset 0 0 0 1000px white!important;
-  -webkit-text-fill-color: white!important;
+  // -webkit-text-fill-color: white!important;
 }
 </style>
 
