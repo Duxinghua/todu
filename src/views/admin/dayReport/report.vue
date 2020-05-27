@@ -13,8 +13,9 @@
             v-model="form.searchDate"
             format="yyyy-MM-dd"
             value-format="yyyy-MM-dd"
-            type="date"
+            type="daterange"
             placeholder="请选择日期"
+            :clearable="true"
           />
         </div>
         <div class="search-row search-row-dep">
@@ -30,14 +31,17 @@
         </div>
         <div class="search-row">
           <div class="search-text">工号</div>
-          <el-input v-model="form.job_number" placeholder="请输入员工工号" />
+          <el-input v-model="form.workNumberKeyWord" placeholder="请输入员工工号" />
         </div>
         <div class="search-row">
           <div class="search-text">姓名</div>
-          <el-input v-model="form.job_staff" placeholder="请输入员工姓名" />
+          <el-input v-model="form.userNameKeyWord" placeholder="请输入员工姓名" />
         </div>
         <div class="search-row search-row-btn-s">
-          <el-button type="primary" @click="searchForm">查询</el-button>
+          <el-button type="primary" @click="searchForm">员工查询</el-button>
+        </div>
+        <div class="search-row search-row-btn-s">
+          <el-button type="primary" @click="searchDepForm">部门查询</el-button>
         </div>
         <div class="search-row search-row-btn-fix">
           <el-button type="primary" @click="saveForm" style="width:70px">导出</el-button>
@@ -57,11 +61,11 @@
         </div> -->
         <!--           :header-cell-style="{background:'#eef1f6',color:'#606266'}" -->
         <el-table
+          v-if="!searchDep"
           :data="tableData"
           border
           style="width: 100%"
           :height="tableHeight"
-          :span-method="objectSpanMethod"
           :fit="true"
           :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
         >
@@ -78,15 +82,34 @@
             label="姓名"
           />
           <el-table-column
-            prop="userName"
-            label="姓名"
+            prop="reportRate"
+            label="填报率"
+          />
+
+        </el-table>
+        <el-table
+          v-if="searchDep"
+          :data="tableData"
+          border
+          style="width: 100%"
+          :height="tableHeight"
+          :fit="true"
+          :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
+        >
+          <el-table-column
+            prop="deptName"
+            label="部门"
+          />
+          <el-table-column
+            prop="reportRate"
+            label="填报率"
           />
 
         </el-table>
 
       </div>
       <!-- 表格分页组件 -->
-      <div style="padding: 20px 0 ">
+      <!-- <div style="padding: 20px 0 ">
         <el-pagination
           style="margin-top: 20px;"
           :current-page="pageNum"
@@ -97,14 +120,14 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
-      </div>
+      </div> -->
     </div>
 
   </div>
 </template>
 
 <script>
-import { admindeptlist, dailyListAdmin } from '@/api/sDayReport'
+import { admindeptlist, dailyListAdmin, statisticsDaily, statisticsDailyDept } from '@/api/sDayReport'
 export default {
   name: 'DayReport',
   data() {
@@ -119,18 +142,15 @@ export default {
       pageNum: 1,
       total: 0,
       form: {
-        searchDate: '',
-        searchProject: '',
-        keyword: '',
-        reportDate: '2020-01-01',
-        workContent: '',
-        planContent: '',
-        job_number: '',
-        job_staff: ''
+        searchDate: [],
+        workNumberKeyWord: '',
+        userNameKeyWord: '',
+        searchProject: ''
       },
       tableData: [],
       tableHeight: 500,
-      spanArr: []
+      spanArr: [],
+      searchDep: false
     }
   },
   watch: {
@@ -148,7 +168,6 @@ export default {
     }
   },
   mounted() {
-    this.form.searchDate = this.dateFormat(new Date())
     this.getList()
     this.getDep()
     const that = this
@@ -207,10 +226,11 @@ export default {
     },
     async handleDownload2() {
       this.$message.success('导出成功')
-              // this.downloadLoading = true
+      // this.downloadLoading = true
+      if (!this.searchDep) {
               import('@/vendor/Export2Excel').then(excel => {
-                const filterVal = ['deptName', 'workNumber', 'userName', 'content', 'logTime']
-                const tHeader = ['部门', '工号', '姓名', '日志内容', '日期']
+                const filterVal = ['deptName', 'workNumber', 'userName', 'reportRate']
+                const tHeader = ['部门', '工号', '姓名', '填报率']
                 const data = this.formatJson(filterVal, this.tableData)
                 excel.export_json_to_excel({
                   header: tHeader,
@@ -221,10 +241,25 @@ export default {
                 })
                 // this.downloadLoading = false
               })
+      } else {
+              import('@/vendor/Export2Excel').then(excel => {
+                const filterVal = ['deptName', 'reportRate']
+                const tHeader = ['部门', '填报率']
+                const data = this.formatJson(filterVal, this.tableData)
+                excel.export_json_to_excel({
+                  header: tHeader,
+                  data,
+                  filename: 'totalReport',
+                  autoWidth: this.autoWidth,
+                  bookType: this.bookType
+                })
+                // this.downloadLoading = false
+              })
+      }
     },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => {
-        return this.toText(v[j])
+        return v[j]
       }))
     },
     toText(HTML) {
@@ -235,8 +270,23 @@ export default {
         return ''
       }
     },
+    searchDepForm() {
+      this.searchDep = true
+      this.getstatisticsDailyDept()
+    },
     searchForm() {
-      this.getList()
+      this.searchDep = false
+      // if (this.form.searchDate.length != 2) {
+      //   this.$alert('请选择时间段', '提示', {
+      //     confirmButtonText: '确定',
+      //     callback: action => {
+      //     }
+      //   })
+      //   return
+      // }
+
+      this.getStatisticsDaily()
+      // this.getList()
     },
     showReport() {
       this.drawer = true
@@ -249,6 +299,46 @@ export default {
         const { status, data } = res
         if (status === 200) {
           this.projectList = data
+        }
+      })
+    },
+    getStatisticsDaily() {
+      var that = this
+      statisticsDaily({
+        startDateStr: this.form.searchDate[0],
+        endDateStr: this.form.searchDate[1],
+        workNumberKeyWord: this.form.workNumberKeyWord,
+        deptId: this.form.searchProject,
+        userNameKeyWord: this.form.userNameKeyWord }).then((result) => {
+        if (result.status == 200) {
+          var list = []
+          var r = result.data
+          r.map((item) => {
+            item.reportRate = (item.reportRate * 100) + '%'
+            list.push(item)
+          })
+          that.tableData = list
+        }
+      })
+    },
+    getstatisticsDailyDept() {
+      var that = this
+      statisticsDailyDept({
+        startDateStr: this.form.searchDate[0],
+        endDateStr: this.form.searchDate[1],
+        deptId: this.form.searchProject,
+        workNumberKeyWord: this.form.workNumberKeyWord,
+        userNameKeyWord: this.form.userNameKeyWord }).then((result) => {
+        if (result.status == 200) {
+          var list = []
+          var r = result.data
+          r.map((item) => {
+            if (item.reportRate != 0) {
+              item.reportRate = (item.reportRate * 100) + '%'
+            }
+            list.push(item)
+          })
+          that.tableData = list
         }
       })
     },

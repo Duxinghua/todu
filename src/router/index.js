@@ -84,7 +84,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'MonthReport',
       component: () => import('@/views/self/monthReport/index'),
-      meta: { title: '院控周报', icon: 'dashboard' }
+      meta: { title: '周报', icon: 'dashboard' }
     },
     {
       path: 'index',

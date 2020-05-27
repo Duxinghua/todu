@@ -75,3 +75,29 @@ export function dailyListAdmin(params) {
     params
   })
 }
+
+/**
+ * 个人填报率 /statistics/statisticsDaily
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function statisticsDaily(params) {
+  return request({
+    url: '/statistics/statisticsDaily',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 统计室所填报率 /statistics/statisticsDaily/dept
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function statisticsDailyDept(params) {
+  return request({
+    url: '/statistics/statisticsDaily/dept',
+    method: 'get',
+    params
+  })
+}

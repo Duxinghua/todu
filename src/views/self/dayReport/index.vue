@@ -456,6 +456,8 @@ export default {
       this.id = data.id
       this.reportForm.logTimeStr = this.dateFormat(data.logTime)
       this.reportForm.content = data.content
+      this.reportForm.proName = data.proName
+      this.reportForm.proCode = data.proCode
       this.addDrawer = true
     },
     closeDrawer() {
