@@ -100,6 +100,13 @@
                 @click="handleEdit(scope.row)"
               >编辑
               </el-link>
+              <el-link
+                type="primary"
+                :underline="false"
+                style="font-size: 14px"
+                @click="handleDel(scope.row)"
+              >删除
+              </el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -114,8 +121,8 @@
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
-          @size-change="proSizeChange"
-          @current-change="proCurrentChange"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
       </div>
     </div>
@@ -253,7 +260,7 @@
 
 <script>
 import EditorBar from '@/components/Edit.vue'
-import { dayReportList, projectRoleList, reportAdd, dailyAddStatus, dailyUpdate } from '@/api/dayReportList'
+import { dayReportList, projectRoleList, reportAdd, dailyAddStatus, dailyUpdate, dailyDelete } from '@/api/dayReportList'
 import { projectSelectListNormalps } from '@/api/project'
 // import Tinymce from '@/components/Tinymce'
 export default {
@@ -337,6 +344,22 @@ export default {
     this.getList()
   },
   methods: {
+    handleDel(e) {
+      dailyDelete(e.id).then((result) => {
+        if (result.status == 200) {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          this.getList()
+        } else {
+          this.$message({
+            message: '删除失败',
+            type: 'success'
+          })
+        }
+      })
+    },
     handleEdit(e) {
       this.showReportDetail(e)
     },
@@ -581,7 +604,9 @@ export default {
           }
         })
       } else {
-        dailyUpdate({ id: this.id, content: this.reportForm.content }).then((res) => {
+      // this.reportForm.proName = data.proName
+      // this.reportForm.proCode = data.proCode
+        dailyUpdate({ id: this.id, content: this.reportForm.content, proCode: this.reportForm.proCode, proName: this.reportForm.proName, logTimeStr: this.reportForm.logTimeStr }).then((res) => {
           const { status } = res
           if (status === 200) {
             this.$message.success('修改成功')

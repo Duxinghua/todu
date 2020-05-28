@@ -58,6 +58,18 @@ export function reportUpdate(data) {
     data
   })
 }
+// dailyDelete
+/**
+ * 更新配施日志
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function dailyDelete(id) {
+  return request({
+    url: '/daily/delete/' + id,
+    method: 'delete'
+  })
+}
 
 /**
  * 项目下拉列表

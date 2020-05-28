@@ -288,6 +288,12 @@ export default {
       this.getStatisticsDaily()
       // this.getList()
     },
+    accMul(arg1, arg2) {
+      var m=0,s1=arg1.toString(),s2=arg2.toString();
+      try{m+=s1.split(".")[1].length}catch(e){}
+      try{m+=s2.split(".")[1].length}catch(e){}
+      return Number(s1.replace(".",""))*Number(s2.replace(".",""))/Math.pow(10,m)
+    },
     showReport() {
       this.drawer = true
     },
@@ -314,7 +320,7 @@ export default {
           var list = []
           var r = result.data
           r.map((item) => {
-            item.reportRate = (item.reportRate * 100) + '%'
+            item.reportRate = that.accMul(item.reportRate, 100) + '%'
             list.push(item)
           })
           that.tableData = list
@@ -333,9 +339,7 @@ export default {
           var list = []
           var r = result.data
           r.map((item) => {
-            if (item.reportRate != 0) {
-              item.reportRate = (item.reportRate * 100) + '%'
-            }
+            item.reportRate = that.accMul(item.reportRate, 100) + '%'
             list.push(item)
           })
           that.tableData = list
