@@ -162,3 +162,18 @@ export function adminPsDel(id) {
     method: 'delete'
   })
 }
+
+// 搜索  searchAdminps
+
+/**
+ *批量添加用户
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function searchAdminps(params) {
+  return request({
+    url: 'admin/list/ps',
+    method: 'get',
+    params
+  })
+}

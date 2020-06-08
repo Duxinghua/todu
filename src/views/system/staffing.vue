@@ -41,7 +41,7 @@
                 </div>
               </el-col>
             </el-row>
-            <el-row class="self-box2 self-box2-fix2" style="display:none">
+            <el-row class="self-box2 self-box2-fix2">
               <div class="search-row">
                 <div class="search-text" style="width:40px">室所</div>
                 <el-select v-model="searchDeptId" placeholder="请选择项目" :clearable="true" @clear="clearDept">
@@ -55,18 +55,16 @@
                 </el-select>
               </div>
               <div class="search-row">
-                <div class="search-text" style="width: 40px">工号</div>
+                <div class="search-text" style="width: 140px">工号或姓名</div>
                 <el-input v-model="workNumberKeyWord" :clearable="true" />
               </div>
-              <div class="search-row">
+              <!-- <div class="search-row">
                 <div class="search-text" style="width: 40px">姓名</div>
                 <el-input v-model="userNameKeyWord" :clearable="true" />
-              </div>
+              </div> -->
               <div class="search-row">
                 <el-button type="primary" @click="searchForm">查询</el-button>
               </div>
-            </el-row>
-            <el-row>
               <el-col :span="12">
                 <div style="margin-top: 10px;margin-left: 20px">
                   <div v-if="batchEdit" class="self-box3">
@@ -433,7 +431,7 @@
 
 <script>
 
-import { deptAdd, adminPsDel, deletePerson, batchDeletePerson, savePerson, updatePerson, deptList, checkContactInfo, checkWorkNumber, AdminListPs } from '@/api/dept'
+import { deptAdd, adminPsDel, searchAdminps, batchDeletePerson, savePerson, updatePerson, deptList, checkContactInfo, checkWorkNumber, AdminListPs } from '@/api/dept'
 import { posList, majorList, roleList } from '@/api/dict'
 import { updateAccountStatus } from '@/api/account'
 export default {
@@ -551,6 +549,9 @@ export default {
         window.tableHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
         // that.tableHeight = window.tableHeight - that.$refs.queryHeight.offsetHeight
         that.tableHeight = that.$refs.queryHeight.offsetHeight - 50
+        if (that.tableHeight < 600) {
+          that.tableHeight = 600
+        }
       })()
     }
   },
@@ -559,12 +560,27 @@ export default {
     onprogress(e) {
       this.fullscreenLoading = true
     },
-    searchForm() {
-      if (this.searchDeptId != null && this.searchDeptId !== '') {
-        this.currentDeptId = this.searchDeptId
+    searchForm(e) {
+      //       searchDeptId: '',
+      // workNumberKeyWord: '',
+      // userNameKeyWord: '',
+      var searchText = false
+      if (!isNaN(this.workNumberKeyWord)) {
+        searchText = true
       }
+      searchAdminps({ deptId: this.searchDeptId, workNumberKeyWord: searchText ? this.workNumberKeyWord : '', userNameKeyWord: !searchText ? this.workNumberKeyWord : '', pageNum: this.pageNum, pageSize: this.pageSize }).then((res) => {
+        const {
+          data, msg, status, count
+        } = res
 
-      this.getList()
+        if (status === 200) {
+          this.tableData = data
+          this.total = count
+        } else {
+          this.$message.warning(msg)
+        }
+        this.loading = false
+      })
     },
     clearDept() {
       this.currentDeptId = -1

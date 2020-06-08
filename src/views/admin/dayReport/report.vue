@@ -7,7 +7,7 @@
         <div style="padding-left: 30px;font-weight: bold">填报率统计</div>
       </div>
       <div class="self-box2">
-        <div class="search-row">
+        <!-- <div class="search-row" style="display:none">
           <div class="search-text" style="width:40px">时间</div>
           <el-date-picker
             v-model="form.searchDate"
@@ -18,7 +18,7 @@
             :clearable="true"
           />
         </div>
-        <div class="search-row search-row-dep">
+        <div class="search-row search-row-dep" style="display:none">
           <div class="search-text">部门</div>
           <el-select v-model="form.searchProject" clearable placeholder="请选择部门" class="el-select-f">
             <el-option
@@ -36,15 +36,21 @@
         <div class="search-row">
           <div class="search-text">姓名</div>
           <el-input v-model="form.userNameKeyWord" placeholder="请输入员工姓名" />
+        </div> -->
+        <div class="search-row search-row-btn-s">
+          <el-button type="primary" @click="psersonForm">员工填报率查询</el-button>
         </div>
         <div class="search-row search-row-btn-s">
-          <el-button type="primary" @click="searchForm">员工查询</el-button>
+          <el-button type="primary" @click="depForm">部门填报率查询</el-button>
         </div>
         <div class="search-row search-row-btn-s">
-          <el-button type="primary" @click="searchDepForm">部门查询</el-button>
+          <el-button type="primary" @click="noRepertForm">未填报人员查询</el-button>
+        </div>
+        <div v-if="searchRowTxt" class="search-row search-row-txt" >
+          当前查询条件(起始时间:{{ form.searchstartDate }},结束时间:{{ form.searchendDate }},室所:{{ searchProjectName }},工号或姓名:{{ form.proName_Num }})
         </div>
         <div class="search-row search-row-btn-fix">
-          <el-button type="primary" @click="saveForm" style="width:70px">导出</el-button>
+          <el-button style="width:70px" type="primary" @click="saveForm">导出</el-button>
         </div>
       </div>
 
@@ -61,7 +67,7 @@
         </div> -->
         <!--           :header-cell-style="{background:'#eef1f6',color:'#606266'}" -->
         <el-table
-          v-if="!searchDep"
+          v-if="searchType == 1"
           :data="tableData"
           border
           style="width: 100%"
@@ -71,7 +77,7 @@
         >
           <el-table-column
             prop="deptName"
-            label="部门"
+            label="室所"
           />
           <el-table-column
             prop="workNumber"
@@ -88,7 +94,7 @@
 
         </el-table>
         <el-table
-          v-if="searchDep"
+          v-if="searchType == 2"
           :data="tableData"
           border
           style="width: 100%"
@@ -98,11 +104,38 @@
         >
           <el-table-column
             prop="deptName"
-            label="部门"
+            label="室所"
           />
           <el-table-column
             prop="reportRate"
             label="填报率"
+          />
+
+        </el-table>
+        <el-table
+          v-if="searchType == 3"
+          :data="tableData"
+          border
+          style="width: 100%"
+          :height="tableHeight"
+          :fit="true"
+          :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
+        >
+          <el-table-column
+            prop="deptName"
+            label="室所"
+          />
+          <el-table-column
+            prop="workNumber"
+            label="工号"
+          />
+          <el-table-column
+            prop="userName"
+            label="姓名"
+          />
+          <el-table-column
+            prop="logTime"
+            label="未填报时间"
           />
 
         </el-table>
@@ -122,12 +155,65 @@
         />
       </div> -->
     </div>
+    <el-dialog
+      ref="editDrawer"
+      :visible.sync="editProjectFormVisible"
+      direction="rtl"
+      :title="searchTitle"
+      :show-close="true"
+      :wrapper-closable="false"
+      width="25%"
+      class="self-drawer report-el-dialog"
+    >
+      <!-- <div class="self-box3" style="padding: 0 20px;justify-content: space-between">
+        <div slot="title" style="font-size: 20px">查询填报率</div>
+      </div> -->
+      <p style="color:red">提示：上周五至周四为查询周期</p>
+      <el-form ref="editProjectForm" label-position="right" label-width="80px">
+        <el-form-item class="self-input-box" label="起始时间">
+          <el-date-picker
+            v-model="form.searchstartDate"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择日期"
+            :clearable="true"
+            @change="searchstartChange"
+          />
+        </el-form-item>
+        <el-form-item class="self-input-box" label="结束时间">
+          <el-date-picker
+            v-model="form.searchendDate"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择日期"
+            :clearable="true"
+            @change="searchendChange"
+          />
+        </el-form-item>
+        <el-form-item v-if="searchType == 1" class="self-input-box" label="工号或姓名">
+          <el-input v-model="form.proName_Num" placeholder="请输入工号或者姓名" class="self-input" />
+        </el-form-item>
+        <el-form-item class="self-input-box" label="室所">
+          <el-select v-model="form.searchProject" @change="optionChange" clearable placeholder="请选择部门" class="el-select-f">
+            <el-option
+              v-for="project in projectList"
+              :key="project.id"
+              :label="project.deptName"
+              :value="project.id"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="report-el-dialog-footer">
+        <el-button size="normal" type="primary" @click="searchForm">查询</el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import { admindeptlist, dailyListAdmin, statisticsDaily, statisticsDailyDept } from '@/api/sDayReport'
+import { admindeptlist, dailyListAdmin, statisticsDaily, statisticsDailyDept,statisticsDailyNoReport } from '@/api/sDayReport'
 export default {
   name: 'DayReport',
   data() {
@@ -141,16 +227,23 @@ export default {
       pageSize: 10,
       pageNum: 1,
       total: 0,
+      searchTitle: '填报率统计',
       form: {
-        searchDate: [],
+        searchstartDate: '',
+        searchendDate: '',
         workNumberKeyWord: '',
         userNameKeyWord: '',
-        searchProject: ''
+        searchProject: '',
+        proName_Num: ''
       },
       tableData: [],
       tableHeight: 500,
       spanArr: [],
-      searchDep: false
+      searchDep: false,
+      editProjectFormVisible: false,
+      searchType: 1,
+      searchProjectName: '',
+      searchRowTxt: false
     }
   },
   watch: {
@@ -175,10 +268,81 @@ export default {
       return (() => {
         window.tableHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
         that.tableHeight = that.$refs.queryHeight.offsetHeight - 50
+        if (that.tableHeight < 600) {
+          that.tableHeight = 600
+        }
       })()
     }
   },
   methods: {
+    optionChange(e) {
+      this.projectList.map((item) => {
+        if (item.id == e) {
+          this.searchProjectName = item.deptName
+        }
+      })
+    },
+    searchstartChange(e) {
+      if (new Date(e).getDay() != 5) {
+        this.$message.warning('请选择周五')
+        this.form.searchstartDate = ''
+        return
+      }
+      if (new Date(e).getTime() > new Date().getTime()) {
+        this.$message.warning('请重新选择时间')
+        this.form.searchstartDate = ''
+        return
+      }
+    },
+    searchendChange(e) {
+      if (new Date(e).getDay() != 4) {
+        this.$message.warning('请选择周四')
+        this.form.searchendDate = ''
+        return
+      }
+      if (this.form.searchstartDate == this.form.searchendDate) {
+        this.$message.warning('结束时间不能和起始时间一样')
+        this.form.searchendDate = ''
+      }
+      var start = new Date(this.form.searchstartDate).getTime()
+      var end = new Date(e).getTime()
+      if (end < start) {
+        this.$message.warning('请重新选择时间')
+        this.form.searchendDate = ''
+      }
+      var low = start + (6 * 24 * 60 * 60 * 1000)
+      if (low !== end) {
+        this.$message.warning('请重新选择时间')
+        this.form.searchendDate = ''
+      }
+    },
+    clearForm() {
+      this.form.searchstartDate = ''
+      this.form.searchendDate = ''
+      this.form.workNumberKeyWord = ''
+      this.form.userNameKeyWord = ''
+      this.form.searchProject = ''
+      this.form.proName_Num = ''
+      this.searchRowTxt = false
+    },
+    psersonForm: function() {
+      this.editProjectFormVisible = true
+      this.searchTitle = '员工填报率查询'
+      this.searchType = 1
+      this.clearForm()
+    },
+    depForm: function() {
+      this.editProjectFormVisible = true
+      this.searchTitle = '部门填报率查询'
+      this.searchType = 2
+      this.clearForm()
+    },
+    noRepertForm: function() {
+      this.editProjectFormVisible = true
+      this.searchTitle = '未填报人员查询'
+      this.searchType = 3
+      this.clearForm()
+    },
     dateFormat: function(time) {
       const date = new Date(time)
       /* 在日期格式中，月份是从0开始的，因此要加0
@@ -227,10 +391,10 @@ export default {
     async handleDownload2() {
       this.$message.success('导出成功')
       // this.downloadLoading = true
-      if (!this.searchDep) {
+      if (this.searchType == 1) {
               import('@/vendor/Export2Excel').then(excel => {
                 const filterVal = ['deptName', 'workNumber', 'userName', 'reportRate']
-                const tHeader = ['部门', '工号', '姓名', '填报率']
+                const tHeader = ['室所', '工号', '姓名', '填报率']
                 const data = this.formatJson(filterVal, this.tableData)
                 excel.export_json_to_excel({
                   header: tHeader,
@@ -241,10 +405,10 @@ export default {
                 })
                 // this.downloadLoading = false
               })
-      } else {
+      } else if (this.searchType == 2) {
               import('@/vendor/Export2Excel').then(excel => {
                 const filterVal = ['deptName', 'reportRate']
-                const tHeader = ['部门', '填报率']
+                const tHeader = ['室所', '填报率']
                 const data = this.formatJson(filterVal, this.tableData)
                 excel.export_json_to_excel({
                   header: tHeader,
@@ -255,6 +419,19 @@ export default {
                 })
                 // this.downloadLoading = false
               })
+      } else if (this.searchType == 3) {
+            import('@/vendor/Export2Excel').then(excel => {
+              const filterVal = ['deptName', 'workNumber', 'userName', 'logTime']
+              const tHeader = ['室所', '工号', '姓名', '未填报时间']
+              const data = this.formatJson(filterVal, this.tableData)
+              excel.export_json_to_excel({
+                header: tHeader,
+                data,
+                filename: 'totalReport',
+                autoWidth: this.autoWidth,
+                bookType: this.bookType
+              })
+            })
       }
     },
     formatJson(filterVal, jsonData) {
@@ -275,18 +452,23 @@ export default {
       this.getstatisticsDailyDept()
     },
     searchForm() {
-      this.searchDep = false
-      // if (this.form.searchDate.length != 2) {
-      //   this.$alert('请选择时间段', '提示', {
-      //     confirmButtonText: '确定',
-      //     callback: action => {
-      //     }
-      //   })
-      //   return
-      // }
-
-      this.getStatisticsDaily()
-      // this.getList()
+      if (!this.form.searchstartDate) {
+        this.$message.warning('请输入起始时间')
+        return
+      }
+      if (!this.form.searchendDate) {
+        this.$message.warning('请输入结束时间')
+        return
+      }
+      if (this.searchType == 1) {
+        this.getStatisticsDaily()
+      } else if (this.searchType == 2) {
+        this.getstatisticsDailyDept()
+      } else if(this.searchType == 3) {
+        this.getstatisticsDailyNoReport()
+      }
+      this.editProjectFormVisible = false
+      this.searchRowTxt = true
     },
     accMul(arg1, arg2) {
       var m=0,s1=arg1.toString(),s2=arg2.toString();
@@ -311,11 +493,11 @@ export default {
     getStatisticsDaily() {
       var that = this
       statisticsDaily({
-        startDateStr: this.form.searchDate[0],
-        endDateStr: this.form.searchDate[1],
-        workNumberKeyWord: this.form.workNumberKeyWord,
+        startDateStr: this.form.searchstartDate,
+        endDateStr: this.form.searchendDate,
+        workNumberKeyWord: !isNaN(parseInt(this.form.proName_Num)) ? this.form.proName_Num : '',
         deptId: this.form.searchProject,
-        userNameKeyWord: this.form.userNameKeyWord }).then((result) => {
+        userNameKeyWord: !isNaN(parseInt(this.form.proName_Num)) ? '' : this.form.proName_Num }).then((result) => {
         if (result.status == 200) {
           var list = []
           var r = result.data
@@ -330,8 +512,8 @@ export default {
     getstatisticsDailyDept() {
       var that = this
       statisticsDailyDept({
-        startDateStr: this.form.searchDate[0],
-        endDateStr: this.form.searchDate[1],
+        startDateStr: this.form.searchstartDate,
+        endDateStr: this.form.searchendDate,
         deptId: this.form.searchProject,
         workNumberKeyWord: this.form.workNumberKeyWord,
         userNameKeyWord: this.form.userNameKeyWord }).then((result) => {
@@ -343,6 +525,19 @@ export default {
             list.push(item)
           })
           that.tableData = list
+        }
+      })
+    },
+    getstatisticsDailyNoReport() {
+      var that = this
+      statisticsDailyNoReport({
+        startDateStr: this.form.searchstartDate,
+        endDateStr: this.form.searchendDate,
+        deptId: this.form.searchProject
+      }).then((result) => {
+        let { code, data} = result
+        if (code == 200) {
+          that.tableData = data
         }
       })
     },
@@ -393,6 +588,15 @@ export default {
 </script>
 
 <style scoped>
+.search-row-txt{
+  font-size: 14px;
+  color:red;
+  width:40%!important;
+}
+  .report-el-dialog-footer{
+    display: flex;
+    justify-content: center;
+  }
   .self-container{
     padding: 10px 10px 10px 0;
     display: flex;
@@ -452,6 +656,7 @@ export default {
     float:right\9;
     justify-content: flex-end;
     width:10%;
+    margin-left:auto;
   }
   .search-row-btn-fix button{
     margin-left:calc(100% - 70px)
@@ -516,9 +721,18 @@ export default {
   .search-row .el-input.el-date-editor, .search-row .el-input__inner.el-date-editor,.search-row .el-input{
     width:calc(100% - 50px);
   }
-
 </style>
 <style>
+  .report-el-dialog .el-form-item__label{
+    width:120px!important
+  }
+  .report-el-dialog .el-dialog__header{
+    display: flex;
+    justify-content: center;
+  }
+  .report-el-dialog .el-dialog__body{
+    padding-top:20px!important;
+  }
   .self-input .el-input__inner{
     flex: 1;
     border: none;

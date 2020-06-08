@@ -101,3 +101,11 @@ export function statisticsDailyDept(params) {
     params
   })
 }
+// GET /statistics/statisticsDaily/noReport 查询一周室所未填报人员(默认上周五到本周四)
+export function statisticsDailyNoReport(params) {
+  return request({
+    url: '/statistics/statisticsDaily/noReport',
+    method: 'get',
+    params
+  })
+}

@@ -372,6 +372,9 @@ export default {
       return (() => {
         window.tableHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
         that.tableHeight = that.$refs.queryHeight.offsetHeight - 50
+        if (that.tableHeight < 600) {
+          that.tableHeight = 600
+        }
       })()
     }
   },

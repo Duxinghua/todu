@@ -290,7 +290,7 @@ export default {
       pageSize: 10,
       total: 0,
       flag: false,
-      tableHeight: 500,
+      tableHeight: 600,
       // pickerOptions: {
       //   disabledDate(time) {
       //     if (this.flag) {
