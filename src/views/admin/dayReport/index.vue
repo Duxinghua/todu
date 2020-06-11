@@ -68,18 +68,22 @@
           <el-table-column
             prop="deptName"
             label="部门"
+            width="90px"
           />
           <el-table-column
             prop="workNumber"
             label="工号"
+            width="90px"
           />
           <el-table-column
             prop="userName"
             label="姓名"
+            width="90px"
           />
           <el-table-column
             prop="proName"
             label="项目"
+            width="250px"
           />
           <el-table-column
             prop="content"
@@ -92,6 +96,7 @@
           <el-table-column
             prop="logTime"
             label="日期"
+            width="100px"
           />
         </el-table>
 
@@ -140,7 +145,7 @@ export default {
         job_staff: ''
       },
       tableData: [],
-      tableHeight: 500,
+      tableHeight: 700,
       spanArr: []
     }
   },
@@ -167,8 +172,8 @@ export default {
       return (() => {
         window.tableHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
         that.tableHeight = that.$refs.queryHeight.offsetHeight - 50
-        if (that.tableHeight < 600) {
-          that.tableHeight = 600
+        if (that.tableHeight < 700) {
+          that.tableHeight = 700
         }
       })()
     }
@@ -181,8 +186,8 @@ export default {
          * */
       const year = date.getFullYear()
       let month = date.getMonth() + 1
-      month = month > 10 ? date.getDate() : '0' + month
-      const day = date.getDate() > 10 ? date.getDate() : '0' + date.getDate()
+      month = month > 9 ? date.getDate() : '0' + month
+      const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
       // 拼接
       return year + '-' + month + '-' + day
     },

@@ -398,10 +398,10 @@ export default {
          * */
       const year = date.getFullYear()
       let month = date.getMonth() + 1
-      month = month > 10 ? date.getDate() : '0' + month
-      const day = date.getDate() > 10 ? date.getDate() : '0' + date.getDate()
-      const min = date.getMinutes() > 10 ? date.getMinutes() : '0' + date.getMinutes()
-      const sec = date.getSeconds() > 10 ? date.getSeconds() : '0' + date.getSeconds()
+      month = month > 9 ? date.getDate() : '0' + month
+      const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
+      const min = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
+      const sec = date.getSeconds() > 9 ? date.getSeconds() : '0' + date.getSeconds()
       // 拼接
       return year + '-' + month + '-' + day + ' ' + date.getHours() + ':' + min + ':' + sec
     },
