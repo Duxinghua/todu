@@ -62,22 +62,27 @@
           <el-table-column
             prop="deptName"
             label="部门"
+            width="90px"
           />
           <el-table-column
             prop="workNumber"
             label="工号"
+            width="90px"
           />
           <el-table-column
             prop="userName"
             label="姓名"
+            width="90px"
           />
           <el-table-column
             prop="proCode"
             label="项目代码"
+            width="120px"
           />
           <el-table-column
             prop="proName"
             label="项目"
+            width="250px"
           />
           <el-table-column
             prop="content"
@@ -90,6 +95,7 @@
           <el-table-column
             prop="logTime"
             label="日期"
+            width="90px"
           />
           <el-table-column label="操作" width="180" fixed="right" align="center">
             <template slot-scope="scope">
@@ -242,7 +248,7 @@
       </el-table>
       <el-pagination
         :current-page="projectpageNum"
-        :page-sizes="[20, 50, 80, 200]"
+        :page-sizes="[10,20,30,40, 50, 80, 200]"
         :page-size="projectpageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="propageTotal"
