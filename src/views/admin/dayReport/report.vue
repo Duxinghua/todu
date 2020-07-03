@@ -204,6 +204,7 @@
           </el-select>
         </el-form-item>
       </el-form>
+      <div style="font-size:24px;color:red"> {{ searchType == 2 ? '提示：室所可不选':'' }}</div>
       <div slot="footer" class="report-el-dialog-footer">
         <el-button size="normal" type="primary" @click="searchForm">查询</el-button>
       </div>

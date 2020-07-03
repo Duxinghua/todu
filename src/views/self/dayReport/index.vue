@@ -196,6 +196,7 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
+      <div style="color:red">提示：没有显示需要的项目就根据项目编号或项目名称查询</div>
       <div class="self-box2" style="margin: 0">
         <div class="search-row">
           <div class="search-text" style="width: 80px">项目名称</div>
@@ -335,9 +336,9 @@ export default {
       return {
         disabledDate(time) {
           if (_this.flag) {
-            return time.getTime() < Date.now() - 604800000 || time.getTime() > Date.now()
+            return time.getTime() < Date.now() - 777600000 || time.getTime() > Date.now()
           } else {
-            return time.getTime() < Date.now() - 604800000 || time.getTime() > Date.now() - 86400000
+            return time.getTime() < Date.now() - 777600000 || time.getTime() > Date.now() - 86400000
           }
         }
       }
