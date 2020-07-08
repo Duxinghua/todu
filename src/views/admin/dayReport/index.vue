@@ -186,6 +186,7 @@
             value-format="yyyy-MM-dd"
             type="date"
             placeholder="请选择日期"
+            @blur="pageTo"
           />
         </div>
         <div class="search-row">
@@ -199,6 +200,7 @@
             value-format="yyyy-MM-dd"
             type="date"
             placeholder="请选择日期"
+            @blur="pageTo"
           />
         </div>
         <div class="search-row">
@@ -359,6 +361,14 @@ export default {
     }
   },
   methods: {
+    pageTo() {
+      this.logpageNum = 1
+      this.logtableData = []
+      this.logspanArr = []
+      this.logpageSize = 7
+      this.logpageNum = 1
+      this.logTotal = 0
+    },
     getLogFrom() {
       this.logtableData = []
       this.logspanArr = []
@@ -420,6 +430,7 @@ export default {
     // 前一天
     beforesearchForm() {
       this.tableData = []
+      this.pageNum = 1
       this.spanArr = []
       this.form.searchDate = this.dateFormat(
         new Date(new Date(this.form.searchDate).getTime() - 24 * 60 * 60 * 1000)
@@ -428,6 +439,7 @@ export default {
     },
     // 后一天
     aftersearchForm() {
+      this.pageNum = 1
       this.tableData = []
       this.spanArr = []
       var flag = true
@@ -540,6 +552,7 @@ export default {
       }
     },
     searchForm() {
+      this.pageNum = 1
       this.getList()
     },
     showReport() {
