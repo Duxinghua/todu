@@ -15,14 +15,14 @@
       <div class="self-box2">
         <div
           class="search-row search-row-btn-s"
-          style="width:40px;padding-left:0px;margin-right:20px;"
+          style="width:50px;padding-left:0px;margin-right:40px;"
         >
           <el-button
             type="primary"
             @click="beforesearchForm"
           >前一天</el-button>
         </div>
-        <div class="search-row">
+        <div class="search-row" style="margin-right:40px">
           <div
             class="search-text"
             style="width:40px"
@@ -37,7 +37,7 @@
         </div>
         <div
           class="search-row search-row-btn-s"
-          style="width:40px;padding-left:0px;margin-right:20px"
+          style="width:50px;padding-left:0px;margin-right:40px"
         >
           <el-button
             type="primary"
@@ -60,18 +60,19 @@
             />
           </el-select>
         </div>
+        <div class="search-row search-row-btn-s" style="width:7%">
+          <el-button
+            type="primary"
+            @click="searchForm"
+          >查询</el-button>
+        </div>
         <div class="search-row search-row-btn-s">
           <el-button
             type="primary"
             @click="worksearchForm"
           >员工配施日志查询</el-button>
         </div>
-        <div class="search-row search-row-btn-s">
-          <el-button
-            type="primary"
-            @click="searchForm"
-          >查询</el-button>
-        </div>
+
         <div
           class="search-row search-row-btn-fix"
           style="margin-left:auto"
@@ -211,7 +212,7 @@
             :clearable="true"
           />
         </div>
-        <div class="search-row">
+        <div class="search-row" style="margin-left:15px">
           <el-button
             type="primary"
             @click="getLogFrom"
@@ -283,7 +284,8 @@
 </template>
 
 <script>
-import { admindeptlist, dailyListAdmin } from '@/api/sDayReport'
+// /list/admin/workNumber
+import { admindeptlist, dailyListAdmin, dailyListAdminWorkNumber } from '@/api/sDayReport'
 export default {
   name: 'DayReport',
   data() {
@@ -382,12 +384,13 @@ export default {
         logTimeStr: this.logFrom.logTimeStr,
         logTimeEndStr: this.logFrom.logTimeEndStr
       }
+      console.log(data)
       if (isNaN(this.logFrom.job_text)) {
         data.userNameKeyWord = this.logFrom.job_text
       } else {
         data.workNumberKeyWord = this.logFrom.job_text
       }
-      dailyListAdmin(data).then(res => {
+      dailyListAdminWorkNumber(data).then(res => {
         const { status, data, count } = res
         if (status === 200) {
           var s = data
@@ -416,6 +419,8 @@ export default {
     },
     // 前一天
     beforesearchForm() {
+      this.tableData = []
+      this.spanArr = []
       this.form.searchDate = this.dateFormat(
         new Date(new Date(this.form.searchDate).getTime() - 24 * 60 * 60 * 1000)
       )
@@ -423,6 +428,8 @@ export default {
     },
     // 后一天
     aftersearchForm() {
+      this.tableData = []
+      this.spanArr = []
       var flag = true
       if (
         new Date(

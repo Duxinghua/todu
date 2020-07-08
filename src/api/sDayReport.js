@@ -77,6 +77,19 @@ export function dailyListAdmin(params) {
 }
 
 /**
+ * 管理员查询日志// GET //daily/list/admin/workNumber
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function dailyListAdminWorkNumber(params) {
+  return request({
+    url: '/daily/list/admin/workNumber',
+    method: 'get',
+    params
+  })
+}
+
+/**
  * 个人填报率 /statistics/statisticsDaily
  * @param params
  * @returns {AxiosPromise}
