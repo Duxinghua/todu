@@ -4,7 +4,7 @@
       <div class="self-box2">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">自揽项目周报</div>
+        <div style="padding-left: 30px;font-weight: bold">周报</div>
       </div>
       <div class="self-box2">
         <div class="search-row">
@@ -43,96 +43,6 @@
         </div>
       </div>
       <div class="self-box2" style="flex: 1;flex-wrap: wrap;align-items: flex-start">
-        <el-table
-          ref="personTable"
-          :data="taskList"
-          style="width: 100%"
-          height="100%"
-          @selection-change="handleSelectionChange"
-        >
-          <!-- <el-table-column
-            header-align="center"
-            align="center"
-            type="selection"
-            width="55"
-          /> -->
-          <el-table-column
-            fixed
-            prop="proName"
-            label="项目名称"
-            align="center"
-            header-align="center"
-          />
-          <el-table-column
-            fixed
-            prop="proCode"
-            label="项目编码"
-          />
-          <el-table-column
-            fixed
-            label="项目类别"
-            align="center"
-            header-align="center"
-          >
-            <template slot-scope="scope">
-              {{ formatterRoleName(scope.row.proType) }}
-            </template>
-          </el-table-column>
-          <!--          <el-table-column-->
-          <!--            fixed-->
-          <!--            prop="workPlace"-->
-          <!--            label="地点"-->
-
-          <!--            align="center"-->
-          <!--            header-align="center"-->
-          <!--          />-->
-          <el-table-column
-            fixed
-            prop="problem"
-            label="项目存在的问题"
-
-            align="center"
-            header-align="center"
-          >
-            <template slot-scope="scope">
-              <span v-html="scope.row.problem" />
-            </template>
-          </el-table-column>
-          <el-table-column
-            fixed
-            prop="plan"
-            label="下步计划"
-            align="center"
-            header-align="center"
-          >
-            <template slot-scope="scope">
-              <span v-html="scope.row.keyPoint" />
-            </template>
-          </el-table-column>
-          <el-table-column
-            fixed
-            prop="logTime"
-            label="提交日期"
-            align="center"
-            header-align="center"
-          >
-            <template slot-scope="scope">
-              {{ dateFormat(scope.row.logTime) }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            fixed
-            prop="date"
-            label="编辑"
-            align="center"
-            header-align="center"
-          >
-            <template slot-scope="scope">
-              <el-button type="text" size="small" @click="showReport(scope.row)">查看</el-button>
-              <el-button type="text" size="small" @click="deleteRow(scope.row.id)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
         <div class="self-content-wrap">
           <div v-for="(task,index) in taskList" :key="index" class="self-card-container" style="cursor: pointer">
             <!--            <el-card class="self-box-card" :body-style="{ width: '100%' }">-->
@@ -188,7 +98,8 @@
     >
       <div slot="title" style="display: flex;justify-content: space-between" class="btns-fix">
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">新建{{proType == 1 ? '自揽' : '院控'}}周报</div>
+          <div style="font-size: 18px;color: #000000">新建周报</div>
+          <div style="font-size: 12px;padding:5px 0 0 2px">周二、周三可以新增和修改周报</div>
         </div>
         <el-row style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;margin-left:10px">
           <el-button size="normal" type="primary" plain @click="closeDrawer">取消</el-button>
@@ -214,8 +125,8 @@
             </el-row>
             <el-row :gutter="20" class="mon-el-row">
               <el-col :span="12" class="self-input-box" style="margin-right:10px">
-                <div class="self-title">起始时间</div>
-                   <el-date-picker v-model="searchWeekStartStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
+                <div class="self-title">时间</div>
+                <el-input v-model="weekForm.dateLine" :readonly="true" placeholder="请输入内容" size="small" class="self-input" />
               </el-col>
               <!--              <el-col :span="12" class="self-input-box" style="margin-left: 10px">-->
               <!--                <div class="self-title">项目角色</div>-->
@@ -229,12 +140,9 @@
               <!--                </el-select>-->
               <!--              </el-col>-->
               <el-col :span="12" class="self-input-box" style="margin-left:10px">
-                <div class="self-title">结束时间</div>
-                <el-date-picker v-model="searchWeekEndStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
+                <div class="self-title">项目角色</div>
+                <el-input v-model="weekForm.proRoleName" :readonly="true" size="small" class="self-input" />
               </el-col>
-            </el-row>
-            <el-row :gutter="20" class="mon-el-row">
-            <span style="color:red">提示:上周四至本周三为一周</span>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>工作情况</h3>
@@ -257,7 +165,7 @@
                 <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
               </div>
             </el-row>
-            <el-row v-if="proType == 1" style="margin-top: 10px">
+            <el-row v-if="proTypeFlag == 1" style="margin-top: 10px">
               <h3>需要室所领导、处领导、总工解决的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
@@ -287,8 +195,8 @@
     >
       <div slot="title" style="display: flex;justify-content: space-between" class="btns-fix">
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">新建{{proType == 1 ? '自揽' : '院控'}}周报</div>
-
+          <div style="font-size: 18px;color: #000000">新建周报</div>
+          <div style="font-size: 12px;padding:5px 0 0 2px">周二、周三可以新增和修改周报</div>
         </div>
         <el-row style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;">
           <el-button size="normal" type="primary" plain @click="closeDrawer()">取消</el-button>
@@ -341,7 +249,7 @@
                 <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
               </div>
             </el-row>
-            <el-row v-if="proType == 1" style="margin-top: 10px">
+            <el-row style="margin-top: 10px">
               <h3>需要室所领导、处领导、总工解决的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
@@ -368,18 +276,6 @@
       :close-on-press-escape="false"
     >
       <div class="self-box2" style="margin: 0">
-        <div style="width:100%;color:red">提示：没有显示需要的项目就根据项目编号或项目名称查询</div>
-        <div class="search-row">
-          <div class="search-text" style="width: 80px">项目类型</div>
-            <el-select v-model="proType" placeholder="请选择">
-              <el-option
-                v-for="item in proObj"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-        </div>
         <div class="search-row">
           <div class="search-text" style="width: 80px">项目名称</div>
           <el-input v-model="projectForm.searchProjectName" placeholder="请输入项目名称" :clearable="true" />
@@ -458,16 +354,6 @@ export default {
     return {
       radio: -1,
       proTypeObj: { 1: '自揽', 2: '院控' },
-      proObj:[
-        {
-          value: 1,
-          label: '自揽'
-        },
-        {
-          value: 2,
-          label: '院控'
-        }
-      ],
       proStatusObj: { 0: '停止', 1: '进行中' },
       pageSize: 10,
       pageNum: 1,
@@ -475,9 +361,7 @@ export default {
       prevWeekStr: '',
       currentWeekStr: '',
       nextWeekStr: '',
-      searchWeekStr:'',
-      searchWeekStartStr: '',
-      searchWeekEndStr:'',
+      searchWeekStr: '',
       nextWeekBtnEdit: true,
       userId: '',
       menubar: '',
@@ -508,8 +392,7 @@ export default {
         projectRoleId: ''
       },
       isClear: false,
-      proTypeFlag: '',
-      proType:1
+      proTypeFlag: ''
     }
   },
   mounted() {
@@ -532,53 +415,6 @@ export default {
     }
   },
   methods: {
-    formatterRoleName(e){
-      return this.proTypeObj[e]
-    },
-    timeEndChange(e){
-      if(!this.searchWeekStartStr){
-        this.$message.error('请选择起始时间')
-        return
-      }
-      var end = new Date(e).getTime()
-      var start = new Date(this.searchWeekStartStr).getTime()
-      if(end < start){
-        this.searchWeekEndStr = ''
-        this.$message.error('起始时间不能大于结束时间')
-        return
-      }
-      if(end - start != 518400000){
-        this.$message.error('必须是一周之内')
-        this.searchWeekEndStr = ''
-        this.searchWeekStartStr = ''
-        return
-      }
-      var time = new Date(e).getDay()
-      if(time == 3){
-
-        this.searchWeekEndStr = e
-
-      }else{
-        this.searchWeekEndStr = ''
-        this.$message.error('时间必须为周三')
-        return
-      }
-    },
-    timeStartChange(e){
-      var time = new Date(e).getDay()
-      if(time == 4){
-
-        this.searchWeekStartStr = e
-
-      }else{
-        this.searchWeekStartStr = ''
-        this.$message.error('时间必须为周四')
-        return
-      }
-    },
-    handleSelectionChange(){
-
-    },
     change1(val) {
       this.weekForm.content = val
     },
@@ -803,7 +639,7 @@ export default {
       projectList({
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        proType: this.proType,
+        proType: 2,
         proCodeKeyWord: this.projectForm.searchProjectNo,
         proNameKeyWord: this.projectForm.searchProjectName
       }).then(res => {
