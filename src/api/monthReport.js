@@ -98,3 +98,29 @@ export function personWeekList(params) {
     params
   })
 }
+
+/**
+ * 个人周报 查询新加
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function projectListPersonx(params) {
+  return request({
+    url: '/weekly/projectList/person/x',
+    method: 'get',
+    params
+  })
+}
+
+/**
+ * 个人周报 删除
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function weeklyDelete(params) {
+  return request({
+    url: '/weekly/delete/'+params.id,
+    method: 'delete'
+  })
+}
+

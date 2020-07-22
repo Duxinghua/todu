@@ -8,7 +8,7 @@
       </div>
       <div class="self-box2">
         <div class="search-row">
-          <div class="search-text search-text-fw">时间</div>
+          <div class="search-text">起始时间</div>
           <el-date-picker v-model="searchWeekStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="listChange" />
           <!-- <el-button-group>
             <el-button type="primary" @click="prevWeek">上一周</el-button>
@@ -27,18 +27,18 @@
         <!--            placeholder="请选择日期"-->
         <!--          />-->
         <!--        </div>-->
-        <div class="search-row">
+        <!-- <div class="search-row">
           <div class="search-text">项目编号</div>
           <el-input v-model="form.searchProjectPro" placeholer="请输入项目编号" :clearable="true" class="search-el-input" />
-        </div>
-        <div class="search-row">
+        </div> -->
+        <!-- <div class="search-row">
           <div class="search-text">项目名称</div>
           <el-input v-model="form.searchProject" placeholer="请输入项目名称" :clearable="true" class="search-el-input" />
-        </div>
+        </div> -->
         <div class="search-row" style="width:10%">
           <el-button type="primary" @click="searchForm">查询</el-button>
         </div>
-        <div class="search-row search-row-fix">
+        <div class="search-row search-row-fix" style="margin-left:auto">
           <el-button type="primary" icon="el-icon-plus" :disabled="buttonDisabled" @click="addReport">新建周报</el-button>
         </div>
       </div>
@@ -47,15 +47,13 @@
           ref="personTable"
           :data="taskList"
           style="width: 100%"
-          height="100%"
+          border
+          highlight-current-row
+          :fit="true"
+          :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
+          max-height="900"
           @selection-change="handleSelectionChange"
         >
-          <!-- <el-table-column
-            header-align="center"
-            align="center"
-            type="selection"
-            width="55"
-          /> -->
           <el-table-column
             fixed
             prop="proName"
@@ -70,6 +68,7 @@
           />
           <el-table-column
             fixed
+            parop="proType"
             label="项目类别"
             align="center"
             header-align="center"
@@ -78,19 +77,10 @@
               {{ formatterRoleName(scope.row.proType) }}
             </template>
           </el-table-column>
-          <!--          <el-table-column-->
-          <!--            fixed-->
-          <!--            prop="workPlace"-->
-          <!--            label="地点"-->
-
-          <!--            align="center"-->
-          <!--            header-align="center"-->
-          <!--          />-->
           <el-table-column
             fixed
             prop="problem"
             label="项目存在的问题"
-
             align="center"
             header-align="center"
           >
@@ -100,8 +90,30 @@
           </el-table-column>
           <el-table-column
             fixed
+            prop="toBeSolve"
+            label="需要室所领导、处领导、总工解决的问题"
+            align="center"
+            header-align="center"
+          >
+            <template slot-scope="scope">
+              <span v-html="scope.row.problem" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed
+            prop="content"
+            label="项目进展情况"
+            align="center"
+            header-align="center"
+          >
+            <template slot-scope="scope">
+              <span v-html="scope.row.content" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed
             prop="plan"
-            label="下步计划"
+            label="下周工作安排"
             align="center"
             header-align="center"
           >
@@ -111,13 +123,24 @@
           </el-table-column>
           <el-table-column
             fixed
-            prop="logTime"
-            label="提交日期"
+            prop="startDate"
+            label="起始日期"
             align="center"
             header-align="center"
           >
             <template slot-scope="scope">
-              {{ dateFormat(scope.row.logTime) }}
+              {{ dateFormat2(scope.row.startDate) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed
+            prop="endDate"
+            label="起始日期"
+            align="center"
+            header-align="center"
+          >
+            <template slot-scope="scope">
+              {{ dateFormat2(scope.row.endDate) }}
             </template>
           </el-table-column>
           <el-table-column
@@ -128,51 +151,21 @@
             header-align="center"
           >
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="showReport(scope.row)">查看</el-button>
+              <el-button type="text" size="small" @click="showReport(scope.row)">编辑</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed
+            prop="date"
+            label="删除"
+            align="center"
+            header-align="center"
+          >
+            <template slot-scope="scope">
               <el-button type="text" size="small" @click="deleteRow(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <div class="self-content-wrap">
-          <div v-for="(task,index) in taskList" :key="index" class="self-card-container" style="cursor: pointer">
-            <!--            <el-card class="self-box-card" :body-style="{ width: '100%' }">-->
-            <!--              <div slot="default" class="self-card-body">-->
-            <!--                <div style="display: flex;flex-direction: column">-->
-            <!--                  <div class="self-cr-text">-->
-            <!--                    <span v-if="task.thisWeek">本周</span>-->
-            <!--                    <span v-else>往期</span>-->
-            <!--                  </div>-->
-            <!--                  <div style="font-size: 12px">-->
-            <!--                    {{ dateFormat(task.startDate) }}~{{ dateFormat(task.endDate) }}-->
-            <!--                  </div>-->
-            <!--                </div>-->
-            <!--                <div class="self-cr-desc"><span v-if="task.lackWeekly">有待写的周报</span></div>-->
-            <!--              </div>-->
-            <!--            </el-card>-->
-            <el-card class="self-box-card" :body-style="{ width: '100%' }">
-              <div slot="default" class="self-card-body">
-                <div class="self-card-item-fix">
-                  <div class="self-card-icon">
-                    <el-icon class="el-icon-s-promotion self-font-color self-font-color-fix" />
-                  </div>
-                  <div class="self-card-item-ss">
-                    <div class="self-card-item-ss1">
-                      <div style="margin-bottom: 10px;font-size: 16px">{{ task.proName }}</div>
-                      <div style="font-size: 12px">
-                        {{ dateFormat(task.startDate) }}~{{ dateFormat(task.endDate) }}
-                      </div>
-                    </div>
-                    <div class="self-card-item-ss2">
-                      <el-button v-if="task.isCreate" type="primary" plain @click.stop="addReport">创建周报</el-button>
-                      <el-button v-else type="primary" plain @click="lookWeek(task)">查看周报</el-button>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            </el-card>
-          </div>
-        </div>
       </div>
     </div>
     <!-- 侧边栏 -->
@@ -204,18 +197,18 @@
             <el-row :gutter="20" class="mon-el-row">
               <el-col :span="12" class="self-input-box" style="margin-right:10px">
                 <div class="self-title">项目名称</div>
-                <el-input v-model="weekForm.projectName" :readonly="true" placeholder="请输入内容" size="small" class="self-input self-input-fix" @click.stop="searchProjectList" />
+                <el-input v-model="weekForm.proName" :readonly="true" placeholder="请输入内容" size="small" class="self-input self-input-fix" @click.stop="searchProjectList" />
                 <el-button type="primary" class="self-button" @click.stop="searchProjectList">查询</el-button>
               </el-col>
               <el-col :span="12" class="self-input-box" style="margin-left:10px">
                 <div class="self-title">项目代码</div>
-                <el-input v-model="weekForm.projectNo" :readonly="true" placeholder="请输入内容" size="small" class="self-input" />
+                <el-input v-model="weekForm.proCode" :readonly="true" placeholder="请输入内容" size="small" class="self-input" />
               </el-col>
             </el-row>
             <el-row :gutter="20" class="mon-el-row">
               <el-col :span="12" class="self-input-box" style="margin-right:10px">
                 <div class="self-title">起始时间</div>
-                   <el-date-picker v-model="searchWeekStartStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
+                   <el-date-picker v-model="weekForm.startDateStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
               </el-col>
               <!--              <el-col :span="12" class="self-input-box" style="margin-left: 10px">-->
               <!--                <div class="self-title">项目角色</div>-->
@@ -230,7 +223,7 @@
               <!--              </el-col>-->
               <el-col :span="12" class="self-input-box" style="margin-left:10px">
                 <div class="self-title">结束时间</div>
-                <el-date-picker v-model="searchWeekEndStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
+                <el-date-picker v-model="weekForm.endDateStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
               </el-col>
             </el-row>
             <el-row :gutter="20" class="mon-el-row">
@@ -251,7 +244,7 @@
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
-              <h3>下步计划  /  工作重点提示</h3>
+              <h3>下周工作安排</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
                 <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
@@ -447,7 +440,7 @@
 </template>
 
 <script>
-import { personWeekList, weekDate, weekAdd, reportView, weekUpdate } from '@/api/monthReport'
+import { personWeekList, weekDate, weekAdd, reportView, weekUpdate,projectListPersonx,weeklyDelete } from '@/api/monthReport'
 import EditorBar from '@/components/Edit.vue'
 import { projectList, projectRoleList } from '@/api/dayReportList'
 // import Tinymce from '@/components/Tinymce'
@@ -476,6 +469,7 @@ export default {
       currentWeekStr: '',
       nextWeekStr: '',
       searchWeekStr:'',
+      searchWeekStrEnd:'',
       searchWeekStartStr: '',
       searchWeekEndStr:'',
       nextWeekBtnEdit: true,
@@ -505,7 +499,9 @@ export default {
         searchProjectNo: ''
       },
       weekForm: {
-        projectRoleId: ''
+        projectRoleId: '',
+        startDateStr:'',
+        endDateStr:''
       },
       isClear: false,
       proTypeFlag: '',
@@ -532,34 +528,51 @@ export default {
     }
   },
   methods: {
+    showReport(e){
+     this.weekForm = e
+     this.weekForm.startDateStr = this.dateFormat2(e.startDate)
+     this.weekForm.endDateStr = this.dateFormat2(e.endDate)
+    this.addDrawer = true
+    },
+    deleteRow(e){
+     weeklyDelete({id:e}).then((result) => {
+       const { status, data} = result
+       if(status == 200){
+         this.$message.success('删除成功')
+         setTimeout(()=>{
+           this.getWeekList()
+         })
+       }
+     })
+    },
     formatterRoleName(e){
       return this.proTypeObj[e]
     },
     timeEndChange(e){
-      if(!this.searchWeekStartStr){
+      if(!this.weekForm.endDateStr){
         this.$message.error('请选择起始时间')
         return
       }
       var end = new Date(e).getTime()
-      var start = new Date(this.searchWeekStartStr).getTime()
+      var start = new Date(this.weekForm.startDateStr).getTime()
       if(end < start){
-        this.searchWeekEndStr = ''
+        this.weekForm.endDateStr = ''
         this.$message.error('起始时间不能大于结束时间')
         return
       }
       if(end - start != 518400000){
         this.$message.error('必须是一周之内')
-        this.searchWeekEndStr = ''
-        this.searchWeekStartStr = ''
+        this.weekForm.endDateStr = ''
+        this.weekForm.startDateStr = ''
         return
       }
       var time = new Date(e).getDay()
       if(time == 3){
 
-        this.searchWeekEndStr = e
+        this.weekForm.endDateStr = e
 
       }else{
-        this.searchWeekEndStr = ''
+        this.weekForm.endDateStr = ''
         this.$message.error('时间必须为周三')
         return
       }
@@ -568,10 +581,10 @@ export default {
       var time = new Date(e).getDay()
       if(time == 4){
 
-        this.searchWeekStartStr = e
+        this.weekForm.startDateStr = e
 
       }else{
-        this.searchWeekStartStr = ''
+        this.weekForm.startDateStr = ''
         this.$message.error('时间必须为周四')
         return
       }
@@ -617,18 +630,13 @@ export default {
     addReport() {
       this.$set(this, 'weekForm', {})
       this.addDrawer = true
-      // 封装默认数据
-      this.weekForm.startDateStr = this.currentStartDate
-      this.weekForm.endDateStr = this.currentEndDate
-      this.weekForm.dateLine = this.weekForm.startDateStr + '~' + this.weekForm.endDateStr
     },
     showReportDetail(startDate, endDate) {
-      console.log(startDate)
+
       // 跳转项目列表
       this.$router.push({ path: '/monthReport/projectList', query: { startDate: startDate, endDate: endDate }})
     },
     async lookWeek(row) {
-      console.log(1)
       await reportView({ id: row.id }).then(res => {
         const { status, data } = res
         if (status === 200) {
@@ -640,16 +648,6 @@ export default {
           this.weekForm.proRoleName = row.proRole
           this.weekForm.startDateStr = this.dateFormat2(data.startDate)
           this.weekForm.endDateStr = this.dateFormat2(data.endDate)
-
-          // let overTime = this.dateFormat2(data.startDate).split('-')
-          // overTime = new Date(Number(overTime['0']), (Number(overTime['1']) - 1), Number(overTime['2']))
-          // overTime.setDate(overTime.getDate() + 3)
-          // const nowDate = new Date().getTime()
-          // if (nowDate > overTime) {
-          //   this.buttonDisabled = true
-          // } else {
-          //   this.buttonDisabled = false
-          // }
         }
       })
 
@@ -736,8 +734,8 @@ export default {
         return false
       }
       this.weekForm.projectId = this.selectedProject.id
-      this.weekForm.projectName = this.selectedProject.proName
-      this.weekForm.projectNo = this.selectedProject.proCode
+      this.weekForm.proName = this.selectedProject.proName
+      this.weekForm.proCode = this.selectedProject.proCode
       this.selectedProject = null
       // 调用获取角色的接口
       await this.projectRoleList(this.weekForm.projectId)
@@ -776,14 +774,27 @@ export default {
       return result
     },
     getWeekList() {
-      const params = { dateStr: this.searchWeekStr, proNameKeyWord: this.form.searchProject, proCodeKeyWord: this.form.searchProjectPro }
-      personWeekList(params).then(res => {
-        const { status, data } = res
-        if (status === 200) {
+      if(!this.searchWeekStr){
+        this.$message.warning('请选择起始时间')
+        return
+      }else{
+        var date = new Date(this.searchWeekStr)
+        var day  = date.getDay()
+        if(day != 4){
+          this.$message.warning('起始时间必须为周四')
+          return
+        }else{
+          this.searchWeekStrEnd = this.dateFormat2(date.getTime() + 6*24*60*60*1000)
+        }
+      }
+      const params = { startDateStr: this.searchWeekStr,endDateStr: this.searchWeekStrEnd, proNameKeyWord: this.form.searchProject, proCodeKeyWord: this.form.searchProjectPro }
+      projectListPersonx(params).then((result) => {
+        const {status, data } = result
+        if(status == 200){
+          data.map((item) => {
+            item.proType = item.proType ? item.proType : 1
+          })
           this.taskList = data
-          if (data.length > 0) {
-            this.weekForm.projectRoleId = data.id
-          }
         }
       })
     },
@@ -951,7 +962,7 @@ export default {
     display: inline-block\9;
     width:100%;
     align-items: center;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
   }
   .self-content-wrap{
     display:flex;
