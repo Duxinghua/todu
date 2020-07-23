@@ -4,7 +4,7 @@
       <div class="self-box2">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">周报汇总</div>
+        <div style="padding-left: 30px;font-weight: bold">自揽周报汇总</div>
       </div>
       <div class="self-box2 self-box2-fix" style="justify-content: space-between">
         <div class="search-row-fix">
@@ -49,6 +49,9 @@
         <el-table
           :data="tableData"
           style="width: 100%"
+          highlight-current-row
+          :fit="true"
+          :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
         >
           <el-table-column
             prop="proName"
@@ -59,26 +62,12 @@
             label="项目代码"
           />
           <el-table-column
-            label="调度会内容"
+            prop="proType"
+            label="项目的问题"
           >
-            <el-table-column
-              prop="implementation"
-              label="上周调度会内容落实情况"
-            >
-              <template slot-scope="scope">
-                <div class="self-input">
-                  <el-input v-model="scope.row.implementation" type="textarea" />
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="problem"
-              label="调度会提纲内容"
-            >
-              <template slot-scope="scope">
-                <span v-html="scope.row.problem" />
-              </template>
-            </el-table-column>
+            <template slot-scope="scope">
+              <span v-html="scope.row.problem" />
+            </template>
           </el-table-column>
           <el-table-column
             prop="toBeSolve"
@@ -89,23 +78,41 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="content"
+            label="项目的进展情况"
+          >
+            <template slot-scope="scope">
+              <span v-html="scope.row.content" />
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="keyPoint"
-            label="工作重点提示"
+            label="下周工作安排"
           >
             <template slot-scope="scope">
               <span v-html="scope.row.keyPoint" />
             </template>
           </el-table-column>
           <el-table-column
-            prop="prevTotalContent"
-            label="上周调度会提纲内容"
-          />
-          <el-table-column
-            prop="content"
-            label="工作情况"
+            fixed
+            prop="startDate"
+            label="起始日期"
+            align="center"
+            header-align="center"
           >
             <template slot-scope="scope">
-              <span v-html="scope.row.content" />
+              {{ dateFormat2(scope.row.startDate) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed
+            prop="endDate"
+            label="结束日期"
+            align="center"
+            header-align="center"
+          >
+            <template slot-scope="scope">
+              {{ dateFormat2(scope.row.endDate) }}
             </template>
           </el-table-column>
         </el-table>

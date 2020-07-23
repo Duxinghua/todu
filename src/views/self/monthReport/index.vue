@@ -96,7 +96,7 @@
             header-align="center"
           >
             <template slot-scope="scope">
-              <span v-html="scope.row.problem" />
+              <span v-html="scope.row.toBeSolve" />
             </template>
           </el-table-column>
           <el-table-column
@@ -135,7 +135,7 @@
           <el-table-column
             fixed
             prop="endDate"
-            label="起始日期"
+            label="结束日期"
             align="center"
             header-align="center"
           >
@@ -181,7 +181,7 @@
     >
       <div slot="title" style="display: flex;justify-content: space-between" class="btns-fix">
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">新建{{proType == 1 ? '自揽' : '院控'}}周报</div>
+          <div style="font-size: 18px;color: #000000">{{ editStatus ? '编辑' : '新建'}}{{proType == 1 ? '自揽' : '院控'}}周报</div>
         </div>
         <el-row style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;margin-left:10px">
           <el-button size="normal" type="primary" plain @click="closeDrawer">取消</el-button>
@@ -198,7 +198,7 @@
               <el-col :span="12" class="self-input-box" style="margin-right:10px">
                 <div class="self-title">项目名称</div>
                 <el-input v-model="weekForm.proName" :readonly="true" placeholder="请输入内容" size="small" class="self-input self-input-fix" @click.stop="searchProjectList" />
-                <el-button type="primary" class="self-button" @click.stop="searchProjectList">查询</el-button>
+                <el-button :disabled="editStatus" type="primary" class="self-button" @click.stop="searchProjectList">查询</el-button>
               </el-col>
               <el-col :span="12" class="self-input-box" style="margin-left:10px">
                 <div class="self-title">项目代码</div>
@@ -208,7 +208,7 @@
             <el-row :gutter="20" class="mon-el-row">
               <el-col :span="12" class="self-input-box" style="margin-right:10px">
                 <div class="self-title">起始时间</div>
-                   <el-date-picker v-model="weekForm.startDateStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
+                   <el-date-picker :readonly="editStatus" v-model="weekForm.startDateStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
               </el-col>
               <!--              <el-col :span="12" class="self-input-box" style="margin-left: 10px">-->
               <!--                <div class="self-title">项目角色</div>-->
@@ -223,7 +223,7 @@
               <!--              </el-col>-->
               <el-col :span="12" class="self-input-box" style="margin-left:10px">
                 <div class="self-title">结束时间</div>
-                <el-date-picker v-model="weekForm.endDateStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
+                <el-date-picker :readonly="editStatus" v-model="weekForm.endDateStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
               </el-col>
             </el-row>
             <el-row :gutter="20" class="mon-el-row">
@@ -360,8 +360,8 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
     >
+      <p style="width:100%;color:red">提示：没有显示需要的项目就根据项目编号或项目名称查询</p>
       <div class="self-box2" style="margin: 0">
-        <div style="width:100%;color:red">提示：没有显示需要的项目就根据项目编号或项目名称查询</div>
         <div class="search-row">
           <div class="search-text" style="width: 80px">项目类型</div>
             <el-select v-model="proType" placeholder="请选择">
@@ -505,7 +505,9 @@ export default {
       },
       isClear: false,
       proTypeFlag: '',
-      proType:1
+      proType:1,
+      init:true,
+      editStatus:true
     }
   },
   mounted() {
@@ -513,7 +515,7 @@ export default {
     // this.getWeekList()
     // this.getProjectList()
     this.getWeekDate()
-    this.searchWeekStr = this.currentWeek()
+    // this.searchWeekStr = this.currentWeek()
     this.nextWeekBtnEdit = false
 
     // 判断是否超过修改时间
@@ -526,9 +528,13 @@ export default {
     } else {
       this.buttonDisabled = false
     }
+    if(this.init){
+      this.getWeekList()
+    }
   },
   methods: {
     showReport(e){
+     this.editStatus = true
      this.weekForm = e
      this.weekForm.startDateStr = this.dateFormat2(e.startDate)
      this.weekForm.endDateStr = this.dateFormat2(e.endDate)
@@ -605,7 +611,13 @@ export default {
       this.weekForm.toBeSolve = val
     },
     listChange(e) {
-      this.searchWeekStr = e
+      this.init = false
+      if(new Date(e).getDay() == 4){
+        this.searchWeekStr = e
+      }else{
+        this.$message.error('时间必须为周四')
+        this.searchWeekStr = ''
+      }
     },
     searchForm() {
       // if (this.form.searchProject) {
@@ -613,6 +625,7 @@ export default {
       // } else {
       //   this.getWeekList()
       // }
+      this.init = false
       this.getWeekList()
     },
     cardReport(task) {
@@ -629,6 +642,7 @@ export default {
 
     addReport() {
       this.$set(this, 'weekForm', {})
+      this.editStatus = false
       this.addDrawer = true
     },
     showReportDetail(startDate, endDate) {
@@ -690,17 +704,29 @@ export default {
       }
       this.weekForm.useId = this.userId
       this.weekForm.logTimeStr = this.dateFormat3(new Date())
-      weekAdd(this.weekForm).then(res => {
-        const { status } = res
-        if (status === 200) {
-          this.$message.success('保存成功')
-          this.addDrawer = false
-          // 刷新列表
-          this.getWeekList()
-        } else {
-          this.$message.success('保存失败')
-        }
-      })
+      if(!this.editStatus){
+        weekAdd(this.weekForm).then(res => {
+          const { status } = res
+          if (status === 200) {
+            this.$message.success('保存成功')
+            this.addDrawer = false
+            // 刷新列表
+            this.getWeekList()
+          } else {
+            this.$message.success('保存失败')
+          }
+        })
+      }else{
+        weekUpdate(this.weekForm).then(res => {
+          const { status, msg } = res
+          if (status === 200) {
+            this.$message.success('修改成功')
+            this.addDrawer = false
+          } else {
+            this.$message.warning(msg)
+          }
+        })
+      }
     },
     searchProjectList() {
       this.projectDialogVisible = true
@@ -774,20 +800,27 @@ export default {
       return result
     },
     getWeekList() {
-      if(!this.searchWeekStr){
-        this.$message.warning('请选择起始时间')
-        return
-      }else{
-        var date = new Date(this.searchWeekStr)
-        var day  = date.getDay()
-        if(day != 4){
-          this.$message.warning('起始时间必须为周四')
+      if(!this.init){
+        if(!this.searchWeekStr){
+          this.$message.warning('请选择起始时间')
           return
         }else{
-          this.searchWeekStrEnd = this.dateFormat2(date.getTime() + 6*24*60*60*1000)
+          var date = new Date(this.searchWeekStr)
+          var day  = date.getDay()
+          if(day != 4){
+            this.$message.warning('起始时间必须为周四')
+            return
+          }else{
+            this.searchWeekStrEnd = this.dateFormat2(date.getTime() + 6*24*60*60*1000)
+          }
         }
       }
+
       const params = { startDateStr: this.searchWeekStr,endDateStr: this.searchWeekStrEnd, proNameKeyWord: this.form.searchProject, proCodeKeyWord: this.form.searchProjectPro }
+      if(this.init){
+        params.endDateStr = this.dateFormat2(new Date())
+        params.startDateStr = ''
+      }
       projectListPersonx(params).then((result) => {
         const {status, data } = result
         if(status == 200){
