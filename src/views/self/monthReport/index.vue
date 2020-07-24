@@ -175,7 +175,7 @@
       ref="addDrawer"
       :visible.sync="addDrawer"
       :direction="direction"
-      size="45%"
+      size="65%"
       :show-close="false"
       :destroy-on-close="true"
       :wrapper-closable="false"
@@ -276,7 +276,7 @@
       ref="lookDrawer"
       :visible.sync="lookDrawer"
       :direction="direction"
-      size="45%"
+      size="65%"
       :show-close="false"
       :destroy-on-close="true"
       :wrapper-closable="false"
@@ -362,11 +362,12 @@
       :visible.sync="projectDialogVisible"
       :destroy-on-close="true"
       :close-on-click-modal="false"
+      size="65%"
       :close-on-press-escape="false"
     >
       <p style="width:100%;color:red">提示：没有显示需要的项目就根据项目编号或项目名称查询</p>
       <div class="self-box2" style="margin: 0">
-        <div class="search-row">
+        <div class="search-row" style="width:25%;margin-right:0px">
           <div class="search-text" style="width: 80px">项目类型</div>
             <el-select v-model="proType" placeholder="请选择">
               <el-option
@@ -377,15 +378,15 @@
               </el-option>
             </el-select>
         </div>
-        <div class="search-row">
+        <div class="search-row" style="width:25%;margin-right:0px">
           <div class="search-text" style="width: 80px">项目名称</div>
           <el-input v-model="projectForm.searchProjectName" placeholder="请输入项目名称" :clearable="true" />
         </div>
-        <div class="search-row">
+        <div class="search-row" style="width:25%;margin-right:0px">
           <div class="search-text" style="width: 80px">项目编码</div>
           <el-input v-model="projectForm.searchProjectNo" placeholder="请输入项目编码" :clearable="true" />
         </div>
-        <div class="search-row">
+        <div class="search-row" style="margin-left:auto">
           <el-button type="primary" @click="getProjectList">查询</el-button>
         </div>
       </div>
