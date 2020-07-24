@@ -220,6 +220,13 @@
             @click="getLogFrom"
           >查询</el-button>
         </div>
+        <div class="search-row" style="margin-left:auto">
+          <el-button
+            style="margin-left:auto"
+            type="primary"
+            @click="exportDefault"
+          >导出</el-button>
+        </div>
       </div>
       <el-table
         :data="logtableData"
@@ -286,7 +293,7 @@
 </template>
 
 <script>
-// /list/admin/workNumber
+
 import { admindeptlist, dailyListAdmin, dailyListAdminWorkNumber } from '@/api/sDayReport'
 export default {
   name: 'DayReport',
@@ -475,7 +482,7 @@ export default {
       return year + '-' + month + '-' + day
     },
     saveForm() {
-      this.handleDownload2()
+      this.handleDownload2(1)
     },
     getSpanArr(data) {
       for (var i = 0; i < data.length; i++) {
@@ -508,7 +515,10 @@ export default {
         }
       }
     },
-    async handleDownload2() {
+    exportDefault(){
+      this.handleDownload2(2)
+    },
+    async handleDownload2(findex) {
       this.$message.success('导出成功')
       // this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
@@ -516,11 +526,17 @@ export default {
           'deptName',
           'workNumber',
           'userName',
+          'proName',
           'content',
           'logTime'
         ]
-        const tHeader = ['部门', '工号', '姓名', '日志内容', '日期']
-        const data = this.formatJson(filterVal, this.tableData)
+        const tHeader = ['部门', '工号', '姓名','项目名称','日志内容', '日期']
+        var data = ''
+        if(findex == 1){
+          data = this.formatJson(filterVal, this.tableData)
+        }else{
+          data = this.formatJson(filterVal, this.logtableData)
+        }
         excel.export_json_to_excel({
           header: tHeader,
           data,

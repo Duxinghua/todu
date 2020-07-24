@@ -6,7 +6,9 @@
         <div class="self-circle" style="left: 6px" />
         <div style="padding-left: 30px;font-weight: bold">自揽项目周报</div>
       </div>
+      <p style="color:red;padding-left:30px">提示:起始时间必须为周四</p>
       <div class="self-box2">
+
         <div class="search-row">
           <div class="search-text">起始时间</div>
           <el-date-picker v-model="searchWeekStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="listChange" />
@@ -230,24 +232,10 @@
             <span style="color:red">提示:上周四至本周三为一周</span>
             </el-row>
             <el-row style="margin-top: 10px">
-              <h3>工作情况</h3>
-              <div style="width: 100%;">
-                <!-- <tinymce v-model="weekForm.content" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.content" :isClear="isClear" @change="change1" />
-              </div>
-            </el-row>
-            <el-row style="margin-top: 10px">
-              <h3>存在的问题</h3>
+              <h3>项目存在问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.problem" :height="editorHeight" :menubar="menubar" /> -->
                 <editor-bar v-model="weekForm.problem" :isClear="isClear" @change="change2" />
-              </div>
-            </el-row>
-            <el-row style="margin-top: 10px">
-              <h3>下周工作安排</h3>
-              <div style="width: 100%;">
-                <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
               </div>
             </el-row>
             <el-row v-if="proType == 1" style="margin-top: 10px">
@@ -257,6 +245,22 @@
                 <editor-bar v-model="weekForm.toBeSolve" :isClear="isClear" @change="change4" />
               </div>
             </el-row>
+            <el-row style="margin-top: 10px">
+              <h3>项目进展情况</h3>
+              <div style="width: 100%;">
+                <!-- <tinymce v-model="weekForm.content" :height="editorHeight" :menubar="menubar" /> -->
+                <editor-bar v-model="weekForm.content" :isClear="isClear" @change="change1" />
+              </div>
+            </el-row>
+
+            <el-row style="margin-top: 10px">
+              <h3>下周工作安排</h3>
+              <div style="width: 100%;">
+                <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
+                <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
+              </div>
+            </el-row>
+
             <!--            <el-row style="margin-top: 20px">-->
             <!--              <el-button size="normal" type="primary" plain @click="$refs.addDrawer.closeDrawer()">取消</el-button>-->
             <!--              <el-button type="primary" size="normal" @click="submitReport">确定</el-button>-->
@@ -440,7 +444,7 @@
 </template>
 
 <script>
-import { personWeekList, weekDate, weekAdd, reportView, weekUpdate,projectListPersonx,weeklyDelete } from '@/api/monthReport'
+import { personWeekList, weekDate, weekAdd, reportView, weekUpdate,projectListPersonx,weeklyDelete,weeklyAddStatus } from '@/api/monthReport'
 import EditorBar from '@/components/Edit.vue'
 import { projectList, projectRoleList } from '@/api/dayReportList'
 // import Tinymce from '@/components/Tinymce'
@@ -584,10 +588,24 @@ export default {
       }
     },
     timeStartChange(e){
+      if(!this.weekForm.proCode){
+        this.$message.error('请选择项目')
+        return
+      }
       var time = new Date(e).getDay()
       if(time == 4){
-
-        this.weekForm.startDateStr = e
+        var data = {
+          startDateStr:e,
+          proCode:this.weekForm.proCode
+        }
+        weeklyAddStatus(data).then((result) => {
+          if(result.data){
+            this.weekForm.startDateStr = e
+          }else{
+            this.$message.error('该起始时间已写过周报,请重新选择')
+            this.weekForm.startDateStr = ""
+          }
+        })
 
       }else{
         this.weekForm.startDateStr = ''

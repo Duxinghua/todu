@@ -8,16 +8,10 @@
       </div>
       <div class="self-box2 self-box2-fix" style="justify-content: space-between">
         <div class="search-row-fix">
-          <div class="search-row" style="margin-right:20px">
-            <el-button
-              type="primary"
-              @click="prevWeek"
-            >前一周</el-button>
-          </div>
           <div class="search-row">
             <div class="search-text" style="width:40px;text-align:left">时间</div>
             <el-date-picker
-              v-model="searchForm.startDateStr"
+              v-model="searchWeekStr"
               type="date"
               format="yyyy-MM-dd"
               value-format="yyyy-MM-dd"
@@ -25,19 +19,20 @@
               @change="listChange"
             />
           </div>
-          <div class="search-row" style="margin-right:20px">
-            <el-button
-              type="primary"
-              @click="nextWeek"
-            >后一周</el-button>
+          <!-- <div class="search-row search-row-type search-row-sel">
+            <div class="search-text" style="width: 70px">项目类型</div>
+            <el-select v-model="searchForm.proType" :clearable="true">
+              <el-option key="1" value="1" label="自揽">自控</el-option>
+              <el-option key="2" value="2" label="院控">院控</el-option>
+            </el-select>
+          </div> -->
+          <div class="search-row search-row-type">
+            <div class="search-text" style="width: 70px">项目编号</div>
+            <el-input v-model="searchForm.proCodeKeyWord" :clearable="true" />
           </div>
           <div class="search-row search-row-type">
-            <div class="search-text" style="width: 130px">项目名称或编码</div>
-            <el-input v-model="searchForm.proText" :clearable="true"   @clear="proClear"/>
-          </div>
-                    <div class="search-row search-row-type">
-            <div class="search-text" style="width: 100px">姓名或工号</div>
-            <el-input v-model="searchForm.userText" :clearable="true" @clear="userClear" />
+            <div class="search-text" style="width: 70px">项目名称</div>
+            <el-input v-model="searchForm.proNameKeyWord" :clearable="true" />
           </div>
           <div class="search-row search-row-s">
             <el-button type="primary" @click="search">查询</el-button>
@@ -53,11 +48,9 @@
         <!--           height="calc(100vh - 200px)" -->
         <el-table
           :data="tableData"
-          border
           style="width: 100%"
           highlight-current-row
           :fit="true"
-          :span-method="objectSpanMethod"
           :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
         >
           <el-table-column
@@ -67,12 +60,6 @@
           <el-table-column
             prop="proCode"
             label="项目代码"
-            width="90px"
-          />
-          <el-table-column
-            prop="proTypeText"
-            label="项目类型"
-            width="90px"
           />
           <el-table-column
             prop="proType"
@@ -107,21 +94,27 @@
             </template>
           </el-table-column>
           <el-table-column
+            fixed
             prop="startDate"
             label="起始日期"
-            width="90px"
-          />
+            align="center"
+            header-align="center"
+          >
+            <template slot-scope="scope">
+              {{ dateFormat2(scope.row.startDate) }}
+            </template>
+          </el-table-column>
           <el-table-column
+            fixed
             prop="endDate"
             label="结束日期"
-            width="90px"
-          />
-          <el-table-column
-            prop="userName"
-            label="填报人"
-            width="80px"
-          />
-
+            align="center"
+            header-align="center"
+          >
+            <template slot-scope="scope">
+              {{ dateFormat2(scope.row.endDate) }}
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="self-box3" />
@@ -140,126 +133,51 @@ export default {
       tableData: [],
       searchForm: {
         proType: 1,
-        proCodeKeyWord: '',
         proNameKeyWord: '',
-        proText:'',
-        startDateStr: '',
-        userNameKeyWord: '',
-        workNumberKeyWord: '',
-        userText:''
+        proCodeKeyWord: '',
+        dateStr: ''
       },
       buttonDisabled: false,
       searchDate: '',
       nextWeekBtnEdit: true,
-      searchWeekStr: '',
-      spanArr: []
+      searchWeekStr: ''
     }
   },
   mounted() {
-      this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - (new Date().getDay()+3)*24*60*60*1000)
-      this.getList()
+    this.ids = this.$route.query.ids
+    this.searchWeekStr = this.currentWeek()
+    this.nextWeekBtnEdit = false
+    // this.getList()
+    // const week = new Date().getDay()
+    // if (week !== 2 && week !== 3) {
+    //   this.buttonDisabled = true
+    // } else {
+    //   this.buttonDisabled = false
+    // }
   },
   methods: {
-    userClear(){
-      this.searchForm.userText = ''
-      this.searchForm.userNameKeyWord = ''
-      this.searchForm.workNumberKeyWord = ''
-    },
-    proClear(){
-      this.searchForm.proNameKeyWord = ''
-      this.searchForm.proCodeKeyWord = ''
-      this.searchForm.proText = ''
-    },
-    getSpanArr(data) {
-      console.log(data,'data')
-      for (var i = 0; i < data.length; i++) {
-        if (i === 0) {
-          this.spanArr.push(1)
-          this.pos = 0
-        } else {
-          // 判断当前元素与上一个元素是否相同
-          if (data[i].proCode === data[i - 1].proCode) {
-            this.spanArr[this.pos] += 1
-            this.spanArr.push(0)
-          } else {
-            this.spanArr.push(1)
-            this.pos = i
-          }
-        }
-        console.log(this.spanArr)
-      }
-    },
-    objectSpanMethod: function({ row, column, rowIndex, columnIndex }) {
-      // || columnIndex === 1 || columnIndex === 2
-      if (columnIndex === 0 || columnIndex === 1) {
-        const _row = this.spanArr[rowIndex]
-        const _col = _row > 0 ? 1 : 0
-        console.log(`rowspan:${_row} colspan:${_col}`)
-        return {
-          // [0,0] 表示这一行不显示， [2,1]表示行的合并数
-          rowspan: _row,
-          colspan: _col
-        }
-      }
-    },
     search() {
-      if(!this.searchForm.startDateStr){
-        this.$message.error('必须输入时间')
-        return
-      }
-      if(this.searchForm.proText){
-        if(escape(this.searchForm.proText).indexOf( "%u" ) > -1){
-          this.searchForm.proNameKeyWord = this.searchForm.proText
-          this.searchForm.proCodeKeyWord = ''
-        }else{
-          this.searchForm.proCodeKeyWord = this.searchForm.proText
-          this.searchForm.proNameKeyWord = ''
-        }
-      }
-      if(this.searchForm.userText){
-        if(isNaN(this.searchForm.userText)){
-          this.searchForm.userNameKeyWord = this.searchForm.userText
-          this.searchForm.workNumberKeyWord = ''
-        }else{
-          this.searchForm.workNumberKeyWord = this.searchForm.userText
-          this.searchForm.userNameKeyWord = ''
-        }
-      }
       this.getList()
     },
     getList() {
-      this.spanArr = []
-      this.tableData = []
-      weeklyProjectListAdmin(this.searchForm).then(res => {
-        const { status, data } = res
-        if (status === 200) {
-          var result = data
-          result.map((item) => {
-
-            item.proTypeText = '自揽项目'
-            item.startDate = this.dateFormat2(item.startDate)
-            item.endDate = this.dateFormat2(item.endDate)
-          })
-          this.$nextTick(()=>{
-            this.tableData = result
-            this.getSpanArr(this.tableData)
-            this.$forceUpdate()
-          })
-
-
-        }
-      })
+      // weeklySummary({ dateStr: this.searchWeekStr, proType: this.searchForm.proType, proNameKeyWord: this.searchForm.proNameKeyWord, proCodeKeyWord: this.searchForm.proCodeKeyWord }).then(res => {
+      //   const { status, data } = res
+      //   if (status === 200) {
+      //     var s = data
+      //     var list = []
+      //     s.map((item) => {
+      //       item.content = item.content.replace(/\。\<\/br\>/g, '<br/>')
+      //       item.keyPoint = item.keyPoint.replace(/\。\<\/br\>/g, '<br/>')
+      //       item.problem = item.problem.replace(/\。\<\/br\>/g, '<br/>')
+      //       list.push(item)
+      //     })
+      //     this.tableData = list
+      //   }
+      // })
     },
     listChange(e) {
-      // this.searchWeekStr = e
-      // this.getList()
-      if(new Date(e).getDay != 4){
-        this.$message.error('时间必须为周四')
-        this.searchForm.startDateStr = ''
-        return
-      }else{
-        this.searchForm.startDateStr = e
-      }
+      this.searchWeekStr = e
+      this.getList()
     },
     async saveList() {
       // 校验数据
@@ -291,31 +209,26 @@ export default {
         })
       }
     },
-    //上一周
     prevWeek() {
-      if(!this.searchForm.startDateStr){
-        this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - (new Date().getDay()+3)*24*60*60*1000)
-      }else{
-        this.searchForm.startDateStr = this.dateFormat2(new Date(this.searchForm.startDateStr).getTime() - 7*24*60*60*1000)
-      }
+      const prevWeekTemp = this.addDate(this.searchWeekStr, -7)
+      this.nextWeekBtnStatus(prevWeekTemp)
+      this.searchWeekStr = prevWeekTemp
       this.getList()
+    },
+    // 当前周
+    currentWeek() {
+      const weekTemp = this.dateFormat2(new Date())
+      this.nextWeekBtnStatus(weekTemp)
+      this.searchWeekStr = weekTemp
+      this.getList()
+      return this.searchWeekStr
     },
     // 下一周
     nextWeek() {
-      if(!this.searchForm.startDateStr){
-        this.$message.error('请输入起始时间')
-        return
-      }else{
-        var news = new Date().getTime() + 3*24*60*60*1000
-        if(new Date(this.searchForm.startDateStr).getTime() > news) {
-          this.$message.error('起始时间不能超过本周范围')
-          return
-        }else{
-          this.searchForm.startDateStr = this.dateFormat2(new Date(this.searchForm.startDateStr).getTime() + 7*24*60*60*1000)
-          this.getList()
-        }
-      }
-
+      const weekTemp = this.addDate(this.searchWeekStr, 7)
+      this.nextWeekBtnStatus(weekTemp)
+      this.searchWeekStr = weekTemp
+      this.getList()
     },
     // 设置 按钮状态
     nextWeekBtnStatus(weekTemp) {
@@ -387,40 +300,70 @@ export default {
       // } else {
       //   this.handleDownload2()
       // }
-      this.handleDownload2()
-      //this.handleDownload3()
+      // this.handleDownload2()
+      this.handleDownload3()
     },
     handleDownload3() {
       //  dateStr: this.searchWeekStr, proType: this.searchForm.proType, proNameKeyWord: this.searchForm.proNameKeyWord, proCodeKeyWord: this.searchForm.proCodeKeyWord
       window.open(process.env.VUE_APP_BASE_API + 'excel/downloadSummary?dateStr=' + this.searchWeekStr + '&proType=' + this.searchForm.proType) + '&proNameKeyWord=' + this.searchForm.proNameKeyWord + '&proCodeKeyWord=' + this.searchForm.proCodeKeyWord
     },
     async handleDownload2() {
-      this.$message.success('导出成功')
-      // this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const filterVal = [
-          'proName',
-          'proCode',
-          'proTypeText',
-          'problem',
-          'toBeSolve',
-          'content',
-          'keyPoint',
-          'startDate',
-          'endDate',
-          'userName'
-        ]
-        const tHeader = ['项目名称', '项目代码','项目类型','项目的问题', '需要室所领导、昝领导、总工解决的问题', '项目的进展情况', '下周工作安排', '起始日期','结束日期','填报人']
-        const data = this.formatJson(filterVal, this.tableData)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'Report',
-          autoWidth: this.autoWidth,
-          bookType: this.bookType
-        })
-        // this.downloadLoading = false
+      // 校验数据
+      let flag = true
+      this.tableData.forEach((row, index) => {
+        if (row.implementation === null || row.implementation === '' || row.implementation === undefined) {
+          flag = false
+        }
       })
+      if (!flag) {
+        this.$confirm('您还有上周调度会内容落实情况未填写, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          summaryListAdd(this.tableData).then(res => {
+            if (res.status === 200) {
+              this.$message.success('导出成功')
+              this.downloadLoading = true
+              import('@/vendor/Export2Excel').then(excel => {
+                const filterVal = ['proCode', 'proName', 'implementation', 'problem', 'keyPoint', 'prevTotalContent', 'content']
+                const tHeader = ['项目代码', '项目名称', '上周调度会内容落实情况', '调度会提纲内容', '工作重点提示', '上周调度会提纲内容', '工作情况']
+                const data = this.formatJson(filterVal, this.tableData)
+                excel.export_json_to_excel({
+                  header: tHeader,
+                  data,
+                  filename: 'totalReport',
+                  autoWidth: this.autoWidth,
+                  bookType: this.bookType
+                })
+                this.downloadLoading = false
+              })
+            }
+          })
+        }).catch(() => {
+
+        })
+      } else {
+        summaryListAdd(this.tableData).then(res => {
+          if (res.status === 200) {
+            this.$message.success('导出成功')
+            this.downloadLoading = true
+            import('@/vendor/Export2Excel').then(excel => {
+              const filterVal = ['proCode', 'proName', 'implementation', 'problem', 'keyPoint', 'prevTotalContent', 'content']
+              const tHeader = ['项目代码', '项目名称', '上周调度会内容落实情况', '调度会提纲内容', '工作重点提示', '上周调度会提纲内容', '工作情况']
+              const data = this.formatJson(filterVal, this.tableData)
+              excel.export_json_to_excel({
+                header: tHeader,
+                data,
+                filename: 'totalReport',
+                autoWidth: this.autoWidth,
+                bookType: this.bookType
+              })
+              this.downloadLoading = false
+            })
+          }
+        })
+      }
     },
     toText(HTML) {
       const input = HTML
@@ -500,7 +443,7 @@ export default {
     display: flex;
     display: inline-block\9;
     vertical-align: middle;
-    /* width:20%; */
+    width:20%;
     align-items: center;
   }
   .search-row-sel{

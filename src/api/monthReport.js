@@ -124,3 +124,16 @@ export function weeklyDelete(params) {
   })
 }
 
+//weekly/add/status?startDateStr=2020-05-04&proCode=CT102901
+/**
+ * 是否有周报
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function weeklyAddStatus(params) {
+  return request({
+    url: '/weekly/add/status',
+    method: 'post',
+    params
+  })
+}

@@ -508,7 +508,7 @@ export default {
     float: left;
   }
   .el-button-self{
-    width:152px;
+    /* width:152px; */
     float:right;
   }
 </style>

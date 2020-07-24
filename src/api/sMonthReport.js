@@ -86,3 +86,19 @@ export function excelDownloadSummary(data) {
   })
 }
 
+
+/**
+ * 周报列表
+ * @param params
+ * @returns {AxiosPromise}
+ *  /weekly/projectList/admin
+ */
+export function weeklyProjectListAdmin(params) {
+  return request({
+    url: '/weekly/projectList/admin',
+    method: 'get',
+    params
+  })
+}
+
+
