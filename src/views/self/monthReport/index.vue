@@ -367,11 +367,22 @@
     >
       <p style="width:100%;color:red">提示：没有显示需要的项目就根据项目编号或项目名称查询</p>
       <div class="self-box2" style="margin: 0">
-        <div class="search-row" style="width:25%;margin-right:0px">
+        <!-- <div class="search-row" style="width:25%;margin-right:0px">
           <div class="search-text" style="width: 80px">项目类型</div>
             <el-select v-model="proType" placeholder="请选择">
               <el-option
                 v-for="item in proObj"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+        </div> -->
+        <div class="search-row" style="width:25%;margin-right:0px">
+          <div class="search-text" style="width: 80px">是否参与</div>
+            <el-select v-model="isAll" placeholder="请选择">
+              <el-option
+                v-for="item in joinList"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -466,6 +477,16 @@ export default {
           label: '院控'
         }
       ],
+      joinList:[
+        {
+          value: 1,
+          label: '参与自揽项目'
+        },
+        {
+          value: 2,
+          label: '所有自揽项目'
+        }
+      ],
       proStatusObj: { 0: '停止', 1: '进行中' },
       pageSize: 10,
       pageNum: 1,
@@ -512,7 +533,8 @@ export default {
       proTypeFlag: '',
       proType:1,
       init:true,
-      editStatus:true
+      editStatus:true,
+      isAll:1
     }
   },
   mounted() {
@@ -863,13 +885,16 @@ export default {
     },
     getProjectList() {
       // 搜索条件
-      projectselectListnormal({
+      var data = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        proType: this.proType,
+        proType: 1,
         proCodeKeyWord: this.projectForm.searchProjectNo,
-        proNameKeyWord: this.projectForm.searchProjectName
-      }).then(res => {
+        proNameKeyWord: this.projectForm.searchProjectName,
+        isAll:this.isAll
+      }
+
+      projectselectListnormal(data).then(res => {
         if (res.status === 200) {
           this.projectDataList = res.data
           this.total = res.count
