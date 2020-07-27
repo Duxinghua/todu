@@ -84,13 +84,13 @@ export const constantRoutes = [
       path: 'index',
       name: 'MonthReport',
       component: () => import('@/views/self/monthReport/index'),
-      meta: { title: '周报', icon: 'dashboard' }
+      meta: { title: '自控周报', icon: 'dashboard' }
     },
     {
       path: 'selfindex',
       name: 'MonthReport',
       component: () => import('@/views/self/monthReport/selfindex'),
-      meta: { title: '自控周报', icon: 'dashboard' }
+      meta: { title: '未用周报', icon: 'dashboard' }
     },
     {
       path: 'projectList',

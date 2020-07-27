@@ -19,7 +19,7 @@
             >前一周</el-button>
           </div>
           <div class="search-row">
-            <div class="search-text" style="width:40px;text-align:left">时间</div>
+            <div class="search-text" style="width:80px;text-align:left">起始时间</div>
             <el-date-picker
               v-model="searchForm.startDateStr"
               type="date"
