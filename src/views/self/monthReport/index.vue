@@ -246,7 +246,7 @@
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
-              <h3>项目进展情况<span style="color:red;padding-left:10px">项目紧张情况 (重要时间节点安排，比如：项目启动、内容部署会、外部审查会、汇报会、勘测、文件送审、结题等)</span></h3>
+              <h3>项目进展情况<span style="color:red;padding-left:10px"> (重要时间节点安排，比如：项目启动、内容部署会、外部审查会、汇报会、勘测、文件送审、结题等)</span></h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.content" :height="editorHeight" :menubar="menubar" /> -->
                 <editor-bar v-model="weekForm.content" :isClear="isClear" @change="change1" />
@@ -613,6 +613,7 @@ export default {
     timeStartChange(e){
       if(!this.weekForm.proCode){
         this.$message.error('请选择项目')
+        this.weekForm.startDateStr = ''
         return
       }
       var time = new Date(e).getDay()
@@ -731,16 +732,29 @@ export default {
       //   this.$message.warning('请输入工作地点')
       //   return false
       // }
-      if (!this.weekForm.content) {
-        this.$message.warning('请输入工作工作情况')
+      if (!this.weekForm.proName) {
+        this.$message.warning('请选择项目')
         return false
       }
+      if (!this.weekForm.startDateStr) {
+        this.$message.warning('请输入周报起始时间')
+        return false
+      }
+      if (!this.weekForm.endDateStr) {
+        this.$message.warning('请输入周报结束时间')
+        return false
+      }
+      if (!this.weekForm.content) {
+        this.$message.warning('请输入项目进展情况')
+        return false
+      }
+
       if (!this.weekForm.problem) {
         this.$message.warning('请输入存在的问题')
         return false
       }
       if (!this.weekForm.keyPoint) {
-        this.$message.warning('请输入下步计划 / 工作重点提示')
+        this.$message.warning('请输入下周工作安排')
         return false
       }
       this.weekForm.useId = this.userId

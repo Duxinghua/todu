@@ -48,7 +48,7 @@
           </div>
         </div>
         <div class="search-button-fix">
-          <el-button type="primary" @click="saveList">保存</el-button>
+          <el-button type="primary" @click="saveList" style="display:none">保存</el-button>
           <el-button type="primary" @click="handleDownload">导出</el-button>
         </div>
       </div>
