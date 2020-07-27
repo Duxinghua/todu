@@ -447,7 +447,7 @@
 <script>
 import { personWeekList, weekDate, weekAdd, reportView, weekUpdate,projectListPersonx,weeklyDelete,weeklyAddStatus } from '@/api/monthReport'
 import EditorBar from '@/components/Edit.vue'
-import { projectList, projectRoleList } from '@/api/dayReportList'
+import { projectList, projectRoleList,projectselectListnormal } from '@/api/dayReportList'
 // import Tinymce from '@/components/Tinymce'
 export default {
   name: 'MonthReport',
@@ -863,7 +863,7 @@ export default {
     },
     getProjectList() {
       // 搜索条件
-      projectList({
+      projectselectListnormal({
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         proType: this.proType,

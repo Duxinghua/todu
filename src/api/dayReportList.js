@@ -136,4 +136,18 @@ export function dailyUpdate(data) {
   })
 }
 
+/**
+ * 修改配施日志 GET /project/selectList/normal/{type}
+ * @param params
+ * @returns {AxiosPromise}
+ */
+export function projectselectListnormal(params) {
+  return request({
+    url: '/project/selectList/normal/'+params.proType,
+    method: 'get',
+    params
+  })
+}
+
+
 /** ****通过项目查询 日汇报*******/
