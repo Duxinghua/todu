@@ -246,7 +246,7 @@
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
-              <h3>项目进展情况</h3>
+              <h3>项目进展情况<span style="color:red;padding-left:10px">项目紧张情况 (重要时间节点安排，比如：项目启动、内容部署会、外部审查会、汇报会、勘测、文件送审、结题等)</span></h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.content" :height="editorHeight" :menubar="menubar" /> -->
                 <editor-bar v-model="weekForm.content" :isClear="isClear" @change="change1" />
@@ -398,7 +398,7 @@
           <el-input v-model="projectForm.searchProjectNo" placeholder="请输入项目编码" :clearable="true" />
         </div>
         <div class="search-row" style="margin-left:auto">
-          <el-button type="primary" @click="getProjectList">查询</el-button>
+          <el-button type="primary" @click="handlerProjectList">查询</el-button>
         </div>
       </div>
       <el-table
@@ -786,10 +786,11 @@ export default {
       this.getProjectList()
     },
     handleTableChange(row) {
-      console.log(row)
-      this.proTypeFlag = row.proType
-      console.log(this.proTypeFlag)
-      this.selectedProject = row
+      if(row){
+        this.proTypeFlag = row.proType
+        console.log(this.proTypeFlag)
+        this.selectedProject = row
+      }
     },
     cellClick() {
 
@@ -805,7 +806,7 @@ export default {
       this.weekForm.proCode = this.selectedProject.proCode
       this.selectedProject = null
       // 调用获取角色的接口
-      await this.projectRoleList(this.weekForm.projectId)
+      //await this.projectRoleList(this.weekForm.projectId)
 
       this.projectDialogVisible = false
       this.radio = -1
@@ -825,7 +826,7 @@ export default {
     changeProject(val) {
       // 清空角色列表
       // this.weekForm.projectRoleId = ''
-      this.projectRoleList(val)
+      //this.projectRoleList(val)
     },
     async projectRoleList(val) {
       let result = {}
@@ -882,6 +883,12 @@ export default {
           this.currentEndDate = data.end
         }
       })
+    },
+    handlerProjectList () {
+      this.projectDataList = []
+      this.pageNum = 1
+      this.pageSize = 10
+      this.getProjectList()
     },
     getProjectList() {
       // 搜索条件

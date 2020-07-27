@@ -186,7 +186,6 @@
             value-format="yyyy-MM-dd"
             type="date"
             placeholder="请选择日期"
-            @blur="pageTo"
           />
         </div>
         <div class="search-row">
@@ -200,7 +199,6 @@
             value-format="yyyy-MM-dd"
             type="date"
             placeholder="请选择日期"
-            @blur="pageTo"
           />
         </div>
         <div class="search-row">
@@ -233,7 +231,7 @@
         border
         style="width: 100%"
         :height="tableHeightdialog"
-        :span-method="objectSpanMethod"
+        :span-method="subobjectSpanMethod"
         :fit="true"
         :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
       >
@@ -377,6 +375,7 @@ export default {
       this.logTotal = 0
     },
     getLogFrom() {
+      this.logpageNum = 1
       this.logtableData = []
       this.logspanArr = []
       if (!this.logFrom.logTimeStr) {
@@ -410,20 +409,22 @@ export default {
       dailyListAdminWorkNumber(data).then(res => {
         const { status, data, count } = res
         if (status === 200) {
-          var s = data
-          var list = []
-          s.map(item => {
-            item.busDailyList.map(sitem => {
-              sitem.deptId = item.deptId
-              sitem.deptName = item.deptName
-              sitem.logTime = this.dateFormat(sitem.logTime)
-              list.push(sitem)
-            })
-          })
-          this.$nextTick(() => {
+           this.$nextTick(() => {
+              var s = data
+              var list = []
+              s.map(item => {
+                item.busDailyList.map(sitem => {
+                  sitem.deptId = item.deptId
+                  sitem.deptName = item.deptName
+                  sitem.logTime = this.dateFormat(sitem.logTime)
+                  list.push(sitem)
+                })
+              })
+
             this.logtableData = list
-            this.getSpanArr(this.logtableData)
+            this.getSubSpanArr(this.logtableData)
             this.logTotal = count
+            this.$forceUpdate()
           })
         }
       })
@@ -432,6 +433,15 @@ export default {
       this.projectDialogVisible = false
     },
     worksearchForm() {
+      this.logpageNum = 1
+      this.logtableData = []
+      this.logspanArr = []
+      this.logpageSize = 7
+      this.logpageNum = 1
+      this.logTotal = 0
+      this.logFrom.logTimeStr = ''
+      this.logFrom.logTimeEndStr = ''
+      this.logFrom.job_text = ''
       this.projectDialogVisible = true
     },
     // 前一天
@@ -506,6 +516,37 @@ export default {
       // || columnIndex === 1 || columnIndex === 2
       if (columnIndex === 0) {
         const _row = this.spanArr[rowIndex]
+        const _col = _row > 0 ? 1 : 0
+        console.log(`rowspan:${_row} colspan:${_col}`)
+        return {
+          // [0,0] 表示这一行不显示， [2,1]表示行的合并数
+          rowspan: _row,
+          colspan: _col
+        }
+      }
+    },
+    getSubSpanArr(data) {
+      for (var i = 0; i < data.length; i++) {
+        if (i === 0) {
+          this.logspanArr.push(1)
+          this.pos = 0
+        } else {
+          // 判断当前元素与上一个元素是否相同
+          if (data[i].deptId === data[i - 1].deptId) {
+            this.logspanArr[this.pos] += 1
+            this.logspanArr.push(0)
+          } else {
+            this.logspanArr.push(1)
+            this.pos = i
+          }
+        }
+        console.log(this.logspanArr)
+      }
+    },
+    subobjectSpanMethod: function({ row, column, rowIndex, columnIndex }) {
+      // || columnIndex === 1 || columnIndex === 2
+      if (columnIndex === 0) {
+        const _row = this.logspanArr[rowIndex]
         const _col = _row > 0 ? 1 : 0
         console.log(`rowspan:${_row} colspan:${_col}`)
         return {
