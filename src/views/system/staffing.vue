@@ -672,7 +672,8 @@ export default {
     },
     // 加载用户列表
     async getList() {
-      await AdminListPs({ pageNum: this.pageNum, pageSize: this.pageSize }).then(res => {
+
+      await AdminListPs({ deptId: this.searchDeptId,pageNum: this.pageNum, pageSize: this.pageSize }).then(res => {
         const {
           data, msg, status, count
         } = res

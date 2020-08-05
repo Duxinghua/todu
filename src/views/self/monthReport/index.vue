@@ -1116,6 +1116,7 @@ export default {
     float:left\9;
 
   }
+
   .self-box-card{
     border-top: 3px solid #20a0ff;
     height: 90px;
@@ -1266,5 +1267,10 @@ export default {
     .self-font-color-fix{
       margin:0px!important;
     }
+  }
+</style>
+<style>
+ .el-radio__inner{
+    border:2px solid #107cee
   }
 </style>
