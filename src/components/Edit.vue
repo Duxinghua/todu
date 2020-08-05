@@ -43,6 +43,7 @@ export default {
       // if (value !== this.editor.txt.html()) {
       //   this.editor.txt.html(this.value)
       // }
+
       if (!this.isChange) {
         this.editor.txt.html(this.value)
       }
