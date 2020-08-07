@@ -448,11 +448,10 @@ export default {
       })
     },
     toText(HTML) {
-      var input = HTML
-      input = input+''
+      const input = HTML
       if (input !== null && input !== undefined && input !== '') {
-        console.log(HTML)
-        return input.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ').replace(/[ ]|[&nbsp;]/g, '')
+        var s = input +''
+        return s.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ').replace(/[ ]|[&nbsp;]/g, '')
       } else {
         return ''
       }
