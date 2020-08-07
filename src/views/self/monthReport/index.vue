@@ -390,7 +390,7 @@
             </el-select>
         </div> -->
         <div class="search-row" style="width:25%;margin-right:0px">
-          <div class="search-text" style="width: 80px">插叙范围</div>
+          <div class="search-text" style="width: 80px">查询范围</div>
             <el-select v-model="isAll" placeholder="请选择">
               <el-option
                 v-for="item in joinList"
