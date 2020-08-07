@@ -81,6 +81,11 @@
           </el-table-column>
           <el-table-column
             fixed
+            prop="leaderName"
+            label="主管总工"
+          />
+          <el-table-column
+            fixed
             prop="problem"
             label="项目存在的问题"
             align="center"
@@ -231,6 +236,12 @@
             <el-row :gutter="20" class="mon-el-row">
             <span style="color:red">提示:上周四至本周三为一周</span>
             </el-row>
+            <el-row :gutter="20" class="mon-el-row">
+              <el-col :span="24" class="self-input-box" style="margin-right:10px">
+                <div class="self-title">主管总工</div>
+                <el-input v-model="weekForm.leaderName"  placeholder="请输入主管总工" size="small" class="self-input" />
+              </el-col>
+              </el-row>
             <el-row style="margin-top: 10px">
               <h3>项目存在问题</h3>
               <div style="width: 100%;">
@@ -379,7 +390,7 @@
             </el-select>
         </div> -->
         <div class="search-row" style="width:25%;margin-right:0px">
-          <div class="search-text" style="width: 80px">是否参与</div>
+          <div class="search-text" style="width: 80px">插叙范围</div>
             <el-select v-model="isAll" placeholder="请选择">
               <el-option
                 v-for="item in joinList"
@@ -742,6 +753,10 @@ export default {
       }
       if (!this.weekForm.endDateStr) {
         this.$message.warning('请输入周报结束时间')
+        return false
+      }
+      if (!this.weekForm.endDateStr) {
+        this.$message.warning('请输入主管总工')
         return false
       }
       if (!this.weekForm.content) {

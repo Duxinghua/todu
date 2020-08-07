@@ -125,6 +125,16 @@
             label="填报人"
             width="80px"
           />
+          <el-table-column
+            prop="deptName"
+            label="室所"
+            width="80px"
+          />
+          <el-table-column
+            prop="leaderName"
+            label="主管总工"
+            width="80px"
+          />
 
         </el-table>
       </div>
@@ -239,13 +249,20 @@ export default {
         if (status === 200) {
           var result = data
           result.map((item) => {
-
             item.proTypeText = '自揽项目'
             item.startDate = this.dateFormat2(item.startDate)
             item.endDate = this.dateFormat2(item.endDate)
           })
+          var list = []
+          var a = 1
+          for(var i in result){
+            var obj = result[i]
+            obj.proIndex = a++
+            list.push(obj)
+          }
+
           this.$nextTick(()=>{
-            this.tableData = result
+            this.tableData = list
             this.getSpanArr(this.tableData)
             this.$forceUpdate()
           })
@@ -399,10 +416,12 @@ export default {
       window.open(process.env.VUE_APP_BASE_API + 'excel/downloadSummary?dateStr=' + this.searchWeekStr + '&proType=' + this.searchForm.proType) + '&proNameKeyWord=' + this.searchForm.proNameKeyWord + '&proCodeKeyWord=' + this.searchForm.proCodeKeyWord
     },
     async handleDownload2() {
+      var datas = this.tableData
       this.$message.success('导出成功')
       // this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const filterVal = [
+          'proIndex',
           'proName',
           'proCode',
           'proTypeText',
@@ -412,9 +431,11 @@ export default {
           'keyPoint',
           'startDate',
           'endDate',
-          'userName'
+          'userName',
+          'deptName',
+          'leaderName'
         ]
-        const tHeader = ['项目名称', '项目代码','项目类型','项目的问题', '需要室所领导、昝领导、总工解决的问题', '项目的进展情况', '下周工作安排', '起始日期','结束日期','填报人']
+        const tHeader = ['序号','项目名称', '项目代码','项目类型','项目的问题', '需要室所领导、昝领导、总工解决的问题', '项目的进展情况', '下周工作安排', '起始日期','结束日期','填报人','室所','主管总工']
         const data = this.formatJson(filterVal, this.tableData)
         excel.export_json_to_excel({
           header: tHeader,
@@ -427,9 +448,11 @@ export default {
       })
     },
     toText(HTML) {
-      const input = HTML
+      var input = HTML
+      input = input+''
       if (input !== null && input !== undefined && input !== '') {
-        return input.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ')
+        console.log(HTML)
+        return input.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ').replace(/[ ]|[&nbsp;]/g, '')
       } else {
         return ''
       }
