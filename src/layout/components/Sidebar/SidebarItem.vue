@@ -1,7 +1,6 @@
 <template>
   <div v-if="!item.hidden">
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
-
       <app-link :to="resolvePath(item.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest,'is-active':activeMenu(item)}" style="padding-left: calc(50% - 50px);">
           <div class="self-item">
@@ -95,6 +94,8 @@ export default {
       return false
     },
     resolvePath(routePath) {
+      console.log(this.$store.state.app.device, 'device')
+      console.log(routePath, 'routePath')
       if (isExternal(routePath)) {
         return routePath
       }
@@ -133,4 +134,10 @@ export default {
     background-color: rgb(42,106,240);
     color: white;
   }
+    @media only screen and (max-width: 768px){
+      .el-menu-item, .el-submenu__title{
+        height: auto!important;
+        line-height: 1!important;
+      }
+    }
 </style>

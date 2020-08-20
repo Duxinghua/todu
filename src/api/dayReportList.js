@@ -143,11 +143,10 @@ export function dailyUpdate(data) {
  */
 export function projectselectListnormal(params) {
   return request({
-    url: '/project/selectList/normal/'+params.proType,
+    url: '/project/selectList/normal/' + params.proType,
     method: 'get',
     params
   })
 }
-
 
 /** ****通过项目查询 日汇报*******/

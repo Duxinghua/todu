@@ -119,12 +119,12 @@ export function projectListPersonx(params) {
  */
 export function weeklyDelete(params) {
   return request({
-    url: '/weekly/delete/'+params.id,
+    url: '/weekly/delete/' + params.id,
     method: 'delete'
   })
 }
 
-//weekly/add/status?startDateStr=2020-05-04&proCode=CT102901
+// weekly/add/status?startDateStr=2020-05-04&proCode=CT102901
 /**
  * 是否有周报
  * @param params

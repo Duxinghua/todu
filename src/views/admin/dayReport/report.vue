@@ -46,7 +46,7 @@
         <div class="search-row search-row-btn-s">
           <el-button type="primary" @click="noRepertForm">未填报人员查询</el-button>
         </div>
-        <div v-if="searchRowTxt" class="search-row search-row-txt" >
+        <div v-if="searchRowTxt" class="search-row search-row-txt">
           当前查询条件(起始时间:{{ form.searchstartDate }},结束时间:{{ form.searchendDate }},室所:{{ searchProjectName }},工号或姓名:{{ form.proName_Num }})
         </div>
         <div class="search-row search-row-btn-fix">
@@ -194,7 +194,7 @@
           <el-input v-model="form.proName_Num" placeholder="请输入工号或者姓名" class="self-input" />
         </el-form-item>
         <el-form-item class="self-input-box" label="室所">
-          <el-select v-model="form.searchProject" @change="optionChange" clearable placeholder="请选择部门" class="el-select-f">
+          <el-select v-model="form.searchProject" clearable placeholder="请选择部门" class="el-select-f" @change="optionChange">
             <el-option
               v-for="project in projectList"
               :key="project.id"
@@ -214,7 +214,7 @@
 </template>
 
 <script>
-import { admindeptlist, dailyListAdmin, statisticsDaily, statisticsDailyDept,statisticsDailyNoReport } from '@/api/sDayReport'
+import { admindeptlist, dailyListAdmin, statisticsDaily, statisticsDailyDept, statisticsDailyNoReport } from '@/api/sDayReport'
 export default {
   name: 'DayReport',
   data() {
@@ -465,17 +465,17 @@ export default {
         this.getStatisticsDaily()
       } else if (this.searchType == 2) {
         this.getstatisticsDailyDept()
-      } else if(this.searchType == 3) {
+      } else if (this.searchType == 3) {
         this.getstatisticsDailyNoReport()
       }
       this.editProjectFormVisible = false
       this.searchRowTxt = true
     },
     accMul(arg1, arg2) {
-      var m=0,s1=arg1.toString(),s2=arg2.toString();
-      try{m+=s1.split(".")[1].length}catch(e){}
-      try{m+=s2.split(".")[1].length}catch(e){}
-      return Number(s1.replace(".",""))*Number(s2.replace(".",""))/Math.pow(10,m)
+      var m = 0; var s1 = arg1.toString(); var s2 = arg2.toString()
+      try { m += s1.split('.')[1].length } catch (e) {}
+      try { m += s2.split('.')[1].length } catch (e) {}
+      return Number(s1.replace('.', '')) * Number(s2.replace('.', '')) / Math.pow(10, m)
     },
     showReport() {
       this.drawer = true
@@ -536,7 +536,7 @@ export default {
         endDateStr: this.form.searchendDate,
         deptId: this.form.searchProject
       }).then((result) => {
-        let { code, data} = result
+        const { code, data } = result
         if (code == 200) {
           that.tableData = data
         }

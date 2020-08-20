@@ -1,7 +1,7 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <div v-if="device==='mobile'&&true" class="drawer-bg" @click="handleClickOutside" />
-    <sidebar class="sidebar-container" />
+    <div v-if="mbShow" class="drawer-bg" @click="handleClickOutside" />
+    <sidebar v-if="sidemenuShow" class="sidebar-container" />
     <div class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
         <navbar />
@@ -23,11 +23,41 @@ export default {
     AppMain
   },
   mixins: [ResizeMixin],
+  data() {
+    return {
+      diyshow: false
+    }
+  },
   computed: {
+    mbShow() {
+      if (this.device === 'mobile') {
+        if (this.$store.state.app.sidebar.opened) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }
+    },
+    sidemenuShow() {
+      if (this.device === 'mobile') {
+        if (this.$store.state.app.sidebar.opened) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return true
+      }
+    },
     sidebar() {
       return this.$store.state.app.sidebar
     },
     device() {
+      if (this.$store.state.app.device == 'mobile') {
+
+      }
       return this.$store.state.app.device
     },
     fixedHeader() {
@@ -42,8 +72,26 @@ export default {
       }
     }
   },
+  mounted() {
+
+  },
   methods: {
+    getClientInfo() {
+      var userAgentInfo = navigator.userAgent
+      var Agents = new Array('Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod')
+      var agentinfo = null
+      for (var i = 0; i < Agents.length; i++) {
+        if (userAgentInfo.indexOf(Agents[i]) > 0) { agentinfo = userAgentInfo; break }
+      }
+      if (agentinfo) {
+        return false
+      } else {
+        return true
+      }
+    },
     handleClickOutside() {
+      console.log(2, this.sidebar.opened, 'opened')
+
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     }
   }
@@ -91,4 +139,7 @@ export default {
   .mobile .fixed-header {
     width: 100%;
   }
+   @media only screen and (max-width: 768px){
+     .sidebar-container{width:200px!important;}
+   }
 </style>

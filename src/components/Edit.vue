@@ -1,22 +1,14 @@
 <template lang="html">
   <div class="editor">
-    <div ref="toolbar" class="toolbar"> </div>
-    <div ref="editor" class="text"> </div>
+    <div ref="toolbar" class="toolbar" />
+    <div ref="editor" class="text" />
   </div>
 </template>
 
 <script>
 import E from 'wangeditor'
 export default {
-  name: 'editoritem',
-  data() {
-    return {
-      // uploadPath,
-      editor: null,
-      info_: null,
-      isChange: false
-    }
-  },
+  name: 'Editoritem',
   model: {
     prop: 'value',
     event: 'change'
@@ -29,6 +21,14 @@ export default {
     isClear: {
       type: Boolean,
       default: false
+    }
+  },
+  data() {
+    return {
+      // uploadPath,
+      editor: null,
+      info_: null,
+      isChange: false
     }
   },
   watch: {

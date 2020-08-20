@@ -1,5 +1,10 @@
 <template>
   <el-breadcrumb class="app-breadcrumb" separator="/">
+
+    <el-breadcrumb-item v-if="show">
+      <span @click="mobileHandler">菜单</span>
+    </el-breadcrumb-item>
+
     <transition-group name="breadcrumb">
       <el-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
         <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" class="no-redirect">{{ item.meta.title }}</span>
@@ -18,6 +23,15 @@ export default {
       levelList: null
     }
   },
+  computed: {
+    show() {
+      if (this.$store.state.app.device === 'mobile') {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
   watch: {
     $route() {
       this.getBreadcrumb()
@@ -26,7 +40,14 @@ export default {
   created() {
     this.getBreadcrumb()
   },
+  mounted() {
+
+  },
   methods: {
+    mobileHandler() {
+      console.log('1')
+      this.$store.dispatch('app/toggleSideBar')
+    },
     getBreadcrumb() {
       // only show routes with meta.title
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
@@ -52,6 +73,7 @@ export default {
       return toPath(params)
     },
     handleLink(item) {
+      console.log(item)
       const { redirect, path } = item
       if (redirect) {
         this.$router.push(redirect)

@@ -1,15 +1,15 @@
 <template>
   <div class="self-container">
     <div class="self-box">
-      <div class="self-box2">
+      <div class="self-box2 self-box2-mobile">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">个人资料</div>
+        <div class="self-container-title">个人资料</div>
       </div>
       <div class="self-box2">
         <el-row style="width: 100%">
           <!--左边表单-->
-          <el-col :span="12" style="margin:20px 20px 0 20px;">
+          <el-col :span="12" class="self-box2-col">
             <el-form
               ref="editForm"
               :model="userForm"
@@ -53,15 +53,15 @@
                 </el-select>
               </el-form-item>
             </el-form>
-            <div ref="buttonDiv" style="text-align: center;margin-top: 80px;display: none">
+            <div ref="buttonDiv" class="buttondiv">
               <el-button @click="handleCancelEdit()">取 消</el-button>
               <el-button type="primary" @click="commitUser()">提交</el-button>
             </div>
           </el-col>
           <!--右边表单-->
-          <el-col :span="10">
+          <el-col :span="10" class="el-col-avatar-info">
             <el-row>
-              <el-col style="text-align: center;display: flex;align-items: center;justify-content: center;">
+              <el-col class="el-avatar-col">
                 <el-avatar :size="150" icon="el-icon-user self-font-color" style="font-size: 50px;background: aliceblue;" />
               </el-col>
             </el-row>
@@ -96,9 +96,9 @@
       :show-close="false"
       :destroy-on-close="true"
       :wrapper-closable="false"
-      class="self-drawer"
+      class="self-drawer mobile-self-drawer"
     >
-      <div slot="title" style="font-size: 20px">修改密码</div>
+      <div slot="title" class="self-drawer-title">修改密码</div>
       <el-form ref="passwordForm" :model="passwordForm" :rules="updatePwdRules">
         <el-form-item label="原密码" label-width="80px" prop="oldPassword">
           <el-input v-model="passwordForm.oldPassword" size="normal" autocomplete="off" placeholder="请输入原密码" show-password />
@@ -331,6 +331,9 @@ export default {
 </script>
 
 <style scoped>
+.buttondiv{
+text-align: center;margin-top: 80px;display: none
+}
   .self-container{
     padding: 10px 10px 10px 0;
     display: flex;
@@ -396,6 +399,102 @@ export default {
   .self-drawer .el-form{
 
     padding: 20px ;box-sizing: border-box
+  }
+  .self-container-title{
+      font-size: 30px;
+      padding-left: 30px;
+      font-weight: bold
+  }
+  .el-avatar-col{
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+  .self-drawer-title{
+    font-size:20px;
+  }
+  @media only screen and (max-width: 768px){
+    .self-box{
+      width:100%;
+    }
+    .self-container-title{
+      font-size: 16px;
+      padding-left: 30px;
+      font-weight: bold
+    }
+    .self-box2-mobile{
+      margin-bottom: 0px!important;
+    }
+    .self-box{
+      padding:0 15px!important;
+    }
+    .self-box3 .el-table__body,
+    .self-box3 .el-table__header{
+      width:100%!important;
+    }
+    .self-box .el-input{
+      width:fit-content!important;
+    }
+    .el-pagination__sizes{
+      width:130px;
+    }
+    .el-select{
+      width:200px!important;
+    }
+    .self-box2-col{
+      margin:20px 20px 0 20px;
+      width:100%;
+    }
+    .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
+      margin-bottom:14px;
+
+    }
+    .el-form-item--mini .el-form-item__content, .el-form-item--mini .el-form-item__label{
+      line-height:40px;
+    }
+    .el-input__inner{
+      line-height:40px;
+      height:40px;
+    }
+    .el-avatar-col span{
+      width:80px!important;
+      height:80px!important;
+      line-height:80px!important;
+    }
+    .el-col-avatar-info{
+      display:flex;
+      flex-direction:row;
+      width:100%;
+      justify-content: center;
+    }
+    .el-col-avatar-info .el-row:nth-child(3),
+    .el-col-avatar-info .el-row:nth-child(2),
+    .el-col-avatar-info .el-row:nth-child(1){
+      display:none;
+    }
+     .el-col-avatar-info .el-row:nth-child(4){
+       margin-right:0.5rem;
+     }
+    .buttondiv{
+        text-align: center;
+        margin-top: 0.80rem!important;
+        display: none;
+        margin:0 auto;
+    }
+    .mobile-self-drawer .el-drawer{
+      width:75%!important;
+    }
+    .self-drawer-title{
+        font-size:0.3rem;
+    }
+    .mobile-self-drawer .el-drawer__header{
+      margin-bottom:0px !important;
+    }
+    .self-drawer .el-form-item{
+      padding:0px!important;
+    }
+
   }
 
 </style>

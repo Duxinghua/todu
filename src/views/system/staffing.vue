@@ -82,6 +82,7 @@
               </el-col>
               <el-col :span="12" class="el-col-wrap">
                 <div class="el-button-fix">
+                <el-button style="cursor:pointer;margin-right:5px;" size="mini" type="primary" @click="addPersonView()">添加配施人员</el-button>
                   <el-button style="cursor:pointer;margin-right:5px;" size="mini" type="primary" @click="downloadTemp()">下载导入模板</el-button>
                   <el-upload
                     v-loading.fullscreen.lock="fullscreenLoading"
@@ -391,39 +392,131 @@
         </div>
       </el-dialog>
 
-      <!-- 新增部门对话框 -->
-      <!--      <el-drawer-->
-      <!--        ref="addDeptDrawer"-->
-      <!--        :visible.sync="addDeptVisible"-->
-      <!--        direction="rtl"-->
-      <!--        :show-close="false"-->
-      <!--        :wrapper-closable="false"-->
-      <!--        size="30%"-->
-      <!--      >-->
-      <!--        <div slot="title" style="font-size: 20px">新增部门</div>-->
-      <!--        <el-form ref="addForm" :model="deptForm" :rules="rules">-->
-      <!--          <el-form-item prop="deptName">-->
-      <!--            <el-input v-model="deptForm.deptName" size="normal" placeholder="部门名称" autocomplete="off" />-->
-      <!--          </el-form-item>-->
-      <!--          <el-form-item>-->
-      <!--            <el-cascader-->
-      <!--              v-model="deptForm.pid"-->
-      <!--              style="width: 100%"-->
-      <!--              placeholder="请选择上级部门"-->
-      <!--              :options="deptTree"-->
-      <!--              :show-all-levels="showAllLevels"-->
-      <!--              :disabled="cascaderDisabled"-->
-      <!--              :props="{ checkStrictly: true,emitPath:false,expandTrigger:'hover',value:'id',label:'label'}"-->
-      <!--              clearable-->
-      <!--            />-->
-      <!--          </el-form-item>-->
-      <!--        </el-form>-->
+      <!-- 新增配施人员 -->
+      <el-dialog
+        title="提示"
+        :visible.sync="dialogVisible"
+        width="80%"
+      >
+        <div class="header-search">
+                <div class="search-row">
+                <div class="search-text" style="width:40px">室所</div>
+                <el-select v-model="searchDeptId" placeholder="请选择项目" :clearable="true" @clear="clearDept">
+                  <el-option label="请选择室所" :value="0" disabled />
+                  <el-option
+                    v-for="(item,key) in deptList"
+                    :key="key"
+                    :label="item.deptName"
+                    :value="item.id"
+                  />
+                </el-select>
+              </div>
+              <div class="search-row">
+                <div class="search-text" style="width: 140px">工号或姓名</div>
+                <el-input v-model="workNumberKeyWord" :clearable="true" />
+              </div>
+              <!-- <div class="search-row">
+                <div class="search-text" style="width: 40px">姓名</div>
+                <el-input v-model="userNameKeyWord" :clearable="true" />
+              </div> -->
+              <div class="search-row">
+                <el-button type="primary" @click="searchForm">查询</el-button>
+              </div>
+              <div class="search-row search-row-margin">
+                <el-button type="primary" @click="searchForm">确定添加</el-button>
+              </div>
+        </div>
+        <div class="personview">
+          <div class="left">
+            <el-table
+              v-loading="loading"
+              :data="personListData"
+              style="width: 100%; margin-top:20px;"
+              tooltip-effect="dark"
+              :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+              @selection-change="handleSelectionChange"
+            >
+              <el-table-column
+                header-align="center"
+                align="center"
+                type="selection"
+                width="55"
+              />
+              <el-table-column
+                prop="workNumber"
+                label="工号"
+                align="center"
+              />
+              <el-table-column
+                prop="userName"
+                label="姓名"
+                align="center"
+              />
+              <el-table-column
+                prop="deptName"
+                label="室所"
+                align="center"
+              />
+              <el-table-column
+                prop="operate"
+                label="操作"
+                align="center"
+              >
+                <template slot-scope="scope">
 
-      <!--        <div style="text-align: left;margin-left: 25px;margin-top: 50px;">-->
-      <!--          <el-button size="normal" @click="cancelDeptForm">取 消</el-button>-->
-      <!--          <el-button size="normal" type="primary" :loading="loading" @click="commitDept()">{{ loading ? '提交中 ...' : '确 定' }}</el-button>-->
-      <!--        </div>-->
-      <!--      </el-drawer>-->
+                  <el-button type="primary" @click="addPerson(scope.row)">编辑</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+             <div class="right">
+            <el-table
+              v-loading="loading"
+              :data="personListData"
+              style="width: 100%; margin-top:20px;"
+              tooltip-effect="dark"
+              :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+              @selection-change="handleSelectionChange"
+            >
+              <el-table-column
+                header-align="center"
+                align="center"
+                type="selection"
+                width="55"
+              />
+              <el-table-column
+                prop="workNumber"
+                label="工号"
+                align="center"
+              />
+              <el-table-column
+                prop="userName"
+                label="姓名"
+                align="center"
+              />
+              <el-table-column
+                prop="deptName"
+                label="室所"
+                align="center"
+              />
+              <el-table-column
+                prop="operate"
+                label="操作"
+                align="center"
+              >
+                <template slot-scope="scope">
+
+                  <el-button type="primary" @click="addPerson(scope.row)">编辑</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
   </div>
 
@@ -515,7 +608,9 @@ export default {
       timer: null,
       loading: false,
       deptTree: [],
-      fullscreenLoading: false
+      fullscreenLoading: false,
+      dialogVisible: false,
+      personListData:[]
     }
   },
   watch: {
@@ -557,6 +652,15 @@ export default {
   },
 
   methods: {
+    addPerson(item){
+
+    },
+    handleSelectionChange(e){
+
+    },
+    addPersonView(){
+      this.dialogVisible = true
+    },
     onprogress(e) {
       this.fullscreenLoading = true
     },
@@ -672,8 +776,7 @@ export default {
     },
     // 加载用户列表
     async getList() {
-
-      await AdminListPs({ deptId: this.searchDeptId,pageNum: this.pageNum, pageSize: this.pageSize }).then(res => {
+      await AdminListPs({ deptId: this.searchDeptId, pageNum: this.pageNum, pageSize: this.pageSize }).then(res => {
         const {
           data, msg, status, count
         } = res
@@ -998,7 +1101,27 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.header-search{
+  display: flex;
+  flex-direction: row;
+  .search-row-margin{
+    margin-left:auto;
+    margin-right:0px!important;
+  }
+}
+.personview{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  .left{
+    width:45%
+  }
+  .right{
+    width:45%;
+  }
+}
 .el-col-wrap{
   padding-top:15px;
   padding-bottom: 15px;

@@ -2,7 +2,7 @@
   <div class="navbar">
     <breadcrumb class="breadcrumb-container" />
 
-    <div class="right-menu" style="width: 240px">
+    <div class="right-menu">
       <div class="user-box">
         <div class="user-row">
           <div class="user-img">
@@ -104,6 +104,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@media only screen and (max-width: 768px) {
+  .navbar .right-menu{
+    width:3.5rem!important;
+  }
+}
 .navbar {
   height: 50px;
   overflow: hidden;
@@ -132,7 +137,7 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
-
+    width:240px;
     &:focus {
       outline: none;
     }
@@ -211,6 +216,7 @@ export default {
     top:50%;
     margin-left:-25%;
     margin-top:-25%;
+    font-size: 16px;
   }
   .self-msg-tip{
     width: 8px;

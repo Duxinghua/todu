@@ -1,10 +1,10 @@
 <template>
   <div class="self-container">
     <div class="self-box">
-      <div class="self-box2">
+      <div class="self-box2 self-box2-top">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">配施日志</div>
+        <div class="self-container-title">配施日志</div>
       </div>
       <div class="self-box2 self-box2-fixed">
         <div class="search-row">
@@ -30,7 +30,7 @@
           <div class="search-text" style="width: 70px">项目名称</div>
           <el-input v-model="form.proNameKeyWord" placeholder="请输入关键词" />
         </div>
-        <div class="search-row">
+        <div class="search-row search-row-last2">
           <el-button type="primary" @click="searchForm">查询</el-button>
         </div>
 
@@ -50,8 +50,28 @@
           </el-card>
         </div>
         <div v-if="taskList.length == 0" class="tasknodata">暂无数据</div> -->
-
+        <div v-if="device === 'mobile'" class="mobilecardlist">
+          <el-card v-for="(item,index) in taskList" :key="index" class="mobile-box-card">
+            <div slot="header" class="header-title clearfix">
+              <span>操作</span>
+              <div class="op-btns">
+                <el-button type="text" size="small" @click="handleEdit(item)">编辑</el-button>
+                <el-button type="text" size="small" @click="handleDel(item)">删除</el-button>
+              </div>
+            </div>
+            <ul class="tasklist">
+              <li><span class="tasklabel">部门:</span><span class="taskvalue">{{ item.deptName }}</span></li>
+              <li><span class="tasklabel">工号:</span><span class="taskvalue">{{ item.workNumber }}</span></li>
+              <li><span class="tasklabel">姓名:</span><span class="taskvalue">{{ item.userName }}</span></li>
+              <li><span class="tasklabel">项目代码:</span><span class="taskvalue">{{ item.proCode }}</span></li>
+              <li><span class="tasklabel">项目名称:</span><span class="taskvalue">{{ item.proName }}</span></li>
+              <li><span class="tasklabel">日志内容:</span><span class="taskvalue" v-html="item.content" /></li>
+              <li><span class="tasklabel">结束日期:</span><span class="taskvalue">{{ item.logTime }}</span></li>
+            </ul>
+          </el-card>
+        </div>
         <el-table
+          v-if="device !== 'mobile'"
           :data="taskList"
           border
           style="width: 100%"
@@ -125,7 +145,7 @@
           :current-page="pageNum"
           :page-sizes="[10, 20, 50, 80, 200]"
           :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          :layout="autolayout"
           :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -140,7 +160,7 @@
       width="45%"
       size="45%"
       :show-close="false"
-      custom-class="self-drawer self-drawer-fix"
+      custom-class="self-drawer self-drawer-fix mobile-self-drawer"
     >
       <!--  :wrapper-closable="false"  -->
       <div slot="title">
@@ -150,7 +170,7 @@
         </div>
 
       </div>
-      <div slot="default" style="padding: 0 30px">
+      <div slot="default" class="defaultcontent" style="padding: 0 30px">
         <!-- <div style="position: absolute;left: 5px;top: 50%;width: 50px;height: 50px;cursor: pointer" @click="$refs.addDrawer.closeDrawer()">
           <el-icon class="el-icon-arrow-left" style="font-weight: bold" />
         </div> -->
@@ -175,7 +195,7 @@
             <el-row style="margin-top: 10px">
               <h3>当日工作内容</h3>
               <div class="reportwrap" style="width: 100%;">
-                <editor-bar v-model="reportForm.content" :isClear="isClear" @change="change" />
+                <editor-bar v-model="reportForm.content" :is-clear="isClear" @change="change" />
               </div>
             </el-row>
             <el-row style="margin-top: 20px">
@@ -195,22 +215,39 @@
       :destroy-on-close="true"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      custom-class="dialog-wrap-div"
     >
       <div style="color:red">提示：没有显示需要的项目就根据项目编号或项目名称查询</div>
-      <div class="self-box2" style="margin: 0">
-        <div class="search-row">
+      <div class="self-box2 " style="margin: 0">
+        <div class="search-row search-row-mobiles">
           <div class="search-text" style="width: 80px">项目名称</div>
           <el-input v-model="projectForm.searchProjectName" placeholder="请输入项目名称" :clearable="true" />
         </div>
-        <div class="search-row">
+        <div class="search-row search-row-mobiles">
           <div class="search-text" style="width: 80px">项目编码</div>
           <el-input v-model="projectForm.searchProjectNo" placeholder="请输入项目编码" :clearable="true" />
         </div>
-        <div class="search-row">
+        <div class="search-row search-row-mobiles">
           <el-button type="primary" @click="getProjectList">查询</el-button>
         </div>
       </div>
+      <div v-if="device === 'mobile'" class="listwrap">
+        <el-card v-for="(item,index) in projectDataList" :key="index" class="box-card">
+          <div slot="header" class="clearfix  cardheader">
+            <span class="r1">{{ index+1 }}</span>
+            <el-radio v-model="radio" :label="index" @change="handleTableChange(item)">选择</el-radio>
+          </div>
+          <ul class="itemlist">
+            <li><span>项目名称:</span><span>{{ item.proName }}</span></li>
+            <li><span>项目编码:</span><span>{{ item.proCode }}</span></li>
+            <li><span>项目类型:</span><span>{{ proTypeObj[item.proType] }}</span></li>
+            <li><span>项目状态:</span><span>{{ proStatusObj[item.proStatus] }}</span></li>
+            <li><span>创建时间:</span><span>{{ item.createTime | fmtdate }}</span></li>
+          </ul>
+        </el-card>
+      </div>
       <el-table
+        v-if="device !== 'mobile'"
         :data="projectDataList"
         highlight-current-row
         @current-change="handleTableChange"
@@ -251,7 +288,7 @@
         :current-page="projectpageNum"
         :page-sizes="[10,20,30,40, 50, 80, 200]"
         :page-size="projectpageSize"
-        layout="total, sizes, prev, pager, next, jumper"
+        :layout="autolayout"
         :total="propageTotal"
         style="padding: 30px 0"
         @size-change="proSizeChange"
@@ -331,6 +368,16 @@ export default {
     }
   },
   computed: {
+    autolayout() {
+      if (this.device === 'mobile') {
+        return 'total, sizes, prev, next'
+      } else {
+        return 'total, sizes, prev, pager, next, jumper'
+      }
+    },
+    device() {
+      return this.$store.state.app.device
+    },
     pickerOptions() {
       var _this = this
       return {
@@ -851,5 +898,158 @@ export default {
     margin-top:100px;
     font-size:14px;
     color:#999;
+  }
+  .self-container-title{
+    padding-left: 30px;font-weight: bold
+  }
+  @media only screen and (max-width: 768px){
+    .self-container-title{
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .self-box2-mobile{
+      margin-bottom: 0px!important;
+    }
+    .self-box2-top{
+      margin-bottom: 0px!important;
+    }
+    .self-box{
+      width:100%;
+    }
+    .self-box2-fixed{
+      flex-direction:row;
+      flex-wrap:wrap;
+    }
+    .self-box2-fixed .search-row{
+      width:100%;
+    }
+    .search-text{
+      text-align:left!important;
+    }
+    .self-box2-fixed .search-row-last2{
+      width:50%!important;
+      margin-right:0px!important;
+      margin-top:10px!important;
+    }
+    .search-row-btn-right{
+      width:50%!important;
+      margin-right:0px!important;
+      margin-top:10px!important;
+    }
+    .mobile-self-drawer{
+      width:100%!important;
+    }
+    .dayproName{
+      display:flex;
+      flex-direction:column!important;
+      width:100%;
+    }
+    .prowrap{
+      width:100%!important;
+      display:flex;
+      flex-direction:column!important;
+      margin-bottom:10px!important;
+    }
+    .defaultcontent{
+      padding:0px!important;
+      font-size:14px!important
+    }
+    .self-drawer-fix .el-dialog__header{
+      padding:20px 0px!important;
+    }
+    .daytitle{
+      display:flex;
+      flex-direction:column!important;
+    }
+    .daytitle h3{
+      text-align:left!important;
+      padding-right:5px!important;
+      width:100%!important;
+      margin:0px!important;
+      height:48px!important;
+      line-height:48px!important;
+    }
+    .daytitle .ep-timer,
+    .dayproName .el-input{
+      width:100%!important;
+    }
+    .prowrap .self-button{
+      top:85%!important;
+      transform: translateY(-88%)!important;
+    }
+    .self-drawer-fix .el-dialog__body{
+      padding-top:0px!important;
+    }
+    .dialog-wrap-div{
+      width:100%!important;
+    }
+    .dialog-wrap-div .self-box2{
+      display:flex;
+      flex-direction:column;
+    }
+    .search-row-mobiles{
+      width:100%!important;
+      margin-bottom:10px!important;
+      margin-right:0px!important;
+    }
+    .box-card{
+      margin-bottom:20px;
+    }
+    .itemlist{
+      padding-left:0px!important;
+    }
+    .itemlist li span:first-child{
+      font-weight:bold;
+      padding-right:0.2rem;
+    }
+    .cardheader{
+      display: flex;
+      flex-direction:row;
+      justify-content: space-between;
+    }
+    .cardheader .r1{
+      margin-right:auto;
+    }
+    .mobile-box-card,
+    .mobilecardlist{
+      display:flex;
+      flex-direction:column;
+    }
+    .mobile-box-card{
+      margin-bottom:20px;
+    }
+    .header-title,
+    .tasklist{
+      font-size:15px;
+      padding-left:0px;
+    }
+    .header-title{
+      display:flex;
+      flex-direction:row;
+      align-items:center;
+    }
+    .header-title span{
+      font-weight:bold;
+    }
+    .op-btns{
+      margin-left:auto;
+    }
+    .tasklist li{
+      padding-top:3px;
+      padding-bottom:3px;
+      display:flex;
+      flex-direction:row;
+      align-items:center;
+    }
+    .tasklist .tasklabel{
+      font-weight:bold;
+      width:80px;
+    }
+    .tasklist .taskvalue{
+      width:calc(100% - 80px);
+    }
+    .el-body-self h3{
+      font-size:15px;
+    }
   }
 </style>

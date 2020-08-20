@@ -86,7 +86,6 @@ export function excelDownloadSummary(data) {
   })
 }
 
-
 /**
  * 周报列表
  * @param params
@@ -100,5 +99,4 @@ export function weeklyProjectListAdmin(params) {
     params
   })
 }
-
 

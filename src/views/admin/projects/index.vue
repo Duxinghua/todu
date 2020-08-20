@@ -252,7 +252,7 @@
       </div>
       <el-form ref="editProjectForm" :model="projectForm" :rules="rules" label-position="right" label-width="80px">
         <el-form-item prop="proCode" class="self-input-box" label="项目编码">
-          <el-input v-model="projectForm.proCode" :readonly="true" placeholder="请输入项目代码" class="self-input" />
+          <el-input v-model="projectForm.proCode"  placeholder="请输入项目代码" class="self-input" />
 
         </el-form-item>
         <el-form-item prop="proName" class="self-input-box" label="项目名称">
@@ -690,6 +690,7 @@ export default {
     display: flex;
     min-height: calc(100vh - 50px);
     box-sizing: border-box;
+    font-size: 13px;
   }
   .self-input-box{
     display: flex;

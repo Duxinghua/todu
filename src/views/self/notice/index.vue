@@ -1,10 +1,10 @@
 <template>
   <div class="self-container">
     <div class="self-box">
-      <div class="self-box2">
+      <div class="self-box2 self-box2-mobile">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">公司公告</div>
+        <div class="self-container-title">公司公告</div>
       </div>
       <div v-if="role === 'admin'" class="self-box3" style="display: flex;justify-content: flex-end">
         <el-button style="float:right;" type="primary" size="mini" icon="el-icon-plus" @click="handleAdd()">添加公告</el-button>
@@ -185,11 +185,23 @@ export default {
     border-radius: 10px;
     left: 0;
   }
+  .self-container-title{
+    padding-left: 30px;
+    font-weight: bold
+  }
   .self-icon{
     font-weight: bold;font-size: 16px
   }
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
     .self-box{display: inline-block\9}
+  }
+  @media only screen and (max-width: 768px){
+    .self-container-title{
+      font-size: 16px;
+    }
+    .self-box2-mobile{
+      margin-bottom: 0px!important;
+    }
   }
 </style>
 <style>

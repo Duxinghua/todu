@@ -128,14 +128,14 @@
               <h3>工作情况</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="reportForm.content" :height="150" :menubar="menubar" /> -->
-                <editor-bar v-model="reportForm.content" :isClear="isClear" @change="change1" />
+                <editor-bar v-model="reportForm.content" :is-clear="isClear" @change="change1" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>下步计划</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="reportForm.plan" :height="150" :menubar="menubar" /> -->
-                <editor-bar v-model="reportForm.plan" :isClear="isClear" @change="change2" />
+                <editor-bar v-model="reportForm.plan" :is-clear="isClear" @change="change2" />
               </div>
             </el-row>
             <el-row style="margin-top: 20px">
@@ -209,14 +209,14 @@
               <h3>工作情况</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="reportForm.content" :height="150" :menubar="menubar" /> -->
-                <editor-bar v-model="reportForm.content" :isClear="isClear" @change="change1" />
+                <editor-bar v-model="reportForm.content" :is-clear="isClear" @change="change1" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>下步计划</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="reportForm.plan" :height="150" :menubar="menubar" /> -->
-                <editor-bar v-model="reportForm.content" :isClear="isClear" @change="change2" />
+                <editor-bar v-model="reportForm.content" :is-clear="isClear" @change="change2" />
               </div>
             </el-row>
             <el-row style="margin-top: 20px">
@@ -298,14 +298,14 @@
               <h3>工作情况</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="reportForm.content" :disabled-edit="!buttonDisabled" :height="150" :menubar="menubar" /> -->
-                <editor-bar v-model="reportForm.content" :isClear="isClear" @change="change1" />
+                <editor-bar v-model="reportForm.content" :is-clear="isClear" @change="change1" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>下步计划</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="reportForm.plan" :disabled-edit="!buttonDisabled" :height="150" :menubar="menubar" /> -->
-                <editor-bar v-model="reportForm.plan" :isClear="isClear" @change="change2" />
+                <editor-bar v-model="reportForm.plan" :is-clear="isClear" @change="change2" />
               </div>
             </el-row>
             <el-row style="margin-top: 20px">

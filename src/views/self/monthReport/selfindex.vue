@@ -148,28 +148,28 @@
               <h3>工作情况</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.content" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.content" :isClear="isClear" @change="change1" />
+                <editor-bar v-model="weekForm.content" :is-clear="isClear" @change="change1" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>存在的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.problem" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.problem" :isClear="isClear" @change="change2" />
+                <editor-bar v-model="weekForm.problem" :is-clear="isClear" @change="change2" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>下步计划  /  工作重点提示</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
+                <editor-bar v-model="weekForm.keyPoint" :is-clear="isClear" @change="change3" />
               </div>
             </el-row>
             <el-row v-if="proTypeFlag == 1" style="margin-top: 10px">
               <h3>需要室所领导、处领导、总工解决的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.toBeSolve" :isClear="isClear" @change="change4" />
+                <editor-bar v-model="weekForm.toBeSolve" :is-clear="isClear" @change="change4" />
               </div>
             </el-row>
             <!--            <el-row style="margin-top: 20px">-->
@@ -232,28 +232,28 @@
             <el-row style="margin-top: 10px">
               <h3>工作情况</h3>
               <div style="width: 100%;">
-                <editor-bar v-model="weekForm.content" :isClear="isClear" @change="change1" />
+                <editor-bar v-model="weekForm.content" :is-clear="isClear" @change="change1" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>存在的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.problem" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.problem" :isClear="isClear" @change="change2" />
+                <editor-bar v-model="weekForm.problem" :is-clear="isClear" @change="change2" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>工作重点提示</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
+                <editor-bar v-model="weekForm.keyPoint" :is-clear="isClear" @change="change3" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>需要室所领导、处领导、总工解决的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.toBeSolve" :isClear="isClear" @change="change4" />
+                <editor-bar v-model="weekForm.toBeSolve" :is-clear="isClear" @change="change4" />
               </div>
             </el-row>
             <!--            <el-row style="margin-top: 20px">-->

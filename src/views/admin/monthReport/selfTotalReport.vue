@@ -37,9 +37,9 @@
           </div>
           <div class="search-row search-row-type">
             <div class="search-text" style="width: 130px">项目名称或编码</div>
-            <el-input v-model="searchForm.proText" :clearable="true"   @clear="proClear"/>
+            <el-input v-model="searchForm.proText" :clearable="true" @clear="proClear" />
           </div>
-                    <div class="search-row search-row-type">
+          <div class="search-row search-row-type">
             <div class="search-text" style="width: 100px">姓名或工号</div>
             <el-input v-model="searchForm.userText" :clearable="true" @clear="userClear" />
           </div>
@@ -48,7 +48,7 @@
           </div>
         </div>
         <div class="search-button-fix">
-          <el-button type="primary" @click="saveList" style="display:none">保存</el-button>
+          <el-button type="primary" style="display:none" @click="saveList">保存</el-button>
           <el-button type="primary" @click="handleDownload">导出</el-button>
         </div>
       </div>
@@ -156,11 +156,11 @@ export default {
         proType: 1,
         proCodeKeyWord: '',
         proNameKeyWord: '',
-        proText:'',
+        proText: '',
         startDateStr: '',
         userNameKeyWord: '',
         workNumberKeyWord: '',
-        userText:''
+        userText: ''
       },
       buttonDisabled: false,
       searchDate: '',
@@ -170,22 +170,22 @@ export default {
     }
   },
   mounted() {
-      this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - (new Date().getDay()+3)*24*60*60*1000)
-      this.getList()
+    this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - (new Date().getDay() + 3) * 24 * 60 * 60 * 1000)
+    this.getList()
   },
   methods: {
-    userClear(){
+    userClear() {
       this.searchForm.userText = ''
       this.searchForm.userNameKeyWord = ''
       this.searchForm.workNumberKeyWord = ''
     },
-    proClear(){
+    proClear() {
       this.searchForm.proNameKeyWord = ''
       this.searchForm.proCodeKeyWord = ''
       this.searchForm.proText = ''
     },
     getSpanArr(data) {
-      console.log(data,'data')
+      console.log(data, 'data')
       for (var i = 0; i < data.length; i++) {
         if (i === 0) {
           this.spanArr.push(1)
@@ -217,24 +217,24 @@ export default {
       }
     },
     search() {
-      if(!this.searchForm.startDateStr){
+      if (!this.searchForm.startDateStr) {
         this.$message.error('必须输入时间')
         return
       }
-      if(this.searchForm.proText){
-        if(escape(this.searchForm.proText).indexOf( "%u" ) > -1){
+      if (this.searchForm.proText) {
+        if (escape(this.searchForm.proText).indexOf('%u') > -1) {
           this.searchForm.proNameKeyWord = this.searchForm.proText
           this.searchForm.proCodeKeyWord = ''
-        }else{
+        } else {
           this.searchForm.proCodeKeyWord = this.searchForm.proText
           this.searchForm.proNameKeyWord = ''
         }
       }
-      if(this.searchForm.userText){
-        if(isNaN(this.searchForm.userText)){
+      if (this.searchForm.userText) {
+        if (isNaN(this.searchForm.userText)) {
           this.searchForm.userNameKeyWord = this.searchForm.userText
           this.searchForm.workNumberKeyWord = ''
-        }else{
+        } else {
           this.searchForm.workNumberKeyWord = this.searchForm.userText
           this.searchForm.userNameKeyWord = ''
         }
@@ -255,30 +255,28 @@ export default {
           })
           var list = []
           var a = 1
-          for(var i in result){
+          for (var i in result) {
             var obj = result[i]
             obj.proIndex = a++
             list.push(obj)
           }
 
-          this.$nextTick(()=>{
+          this.$nextTick(() => {
             this.tableData = list
             this.getSpanArr(this.tableData)
             this.$forceUpdate()
           })
-
-
         }
       })
     },
     listChange(e) {
       // this.searchWeekStr = e
       // this.getList()
-      if(new Date(e).getDay() != 4){
+      if (new Date(e).getDay() != 4) {
         this.$message.error('时间必须为周四')
         this.searchForm.startDateStr = ''
         return
-      }else{
+      } else {
         this.searchForm.startDateStr = e
       }
     },
@@ -312,31 +310,30 @@ export default {
         })
       }
     },
-    //上一周
+    // 上一周
     prevWeek() {
-      if(!this.searchForm.startDateStr){
-        this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - (new Date().getDay()+3)*24*60*60*1000)
-      }else{
-        this.searchForm.startDateStr = this.dateFormat2(new Date(this.searchForm.startDateStr).getTime() - 7*24*60*60*1000)
+      if (!this.searchForm.startDateStr) {
+        this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - (new Date().getDay() + 3) * 24 * 60 * 60 * 1000)
+      } else {
+        this.searchForm.startDateStr = this.dateFormat2(new Date(this.searchForm.startDateStr).getTime() - 7 * 24 * 60 * 60 * 1000)
       }
       this.getList()
     },
     // 下一周
     nextWeek() {
-      if(!this.searchForm.startDateStr){
+      if (!this.searchForm.startDateStr) {
         this.$message.error('请输入起始时间')
         return
-      }else{
-        var news = new Date().getTime() + 3*24*60*60*1000
-        if(new Date(this.searchForm.startDateStr).getTime() > news) {
+      } else {
+        var news = new Date().getTime() + 3 * 24 * 60 * 60 * 1000
+        if (new Date(this.searchForm.startDateStr).getTime() > news) {
           this.$message.error('起始时间不能超过本周范围')
           return
-        }else{
-          this.searchForm.startDateStr = this.dateFormat2(new Date(this.searchForm.startDateStr).getTime() + 7*24*60*60*1000)
+        } else {
+          this.searchForm.startDateStr = this.dateFormat2(new Date(this.searchForm.startDateStr).getTime() + 7 * 24 * 60 * 60 * 1000)
           this.getList()
         }
       }
-
     },
     // 设置 按钮状态
     nextWeekBtnStatus(weekTemp) {
@@ -409,7 +406,7 @@ export default {
       //   this.handleDownload2()
       // }
       this.handleDownload2()
-      //this.handleDownload3()
+      // this.handleDownload3()
     },
     handleDownload3() {
       //  dateStr: this.searchWeekStr, proType: this.searchForm.proType, proNameKeyWord: this.searchForm.proNameKeyWord, proCodeKeyWord: this.searchForm.proCodeKeyWord
@@ -435,7 +432,7 @@ export default {
           'deptName',
           'leaderName'
         ]
-        const tHeader = ['序号','项目名称', '项目代码','项目类型','项目的问题', '需要室所领导、昝领导、总工解决的问题', '项目的进展情况', '下周工作安排', '起始日期','结束日期','填报人','室所','主管总工']
+        const tHeader = ['序号', '项目名称', '项目代码', '项目类型', '项目的问题', '需要室所领导、昝领导、总工解决的问题', '项目的进展情况', '下周工作安排', '起始日期', '结束日期', '填报人', '室所', '主管总工']
         const data = this.formatJson(filterVal, this.tableData)
         excel.export_json_to_excel({
           header: tHeader,
@@ -450,7 +447,7 @@ export default {
     toText(HTML) {
       const input = HTML
       if (input !== null && input !== undefined && input !== '') {
-        var s = input +''
+        var s = input + ''
         return s.replace(/<(style|script|iframe)[^>]*?>[\s\S]+?<\/\1\s*>/gi, '').replace(/<[^>]+?>/g, '').replace(/\s+/g, ' ').replace(/ /g, ' ').replace(/>/g, ' ').replace(/[ ]|[&nbsp;]/g, '')
       } else {
         return ''

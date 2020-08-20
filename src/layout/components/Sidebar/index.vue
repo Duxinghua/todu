@@ -1,5 +1,7 @@
 <template>
-  <div :class="{'has-logo':false}">
+  <div :class="{'has-logo':false,'has-fix':true}">
+
+    <el-button icon="el-icon-close" v-if="device === 'mobile'" circle style="border:none;" class="el-bu-fix" size="medium" @click="closeMenu" />
     <logo v-if="false" :collapse="true" />
     <div class="logo-box">
       <div class="logo-img" />
@@ -38,6 +40,7 @@ export default {
     ...mapGetters([
       'sidebar'
     ]),
+
     activeMenu() {
       const route = this.$route
       const { meta, path } = route
@@ -46,6 +49,9 @@ export default {
         return meta.activeMenu
       }
       return path
+    },
+    device() {
+      return this.$store.state.app.device
     },
     showLogo() {
       return this.$store.state.settings.sidebarLogo
@@ -57,7 +63,6 @@ export default {
       return !this.sidebar.opened
     }
   },
-
   mounted() {
     authorityTree().then(res => {
       // 用户权限 默认有首页
@@ -83,10 +88,25 @@ export default {
         this.selfRoute = userRoute
       }
     })
+  },
+  methods: {
+    closeMenu() {
+      this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
+    }
   }
 }
 </script>
 <style scoped>
+.has-fix{
+  position: relative;
+}
+.el-bu-fix{
+  position: absolute;
+  right:0;
+  top:0;
+  z-index: 100;
+  color:#20a0ff;
+}
   .logo-box{
     height: 100px;
     width: 100%;

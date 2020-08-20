@@ -1,27 +1,27 @@
 <template>
   <div class="self-container" style="padding-bottom: 60px">
     <div class="self-box">
-      <div class="self-box2">
+      <div class="self-box2 self-box2-mobile">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">操作日志</div>
+        <div class="self-container-title">操作日志</div>
       </div>
       <!-- 查询项 -->
-      <el-row s style=" margin-top: 2px;">
-        <el-col>
+      <el-row style=" margin-top: 2px;">
+        <el-col class="el-col-pc">
           <span style="font-size: 12px;">时间：</span>
           <el-date-picker
             v-model="queryDataTime"
             format="yyyy-MM-dd"
             value-format="yyyy-MM-dd"
-            style="width:200px"
             placeholder="选择日期时间"
             size="mini"
           />
+        </el-col>
+        <el-col class="el-col-pc  el-col-pc1">
           <span style="font-size: 12px;">操作人：</span>
           <el-input
             v-model="queryUserName"
-            style="width:150px"
             placeholder="请输入用户名"
             clearable
             size="mini"
@@ -48,19 +48,13 @@
           style="width: 100%; margin-top:20px;"
           tooltip-effect="dark"
           :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-          @selection-change="handleSelectionChange"
         >
-          <el-table-column
-            type="selection"
-            width="55"
-            align="center"
-          />
-          <el-table-column
+          <!-- <el-table-column
             prop="operator"
             label="操作人"
             width="100"
             align="center"
-          />
+          /> -->
           <el-table-column
             label="操作时间"
             width="180"
@@ -84,7 +78,7 @@
           :current-page="pageNum"
           :page-sizes="[10, 20, 50, 80, 200]"
           :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          layout="total, sizes, prev, next"
           :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -218,7 +212,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .self-container{
     padding: 10px 10px 10px 0;
     display: flex;
@@ -264,4 +258,61 @@ export default {
   .self-icon{
     font-weight: bold;font-size: 16px
   }
+  .self-container-title{
+      font-size: 30px;
+      padding-left: 30px;
+      font-weight: bold
+  }
+  .el-col-pc{
+      width:25%!important;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+  }
+   .el-col-pc span{
+     width: 80px;
+   }
+    @media only screen and (max-width: 768px){
+    .self-container-title{
+      font-size: 16px!important;
+      padding-left: 30px;
+      font-weight: bold
+    }
+    .self-box2-mobile{
+      margin-bottom: 0px!important;
+    }
+    .self-box{
+      padding:0 15px!important;
+    }
+    .self-box3 .el-table__body,
+    .self-box3 .el-table__header{
+      width:100%!important;
+    }
+    .self-box .el-input{
+      width:fit-content!important;
+    }
+    .el-pagination__sizes{
+      width:130px;
+    }
+    .el-col-pc{
+      width:100%!important;
+      margin-bottom:10px;
+      span{
+        width:60px!important;
+      }
+      .el-input{
+        width:calc(100% - 60px)!important;
+      }
+    }
+    .el-col-pc1{
+      .el-input{
+        width:calc(100% - 132px)!important;
+      }
+    }
+
+  }
+
+</style>
+<style>
+
 </style>

@@ -79,8 +79,8 @@
         >
           <el-button
             type="primary"
-            @click="saveForm"
             style="width:70px"
+            @click="saveForm"
           >导出</el-button>
         </div>
       </div>
@@ -409,17 +409,17 @@ export default {
       dailyListAdminWorkNumber(data).then(res => {
         const { status, data, count } = res
         if (status === 200) {
-           this.$nextTick(() => {
-              var s = data
-              var list = []
-              s.map(item => {
-                item.busDailyList.map(sitem => {
-                  sitem.deptId = item.deptId
-                  sitem.deptName = item.deptName
-                  sitem.logTime = this.dateFormat(sitem.logTime)
-                  list.push(sitem)
-                })
+          this.$nextTick(() => {
+            var s = data
+            var list = []
+            s.map(item => {
+              item.busDailyList.map(sitem => {
+                sitem.deptId = item.deptId
+                sitem.deptName = item.deptName
+                sitem.logTime = this.dateFormat(sitem.logTime)
+                list.push(sitem)
               })
+            })
 
             this.logtableData = list
             this.getSubSpanArr(this.logtableData)
@@ -556,7 +556,7 @@ export default {
         }
       }
     },
-    exportDefault(){
+    exportDefault() {
       this.handleDownload2(2)
     },
     async handleDownload2(findex) {
@@ -571,11 +571,11 @@ export default {
           'content',
           'logTime'
         ]
-        const tHeader = ['部门', '工号', '姓名','项目名称','日志内容', '日期']
+        const tHeader = ['部门', '工号', '姓名', '项目名称', '日志内容', '日期']
         var data = ''
-        if(findex == 1){
+        if (findex == 1) {
           data = this.formatJson(filterVal, this.tableData)
-        }else{
+        } else {
           data = this.formatJson(filterVal, this.logtableData)
         }
         excel.export_json_to_excel({

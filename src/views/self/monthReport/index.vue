@@ -4,10 +4,10 @@
       <div class="self-box2">
         <div class="self-circle" style="opacity: 0.5;" />
         <div class="self-circle" style="left: 6px" />
-        <div style="padding-left: 30px;font-weight: bold">自揽项目周报</div>
+        <div class="self-container-title">自揽项目周报</div>
       </div>
-      <p style="color:red;padding-left:30px">提示:起始时间必须为周四</p>
-      <div class="self-box2">
+      <p class="self-container-p">提示:起始时间必须为周四</p>
+      <div class="self-box2 self-box2-mobile">
 
         <div class="search-row">
           <div class="search-text">起始时间</div>
@@ -37,15 +37,35 @@
           <div class="search-text">项目名称</div>
           <el-input v-model="form.searchProject" placeholer="请输入项目名称" :clearable="true" class="search-el-input" />
         </div> -->
-        <div class="search-row" style="width:10%">
+        <div class="search-row search-row-width">
           <el-button type="primary" @click="searchForm">查询</el-button>
         </div>
-        <div class="search-row search-row-fix" style="margin-left:auto">
+        <div class="search-row search-row-fix search-row-marg">
           <el-button type="primary" icon="el-icon-plus" :disabled="buttonDisabled" @click="addReport">新建周报</el-button>
         </div>
       </div>
       <div class="self-box2" style="flex: 1;flex-wrap: wrap;align-items: flex-start">
+        <div v-if="device === 'mobile'" class="mobilecardlist">
+          <el-card v-for="(item,index) in taskList" :key="index" class="mobile-box-card">
+            <div slot="header" class="header-title clearfix">
+              <span>操作</span>
+              <div class="op-btns">
+                <el-button type="text" size="small" @click="showReport(item)">编辑</el-button>
+                <el-button type="text" size="small" @click="deleteRow(item.id)">删除</el-button>
+              </div>
+            </div>
+            <ul class="tasklist">
+              <li><span class="tasklabel">项目名称:</span><span class="taskvalue">{{ item.proName }}</span></li>
+              <li><span class="tasklabel">项目编码:</span><span class="taskvalue">{{ item.proCode }}</span></li>
+              <li><span class="tasklabel">项目类别:</span><span class="taskvalue">{{ formatterRoleName(item.proType) }}</span></li>
+              <li><span class="tasklabel">主管总工:</span><span class="taskvalue">{{ item.leaderName }}</span></li>
+              <li><span class="tasklabel">起始日期:</span><span class="taskvalue">{{ dateFormat2(item.startDate) }}</span></li>
+              <li><span class="tasklabel">结束日期:</span><span class="taskvalue">{{ dateFormat2(item.endDate) }}</span></li>
+            </ul>
+          </el-card>
+        </div>
         <el-table
+          v-if="device !== 'mobile'"
           ref="personTable"
           :data="taskList"
           style="width: 100%"
@@ -184,18 +204,18 @@
       :show-close="false"
       :destroy-on-close="true"
       :wrapper-closable="false"
-      custom-class="self-drawer"
+      custom-class="self-drawer self-drawer-mobile"
     >
-      <div slot="title" style="display: flex;justify-content: space-between" class="btns-fix">
-        <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">{{ editStatus ? '编辑' : '新建'}}{{proType == 1 ? '自揽' : '院控'}}周报</div>
+      <div slot="title" style="" class="btns-fix self-drawer-btns">
+        <div class="self-drawer-title">
+          <div class="flex-drawer-fonts">{{ editStatus ? '编辑' : '新建' }}{{ proType == 1 ? '自揽' : '院控' }}周报</div>
         </div>
-        <el-row style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;margin-left:10px">
+        <el-row class="self-drawer-s-btns">
           <el-button size="normal" type="primary" plain @click="closeDrawer">取消</el-button>
           <el-button type="primary" size="normal" @click="submitReport">确定</el-button>
         </el-row>
       </div>
-      <div slot="default" style="padding: 0 30px">
+      <div slot="default" class="el-body-self">
         <!-- <div style="position: absolute;left: 5px;top: 50%;width: 50px;height: 50px;cursor: pointer" @click="$refs.addDrawer.closeDrawer()">
           <el-icon class="el-icon-arrow-left" style="font-weight: bold" />
         </div> -->
@@ -215,7 +235,7 @@
             <el-row :gutter="20" class="mon-el-row">
               <el-col :span="12" class="self-input-box" style="margin-right:10px">
                 <div class="self-title">起始时间</div>
-                   <el-date-picker :readonly="editStatus" v-model="weekForm.startDateStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
+                <el-date-picker v-model="weekForm.startDateStr" :readonly="editStatus" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
               </el-col>
               <!--              <el-col :span="12" class="self-input-box" style="margin-left: 10px">-->
               <!--                <div class="self-title">项目角色</div>-->
@@ -230,37 +250,37 @@
               <!--              </el-col>-->
               <el-col :span="12" class="self-input-box" style="margin-left:10px">
                 <div class="self-title">结束时间</div>
-                <el-date-picker :readonly="editStatus" v-model="weekForm.endDateStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
+                <el-date-picker v-model="weekForm.endDateStr" :readonly="editStatus" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
               </el-col>
             </el-row>
             <el-row :gutter="20" class="mon-el-row">
-            <span style="color:red">提示:上周四至本周三为一周</span>
+              <span style="color:red">提示:上周四至本周三为一周</span>
             </el-row>
             <el-row :gutter="20" class="mon-el-row">
               <el-col :span="24" class="self-input-box" style="margin-right:10px">
                 <div class="self-title">主管总工</div>
-                <el-input v-model="weekForm.leaderName"  placeholder="请输入主管总工" size="small" class="self-input" />
+                <el-input v-model="weekForm.leaderName" placeholder="请输入主管总工" size="small" class="self-input" />
               </el-col>
-              </el-row>
+            </el-row>
             <el-row style="margin-top: 10px">
               <h3>项目存在问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.problem" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.problem" :isClear="isClear" @change="change2" />
+                <editor-bar v-model="weekForm.problem" :is-clear="isClear" @change="change2" />
               </div>
             </el-row>
             <el-row v-if="proType == 1" style="margin-top: 10px">
               <h3>需要室所领导、处领导、总工解决的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.toBeSolve" :isClear="isClear" @change="change4" />
+                <editor-bar v-model="weekForm.toBeSolve" :is-clear="isClear" @change="change4" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>项目进展情况<span style="color:red;padding-left:10px"> (重要时间节点安排，比如：项目启动、内容部署会、外部审查会、汇报会、勘测、文件送审、结题等)</span></h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.content" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.content" :isClear="isClear" @change="change1" />
+                <editor-bar v-model="weekForm.content" :is-clear="isClear" @change="change1" />
               </div>
             </el-row>
 
@@ -268,7 +288,7 @@
               <h3>下周工作安排</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
+                <editor-bar v-model="weekForm.keyPoint" :is-clear="isClear" @change="change3" />
               </div>
             </el-row>
 
@@ -295,7 +315,7 @@
     >
       <div slot="title" style="display: flex;justify-content: space-between" class="btns-fix">
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;flex-direction: column">
-          <div style="font-size: 18px;color: #000000">新建{{proType == 1 ? '自揽' : '院控'}}周报</div>
+          <div style="font-size: 18px;color: #000000">新建{{ proType == 1 ? '自揽' : '院控' }}周报</div>
 
         </div>
         <el-row style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;">
@@ -332,28 +352,28 @@
             <el-row style="margin-top: 10px">
               <h3>工作情况</h3>
               <div style="width: 100%;">
-                <editor-bar v-model="weekForm.content" :isClear="isClear" @change="change1" />
+                <editor-bar v-model="weekForm.content" :is-clear="isClear" @change="change1" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>存在的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.problem" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.problem" :isClear="isClear" @change="change2" />
+                <editor-bar v-model="weekForm.problem" :is-clear="isClear" @change="change2" />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>工作重点提示</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.keyPoint" :isClear="isClear" @change="change3" />
+                <editor-bar v-model="weekForm.keyPoint" :is-clear="isClear" @change="change3" />
               </div>
             </el-row>
             <el-row v-if="proType == 1" style="margin-top: 10px">
               <h3>需要室所领导、处领导、总工解决的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.toBeSolve" :isClear="isClear" @change="change4" />
+                <editor-bar v-model="weekForm.toBeSolve" :is-clear="isClear" @change="change4" />
               </div>
             </el-row>
             <!--            <el-row style="margin-top: 20px">-->
@@ -375,6 +395,7 @@
       :close-on-click-modal="false"
       size="65%"
       :close-on-press-escape="false"
+      custom-class="project-mobile"
     >
       <p style="width:100%;color:red">提示：没有显示需要的项目就根据项目编号或项目名称查询</p>
       <div class="self-box2" style="margin: 0">
@@ -391,14 +412,14 @@
         </div> -->
         <div class="search-row" style="width:25%;margin-right:0px">
           <div class="search-text" style="width: 80px">查询范围</div>
-            <el-select v-model="isAll" placeholder="请选择">
-              <el-option
-                v-for="item in joinList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
+          <el-select v-model="isAll" placeholder="请选择">
+            <el-option
+              v-for="item in joinList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </div>
         <div class="search-row" style="width:25%;margin-right:0px">
           <div class="search-text" style="width: 80px">项目名称</div>
@@ -412,7 +433,23 @@
           <el-button type="primary" @click="handlerProjectList">查询</el-button>
         </div>
       </div>
+      <div v-if="device === 'mobile'" class="listwrap">
+        <el-card v-for="(item,index) in projectDataList" :key="index" class="box-card">
+          <div slot="header" class="clearfix  cardheader">
+            <span class="r1">{{ index+1 }}</span>
+            <el-radio v-model="radio" :label="index" @change="handleTableChange(item)">选择</el-radio>
+          </div>
+          <ul class="itemlist">
+            <li><span>项目名称:</span><span>{{ item.proName }}</span></li>
+            <li><span>项目编码:</span><span>{{ item.proCode }}</span></li>
+            <li><span>项目类型:</span><span>{{ proTypeObj[item.proType] }}</span></li>
+            <li><span>项目状态:</span><span>{{ proStatusObj[item.proStatus] }}</span></li>
+            <li><span>创建时间:</span><span>{{ item.createTime | fmtdate }}</span></li>
+          </ul>
+        </el-card>
+      </div>
       <el-table
+        v-if="device !== 'mobile'"
         :data="projectDataList"
         highlight-current-row
         @current-change="handleTableChange"
@@ -452,13 +489,13 @@
         :current-page="pageNum"
         :page-sizes="[20, 50, 80, 200]"
         :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
+        :layout="layoutpc"
         :total="total"
         style="padding: 30px 0"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-      <div style="text-align: right;">
+      <div style="text-align: right;" class="mobile-btns">
         <el-button type="primary" @click="confirmPersonTable">确定</el-button>
         <el-button @click="closePersonTable">取消</el-button>
       </div>
@@ -467,9 +504,9 @@
 </template>
 
 <script>
-import { personWeekList, weekDate, weekAdd, reportView, weekUpdate,projectListPersonx,weeklyDelete,weeklyAddStatus } from '@/api/monthReport'
+import { personWeekList, weekDate, weekAdd, reportView, weekUpdate, projectListPersonx, weeklyDelete, weeklyAddStatus } from '@/api/monthReport'
 import EditorBar from '@/components/Edit.vue'
-import { projectList, projectRoleList,projectselectListnormal } from '@/api/dayReportList'
+import { projectList, projectRoleList, projectselectListnormal } from '@/api/dayReportList'
 // import Tinymce from '@/components/Tinymce'
 export default {
   name: 'MonthReport',
@@ -478,7 +515,7 @@ export default {
     return {
       radio: -1,
       proTypeObj: { 1: '自揽', 2: '院控' },
-      proObj:[
+      proObj: [
         {
           value: 1,
           label: '自揽'
@@ -488,7 +525,7 @@ export default {
           label: '院控'
         }
       ],
-      joinList:[
+      joinList: [
         {
           value: 1,
           label: '参与自揽项目'
@@ -505,10 +542,10 @@ export default {
       prevWeekStr: '',
       currentWeekStr: '',
       nextWeekStr: '',
-      searchWeekStr:'',
-      searchWeekStrEnd:'',
+      searchWeekStr: '',
+      searchWeekStrEnd: '',
       searchWeekStartStr: '',
-      searchWeekEndStr:'',
+      searchWeekEndStr: '',
       nextWeekBtnEdit: true,
       userId: '',
       menubar: '',
@@ -537,15 +574,27 @@ export default {
       },
       weekForm: {
         projectRoleId: '',
-        startDateStr:'',
-        endDateStr:''
+        startDateStr: '',
+        endDateStr: ''
       },
       isClear: false,
       proTypeFlag: '',
-      proType:1,
-      init:true,
-      editStatus:true,
-      isAll:1
+      proType: 1,
+      init: true,
+      editStatus: true,
+      isAll: 1
+    }
+  },
+  computed: {
+    layoutpc() {
+      if (this.device === 'mobile') {
+        return 'total, sizes, prev, next'
+      } else {
+        return 'total, sizes, prev, pager, next, jumper'
+      }
+    },
+    device() {
+      return this.$store.state.app.device
     }
   },
   mounted() {
@@ -566,89 +615,90 @@ export default {
     } else {
       this.buttonDisabled = false
     }
-    if(this.init){
+    if (this.init) {
       this.getWeekList()
     }
   },
   methods: {
-    showReport(e){
-     this.editStatus = true
-     this.weekForm = e
-     this.weekForm.startDateStr = this.dateFormat2(e.startDate)
-     this.weekForm.endDateStr = this.dateFormat2(e.endDate)
-    this.addDrawer = true
+    getTime(){
+      var currentDay = new Date().getDay()
+      var s = currentDay - 3
     },
-    deleteRow(e){
-     weeklyDelete({id:e}).then((result) => {
-       const { status, data} = result
-       if(status == 200){
-         this.$message.success('删除成功')
-         setTimeout(()=>{
-           this.getWeekList()
-         })
-       }
-     })
+    showReport(e) {
+      this.editStatus = true
+      this.weekForm = e
+      this.weekForm.startDateStr = this.dateFormat2(e.startDate)
+      this.weekForm.endDateStr = this.dateFormat2(e.endDate)
+      this.addDrawer = true
     },
-    formatterRoleName(e){
+    deleteRow(e) {
+      weeklyDelete({ id: e }).then((result) => {
+        const { status, data } = result
+        if (status == 200) {
+          this.$message.success('删除成功')
+          setTimeout(() => {
+            this.getWeekList()
+          })
+        }
+      })
+    },
+    formatterRoleName(e) {
       return this.proTypeObj[e]
     },
-    timeEndChange(e){
-      if(!this.weekForm.endDateStr){
+    timeEndChange(e) {
+      if (!this.weekForm.endDateStr) {
         this.$message.error('请选择起始时间')
         return
       }
       var end = new Date(e).getTime()
       var start = new Date(this.weekForm.startDateStr).getTime()
-      if(end < start){
+      if (end < start) {
         this.weekForm.endDateStr = ''
         this.$message.error('起始时间不能大于结束时间')
         return
       }
-      if(end - start != 518400000){
+      if (end - start != 518400000) {
         this.$message.error('必须是一周之内')
         this.weekForm.endDateStr = ''
         this.weekForm.startDateStr = ''
         return
       }
       var time = new Date(e).getDay()
-      if(time == 3){
-
+      if (time == 3) {
         this.weekForm.endDateStr = e
-
-      }else{
+      } else {
         this.weekForm.endDateStr = ''
         this.$message.error('时间必须为周三')
         return
       }
     },
-    timeStartChange(e){
-      if(!this.weekForm.proCode){
+    timeStartChange(e) {
+      if (!this.weekForm.proCode) {
         this.$message.error('请选择项目')
         this.weekForm.startDateStr = ''
         return
       }
       var time = new Date(e).getDay()
-      if(time == 4){
+      if (time == 4) {
         var data = {
-          startDateStr:e,
-          proCode:this.weekForm.proCode
+          startDateStr: e,
+          proCode: this.weekForm.proCode
         }
         weeklyAddStatus(data).then((result) => {
-          if(result.data){
+          if (result.data) {
             this.weekForm.startDateStr = e
-          }else{
+          } else {
             this.$message.error('该起始时间已写过周报,请重新选择')
-            this.weekForm.startDateStr = ""
+            this.weekForm.startDateStr = ''
           }
         })
-
-      }else{
+      } else {
         this.weekForm.startDateStr = ''
         this.$message.error('时间必须为周四')
         return
       }
     },
-    handleSelectionChange(){
+    handleSelectionChange() {
 
     },
     change1(val) {
@@ -665,9 +715,9 @@ export default {
     },
     listChange(e) {
       this.init = false
-      if(new Date(e).getDay() == 4){
+      if (new Date(e).getDay() == 4) {
         this.searchWeekStr = e
-      }else{
+      } else {
         this.$message.error('时间必须为周四')
         this.searchWeekStr = ''
       }
@@ -699,7 +749,6 @@ export default {
       this.addDrawer = true
     },
     showReportDetail(startDate, endDate) {
-
       // 跳转项目列表
       this.$router.push({ path: '/monthReport/projectList', query: { startDate: startDate, endDate: endDate }})
     },
@@ -774,7 +823,7 @@ export default {
       }
       this.weekForm.useId = this.userId
       this.weekForm.logTimeStr = this.dateFormat3(new Date())
-      if(!this.editStatus){
+      if (!this.editStatus) {
         weekAdd(this.weekForm).then(res => {
           const { status } = res
           if (status === 200) {
@@ -786,7 +835,7 @@ export default {
             this.$message.success('保存失败')
           }
         })
-      }else{
+      } else {
         weekUpdate(this.weekForm).then(res => {
           const { status, msg } = res
           if (status === 200) {
@@ -815,7 +864,7 @@ export default {
       this.getProjectList()
     },
     handleTableChange(row) {
-      if(row){
+      if (row) {
         this.proTypeFlag = row.proType
         console.log(this.proTypeFlag)
         this.selectedProject = row
@@ -835,7 +884,7 @@ export default {
       this.weekForm.proCode = this.selectedProject.proCode
       this.selectedProject = null
       // 调用获取角色的接口
-      //await this.projectRoleList(this.weekForm.projectId)
+      // await this.projectRoleList(this.weekForm.projectId)
 
       this.projectDialogVisible = false
       this.radio = -1
@@ -855,7 +904,7 @@ export default {
     changeProject(val) {
       // 清空角色列表
       // this.weekForm.projectRoleId = ''
-      //this.projectRoleList(val)
+      // this.projectRoleList(val)
     },
     async projectRoleList(val) {
       let result = {}
@@ -871,30 +920,30 @@ export default {
       return result
     },
     getWeekList() {
-      if(!this.init){
-        if(!this.searchWeekStr){
+      if (!this.init) {
+        if (!this.searchWeekStr) {
           this.$message.warning('请选择起始时间')
           return
-        }else{
+        } else {
           var date = new Date(this.searchWeekStr)
-          var day  = date.getDay()
-          if(day != 4){
+          var day = date.getDay()
+          if (day != 4) {
             this.$message.warning('起始时间必须为周四')
             return
-          }else{
-            this.searchWeekStrEnd = this.dateFormat2(date.getTime() + 6*24*60*60*1000)
+          } else {
+            this.searchWeekStrEnd = this.dateFormat2(date.getTime() + 6 * 24 * 60 * 60 * 1000)
           }
         }
       }
 
-      const params = { startDateStr: this.searchWeekStr,endDateStr: this.searchWeekStrEnd, proNameKeyWord: this.form.searchProject, proCodeKeyWord: this.form.searchProjectPro }
-      if(this.init){
+      const params = { startDateStr: this.searchWeekStr, endDateStr: this.searchWeekStrEnd, proNameKeyWord: this.form.searchProject, proCodeKeyWord: this.form.searchProjectPro }
+      if (this.init) {
         params.endDateStr = this.dateFormat2(new Date())
         params.startDateStr = ''
       }
       projectListPersonx(params).then((result) => {
-        const {status, data } = result
-        if(status == 200){
+        const { status, data } = result
+        if (status == 200) {
           data.map((item) => {
             item.proType = item.proType ? item.proType : 1
           })
@@ -913,7 +962,7 @@ export default {
         }
       })
     },
-    handlerProjectList () {
+    handlerProjectList() {
       this.projectDataList = []
       this.pageNum = 1
       this.pageSize = 10
@@ -927,7 +976,7 @@ export default {
         proType: 1,
         proCodeKeyWord: this.projectForm.searchProjectNo,
         proNameKeyWord: this.projectForm.searchProjectName,
-        isAll:this.isAll
+        isAll: this.isAll
       }
 
       projectselectListnormal(data).then(res => {
@@ -1278,14 +1327,223 @@ export default {
     font-size: 11px!important;
     padding:6px 0px!important;
   }
+    .self-container-title{
+      font-size: 16px;
+      padding-left: 30px;
+      font-weight: bold
+    }
+    .self-container-p{
+      color:red;
+      padding-left:30px;
+      font-size:16px;
+    }
+    .search-row-width{
+      width:10%
+    }
+    .search-row-marg{
+      margin-left:auto
+    }
+    .self-drawer-btns{
+      display: flex;
+      justify-content: space-between
+    }
+    .self-drawer-title{
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+      padding: 0 20px;
+      flex-direction: column
+    }
+    .flex-drawer-fonts
+    {
+      font-size: 18px;color: #000000
+    }
+    .self-drawer-s-btns{
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+      padding: 0 20px;
+      margin-left:10px
+    }
+    .el-body-self{
+      padding: 0 30px
+    }
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) { /* 3. */
     .self-font-color-fix{
       margin:0px!important;
     }
   }
+
 </style>
 <style>
  .el-radio__inner{
     border:2px solid #107cee
   }
+      @media only screen and (max-width: 768px){
+    .self-box{
+      width:100%;
+    }
+    .self-container-title{
+      font-size: 16px;
+      padding-left: 30px;
+      font-weight: bold
+    }
+    .self-box2-mobile{
+      margin-bottom: 0px!important;
+      padding-bottom:0px !important;
+    }
+    .self-box2-mobile .el-date-editor.el-input{
+      flex:1;
+    }
+    .self-box2-mobile .search-row{
+      margin-right:0px !important;
+    }
+    .self-container-p{
+      color:red;
+      padding-left:30px;
+      font-size:16px;
+      margin-top:5px;
+      margin-bottom:5px;
+    }
+    .self-box2-mobile{
+      flex-wrap:wrap;
+    }
+    .search-text{
+      width:fit-content!important;
+    }
+    .search-row{
+      width:100%!important;
+      margin-bottom:0.15rem!important;
+    }
+    .search-row-fix{
+      margin-right:0px!important;
+      width:fit-content!important;
+      justify-content:flex-start!important;
+    }
+    .search-row-width{
+      width:fit-content!important;
+    }
+    .self-drawer-mobile{
+      width:100%!important;
+    }
+    .self-drawer-mobile .el-dialog__header{
+      padding:20px!important;
+    }
+    .self-drawer-title{
+      padding:0px !important;
+    }
+    .self-drawer-s-btns{
+      padding:0px !important;
+    }
+    .el-dialog__body{
+      padding:0px!important;
+    }
+    .el-body-self{
+      padding:0 20px!important;
+      box-sizing:border-box;
+    }
+    .self-drawer .el-row{
+      margin-left:0px !important;
+      margin-right:0px !important;
+    }
+    .mon-el-row{
+      width:100%;
+      flex-wrap:wrap;
+      margin-bottom:0px !important;
+    }
+    .self-input-box{
+      width:100%;
+      margin-left:0px !important;
+      margin-right:0px !important;
+    }
+    .self-input-box:nth-child(1n){
+      margin-bottom:20px !important;
+    }
+    .self-input-box:nth-child(2n){
+      margin-left:0px!important;
+    }
+    .project-mobile{
+      width:100%;
+      padding-bottom:20px;
+    }
+    .project-mobile .el-dialog__body{
+      padding:0 20px!important;
+      box-sizing:border-box;
+    }
+    .project-mobile .self-box2{
+      display:flex;
+      flex-direction:row;
+      flex-wrap:wrap;
+    }
+    .project-mobile .el-select,
+    .project-mobile .el-input{
+      flex:1;
+    }
+    .box-card{
+      margin-bottom:20px;
+    }
+    .itemlist{
+      padding-left:0px!important;
+    }
+    .itemlist li span:first-child{
+      font-weight:bold;
+      padding-right:0.2rem;
+    }
+    .cardheader{
+      display: flex;
+      flex-direction:row;
+      justify-content: space-between;
+    }
+    .cardheader .r1{
+      margin-right:auto;
+    }
+    .mobile-btns{
+      display:flex;
+      flex-direction:row;
+      justify-content:center;
+    }
+    .mobile-box-card,
+    .mobilecardlist{
+      display:flex;
+      flex-direction:column;
+    }
+    .mobile-box-card{
+      margin-bottom:20px;
+    }
+    .header-title,
+    .tasklist{
+      font-size:15px;
+      padding-left:0px;
+    }
+    .header-title{
+      display:flex;
+      flex-direction:row;
+      align-items:center;
+    }
+    .header-title span{
+      font-weight:bold;
+    }
+    .op-btns{
+      margin-left:auto;
+    }
+    .tasklist li{
+      padding-top:3px;
+      padding-bottom:3px;
+      display:flex;
+      flex-direction:row;
+    }
+    .tasklist .tasklabel{
+      font-weight:bold;
+      width:80px;
+    }
+    .tasklist .taskvalue{
+      width:calc(100% - 80px);
+    }
+    .el-body-self h3{
+      font-size:15px;
+    }
+  }
+
 </style>
