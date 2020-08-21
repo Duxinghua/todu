@@ -443,7 +443,7 @@ text-align: center;margin-top: 80px;display: none
       width:200px!important;
     }
     .self-box2-col{
-      margin:20px 20px 0 20px;
+      margin:0px!important;
       width:100%;
     }
     .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
@@ -452,6 +452,9 @@ text-align: center;margin-top: 80px;display: none
     }
     .el-form-item--mini .el-form-item__content, .el-form-item--mini .el-form-item__label{
       line-height:40px;
+    }
+    .el-form-item__content .el-input{
+      width:calc(100% - 40px)!important;
     }
     .el-input__inner{
       line-height:40px;

@@ -235,7 +235,7 @@
             <el-row :gutter="20" class="mon-el-row">
               <el-col :span="12" class="self-input-box" style="margin-right:10px">
                 <div class="self-title">起始时间</div>
-                <el-date-picker v-model="weekForm.startDateStr" :readonly="editStatus" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
+                <el-date-picker v-model="weekForm.startDateStr" :readonly="editStatus" :picker-options="pickerOptions" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
               </el-col>
               <!--              <el-col :span="12" class="self-input-box" style="margin-left: 10px">-->
               <!--                <div class="self-title">项目角色</div>-->
@@ -250,7 +250,7 @@
               <!--              </el-col>-->
               <el-col :span="12" class="self-input-box" style="margin-left:10px">
                 <div class="self-title">结束时间</div>
-                <el-date-picker v-model="weekForm.endDateStr" :readonly="editStatus" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
+                <el-date-picker v-model="weekForm.endDateStr" :readonly="editStatus" :picker-options="pickerOptions"  type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
               </el-col>
             </el-row>
             <el-row :gutter="20" class="mon-el-row">
@@ -595,9 +595,30 @@ export default {
     },
     device() {
       return this.$store.state.app.device
+    },
+    pickerOptions() {
+      var _this = this
+      return {
+        disabledDate(time) {
+
+            return time.getTime() < Date.now() - 777600000 || time.getTime() > Date.now() + 259200000
+          
+        }
+      }
     }
   },
   mounted() {
+    var day = new Date().getDay()
+    var sub = day - 3
+    var now = this.dateFormat2(new Date())
+    var cdate = ''
+    if(sub > 0){
+      cdate = new Date(now).getTime() - sub*24*60*60*1000
+    }else if(sub < 0){
+      cdate = new Date(now).getTime() + sub*24*60*60*1000
+    }else if(sub == 0){
+      cdate = new Date(now).getTime()
+    }
     this.userId = this.$store.state.user.userId
     // this.getWeekList()
     // this.getProjectList()
@@ -1328,7 +1349,7 @@ export default {
     padding:6px 0px!important;
   }
     .self-container-title{
-      font-size: 16px;
+      font-size: 30px;
       padding-left: 30px;
       font-weight: bold
     }
@@ -1381,7 +1402,7 @@ export default {
  .el-radio__inner{
     border:2px solid #107cee
   }
-      @media only screen and (max-width: 768px){
+  @media only screen and (max-width: 768px){
     .self-box{
       width:100%;
     }
@@ -1397,6 +1418,9 @@ export default {
     .self-box2-mobile .el-date-editor.el-input{
       flex:1;
     }
+    .self-input-box{
+      /* padding:0 15px!important; */
+    }
     .self-box2-mobile .search-row{
       margin-right:0px !important;
     }
@@ -1406,6 +1430,9 @@ export default {
       font-size:16px;
       margin-top:5px;
       margin-bottom:5px;
+    }
+    .self-title{
+      width:70px!important;
     }
     .self-box2-mobile{
       flex-wrap:wrap;
@@ -1486,6 +1513,7 @@ export default {
     }
     .itemlist{
       padding-left:0px!important;
+      list-style:none
     }
     .itemlist li span:first-child{
       font-weight:bold;

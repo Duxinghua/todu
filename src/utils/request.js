@@ -30,6 +30,7 @@ service.interceptors.request.use(
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
       config.headers['Authorization'] = getToken()
+      config.headers['Content-Type'] = 'application/json;charset=UTF-8'
     }
     return config
   },

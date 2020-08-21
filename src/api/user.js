@@ -33,3 +33,16 @@ export function logout() {
     method: 'post'
   })
 }
+/**
+ * 添加配施人员
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export function addBatchAddPs(data) {
+  return request({
+    url: '/admin/add/batchAdd/ps',
+    method: 'post',
+    data
+  })
+}
+

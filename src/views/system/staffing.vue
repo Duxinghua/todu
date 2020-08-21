@@ -394,14 +394,15 @@
 
       <!-- 新增配施人员 -->
       <el-dialog
-        title="提示"
+        title="添加配施人员"
         :visible.sync="dialogVisible"
         width="80%"
       >
+        <p class="tips">请先在查询系统用户表，选择要添加的用户，并添加到待加入配施用户表，然后选择右上角确定添加按钮即可</p>
         <div class="header-search">
                 <div class="search-row">
                 <div class="search-text" style="width:40px">室所</div>
-                <el-select v-model="searchDeptId" placeholder="请选择项目" :clearable="true" @clear="clearDept">
+                <el-select v-model="searchDeptId" placeholder="请选择项目" :clearable="true" @clear="clearDept" @change="depchange">
                   <el-option label="请选择室所" :value="0" disabled />
                   <el-option
                     v-for="(item,key) in deptList"
@@ -413,28 +414,30 @@
               </div>
               <div class="search-row">
                 <div class="search-text" style="width: 140px">工号或姓名</div>
-                <el-input v-model="workNumberKeyWord" :clearable="true" />
+                <el-input v-model="workNumberKeyWord" :clearable="true" @input="workNumberHandler"/>
               </div>
               <!-- <div class="search-row">
                 <div class="search-text" style="width: 40px">姓名</div>
                 <el-input v-model="userNameKeyWord" :clearable="true" />
               </div> -->
               <div class="search-row">
-                <el-button type="primary" @click="searchForm">查询</el-button>
+                <el-button type="primary" @click="listsearchForm">查询</el-button>
               </div>
               <div class="search-row search-row-margin">
-                <el-button type="primary" @click="searchForm">确定添加</el-button>
+                <el-button type="primary" @click="listsearchAdd">确定添加</el-button>
               </div>
         </div>
         <div class="personview">
           <div class="left">
+            <p class="tablenames">系统用户表</p>
             <el-table
               v-loading="loading"
-              :data="personListData"
+              :data="listtableData"
+              height="700px"
               style="width: 100%; margin-top:20px;"
               tooltip-effect="dark"
               :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-              @selection-change="handleSelectionChange"
+              @selection-change="lefthandleSelectionChange"
             >
               <el-table-column
                 header-align="center"
@@ -457,33 +460,32 @@
                 label="室所"
                 align="center"
               />
-              <el-table-column
-                prop="operate"
-                label="操作"
-                align="center"
-              >
-                <template slot-scope="scope">
-
-                  <el-button type="primary" @click="addPerson(scope.row)">编辑</el-button>
-                </template>
-              </el-table-column>
             </el-table>
+                        <!-- 表格分页组件 -->
+            <el-pagination
+              style="margin:20px 0 20px 10px"
+              :current-page="listpageNum"
+              :page-sizes="[20, 50, 80, 200]"
+              :page-size="listpageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="listtotal"
+              @size-change="listhandleSizeChange"
+              @current-change="listhandleCurrentChange"
+            />
+          </div>
+          <div class="center">
+            <el-button type="primary" @click="addPersontoright">添加</el-button>
           </div>
              <div class="right">
+            <p class="tablenames">待加入配施用户表</p>
             <el-table
               v-loading="loading"
               :data="personListData"
+              height="700px"
               style="width: 100%; margin-top:20px;"
               tooltip-effect="dark"
               :header-cell-style="{background:'#eef1f6',color:'#606266'}"
-              @selection-change="handleSelectionChange"
             >
-              <el-table-column
-                header-align="center"
-                align="center"
-                type="selection"
-                width="55"
-              />
               <el-table-column
                 prop="workNumber"
                 label="工号"
@@ -505,14 +507,13 @@
                 align="center"
               >
                 <template slot-scope="scope">
-
-                  <el-button type="primary" @click="addPerson(scope.row)">编辑</el-button>
+                  <el-button type="primary" @click="delPerson(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
           </div>
         </div>
-        <span slot="footer" class="dialog-footer">
+        <span slot="footer" class="dialog-footer" style="display:none">
           <el-button @click="dialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
         </span>
@@ -524,9 +525,10 @@
 
 <script>
 
-import { deptAdd, adminPsDel, searchAdminps, batchDeletePerson, savePerson, updatePerson, deptList, checkContactInfo, checkWorkNumber, AdminListPs } from '@/api/dept'
+import { deptAdd,deptPersonList,adminPsDel, searchAdminps, batchDeletePerson, savePerson, updatePerson, deptList, checkContactInfo, checkWorkNumber, AdminListPs } from '@/api/dept'
 import { posList, majorList, roleList } from '@/api/dict'
 import { updateAccountStatus } from '@/api/account'
+import {addBatchAddPs } from '@/api/user'
 export default {
   name: 'Users',
   data() {
@@ -536,11 +538,15 @@ export default {
       pageNum: 1,
       pageSize: 20,
       total: 0,
+      listpageNum: 1,
+      listpageSize: 20,
+      listtotal: 0,
       searchDeptId: '',
       workNumberKeyWord: '',
       userNameKeyWord: '',
       tableHeight: 500 /* window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight - 500*/,
       tableData: [],
+      listtableData:[],
       majorList: [],
       posList: [],
       deptList: [],
@@ -610,7 +616,8 @@ export default {
       deptTree: [],
       fullscreenLoading: false,
       dialogVisible: false,
-      personListData:[]
+      personListData: [],
+      personListDatas: []
     }
   },
   watch: {
@@ -652,10 +659,93 @@ export default {
   },
 
   methods: {
-    addPerson(item){
-
+    workNumberHandler(e){
+      console.log(e)
     },
-    handleSelectionChange(e){
+    depchange(e){
+      this.currentDeptId = e
+    },
+    async listsearchAdd(){
+      if(!this.personListData.length){
+          this.$message.warning('请添加用户')
+        return 
+      }
+      var data = []
+      this.personListData.map((item)=>{
+        data.push(item.id)
+      })
+      var result = await addBatchAddPs(data)
+      if(result.code == 200){
+        this.listtableData = []
+        this.listpageNum = 1
+        this.listpageSize = 20
+        this.listtotal = 0
+        this.currentDeptId = ''
+        this.dialogVisible = false
+        this.$message.success('添加成功')
+      }else{
+         this.$message.warning('添加失败')
+      }
+    },
+    listsearchForm(){
+      this.listtableData = []
+      this.listpageNum = 1
+      this.listpageSize = 20
+      this.listtotal = 0
+      this.getDeptPersonList()
+    },
+    listhandleSizeChange(val) {
+      this.listpageSize = val
+      this.listpageNum = 1
+      this.getDeptPersonList()
+
+      console.log(`每页 ${val} 条`)
+    },
+    listhandleCurrentChange(val) {
+      console.log(`当前页: ${val}`)
+      this.listpageNum = val
+      this.getDeptPersonList()
+    },
+        // 查询用户
+    async getDeptPersonList() {
+      var searchText = false
+      if (!isNaN(this.workNumberKeyWord)) {
+        searchText = true
+      }
+      await deptPersonList({ deptId: this.currentDeptId, pageNum: this.listpageNum, pageSize: this.listpageSize, workNumberKeyWord: searchText ? this.workNumberKeyWord : '', userNameKeyWord: searchText ? '' : this.workNumberKeyWord }).then(res => {
+        const {
+          data, msg, status, count
+        } = res
+
+        if (status === 200) {
+          this.listtableData = data
+          this.listtotal = count
+        } else {
+          this.$message.warning(msg)
+        }
+        this.loading = false
+      })
+    },
+    addPersontoright(){
+      if(!this.personListDatas.length){
+          this.$message.warning('请选择系统用户')
+        return
+      }
+      this.personListData = this.personListData.concat(this.personListDatas)
+    },
+    delPerson(obj){
+
+         this.personListData.some((item, i) => {
+                if (item.id == obj.id ){
+                        this.personListData.splice(i,1)
+                        return true
+                }
+        })
+    },
+    lefthandleSelectionChange(e){
+      this.personListDatas = e
+    },
+    righthandleSelectionChange(e){
 
     },
     addPersonView(){
@@ -1102,6 +1192,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.tips{
+  color:red;
+}
 .header-search{
   display: flex;
   flex-direction: row;
@@ -1116,10 +1209,22 @@ export default {
   align-items: center;
   justify-content: space-between;
   .left{
-    width:45%
+    width:45%;
+    .tablenames{
+      font-size:18px;
+      font-weight:bold;
+      text-align:center;
+    }
   }
+
   .right{
     width:45%;
+    padding-bottom: 71px;
+    .tablenames{
+      font-size:18px;
+      font-weight:bold;
+      text-align:center;
+    }
   }
 }
 .el-col-wrap{

@@ -106,7 +106,7 @@ export default {
 <style lang="scss" scoped>
 @media only screen and (max-width: 768px) {
   .navbar .right-menu{
-    width:3.5rem!important;
+    width:4rem!important;
   }
 }
 .navbar {

@@ -190,7 +190,8 @@ export default {
   }
   .self-container-title{
     padding-left: 30px;
-    font-weight: bold
+    font-weight: bold;
+    font-size:30px;
   }
   .self-icon{
     font-weight: bold;font-size: 16px

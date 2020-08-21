@@ -900,7 +900,8 @@ export default {
     color:#999;
   }
   .self-container-title{
-    padding-left: 30px;font-weight: bold
+    padding-left: 30px;font-weight: bold;
+    font-size:30px;
   }
   @media only screen and (max-width: 768px){
     .self-container-title{
@@ -924,6 +925,7 @@ export default {
       width:100%;
     }
     .search-text{
+      width:50px!important;
       text-align:left!important;
     }
     .self-box2-fixed .search-row-last2{
