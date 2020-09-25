@@ -2,8 +2,14 @@
   <div class="self-container">
     <div class="self-box">
       <div class="self-box2">
-        <div class="self-circle" style="opacity: 0.5;" />
-        <div class="self-circle" style="left: 6px" />
+        <div
+          class="self-circle"
+          style="opacity: 0.5;"
+        />
+        <div
+          class="self-circle"
+          style="left: 6px"
+        />
         <div class="self-container-title">自揽项目周报</div>
       </div>
       <p class="self-container-p">提示:起始时间必须为周四</p>
@@ -11,7 +17,14 @@
 
         <div class="search-row">
           <div class="search-text">起始时间</div>
-          <el-date-picker v-model="searchWeekStr" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="listChange" />
+          <el-date-picker
+            v-model="searchWeekStr"
+            type="date"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择日期"
+            @change="listChange"
+          />
           <!-- <el-button-group>
             <el-button type="primary" @click="prevWeek">上一周</el-button>
             <el-button type="primary" @click="currentWeek">本周</el-button>
@@ -38,20 +51,49 @@
           <el-input v-model="form.searchProject" placeholer="请输入项目名称" :clearable="true" class="search-el-input" />
         </div> -->
         <div class="search-row search-row-width">
-          <el-button type="primary" @click="searchForm">查询</el-button>
+          <el-button
+            type="primary"
+            @click="searchForm"
+          >查询</el-button>
         </div>
         <div class="search-row search-row-fix search-row-marg">
-          <el-button type="primary" icon="el-icon-plus" :disabled="buttonDisabled" @click="addReport">新建周报</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            :disabled="buttonDisabled"
+            @click="addReport"
+          >新建周报</el-button>
         </div>
       </div>
-      <div class="self-box2" style="flex: 1;flex-wrap: wrap;align-items: flex-start">
-        <div v-if="device === 'mobile'" class="mobilecardlist">
-          <el-card v-for="(item,index) in taskList" :key="index" class="mobile-box-card">
-            <div slot="header" class="header-title clearfix">
+      <div
+        class="self-box2"
+        style="flex: 1;flex-wrap: wrap;align-items: flex-start"
+      >
+        <div
+          v-if="device === 'mobile'"
+          class="mobilecardlist"
+        >
+          <el-card
+            v-for="(item,index) in taskList"
+            :key="index"
+            class="mobile-box-card"
+          >
+            <div
+              slot="header"
+              class="header-title clearfix"
+            >
               <span>操作</span>
               <div class="op-btns">
-                <el-button type="text" size="small" @click="showReport(item)">编辑</el-button>
-                <el-button type="text" size="small" @click="deleteRow(item.id)">删除</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="showReport(item)"
+                >编辑</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="deleteRow(item.id)"
+                >删除</el-button>
               </div>
             </div>
             <ul class="tasklist">
@@ -178,7 +220,11 @@
             header-align="center"
           >
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="showReport(scope.row)">编辑</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="showReport(scope.row)"
+              >编辑</el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -189,7 +235,11 @@
             header-align="center"
           >
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="deleteRow(scope.row.id)">删除</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="deleteRow(scope.row.id)"
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -206,36 +256,97 @@
       :wrapper-closable="false"
       custom-class="self-drawer self-drawer-mobile"
     >
-      <div slot="title" style="" class="btns-fix self-drawer-btns">
+      <div
+        slot="title"
+        style=""
+        class="btns-fix self-drawer-btns"
+      >
         <div class="self-drawer-title">
           <div class="flex-drawer-fonts">{{ editStatus ? '编辑' : '新建' }}{{ proType == 1 ? '自揽' : '院控' }}周报</div>
         </div>
         <el-row class="self-drawer-s-btns">
-          <el-button size="normal" type="primary" plain @click="closeDrawer">取消</el-button>
-          <el-button type="primary" size="normal" @click="submitReport">确定</el-button>
+          <el-button
+            size="normal"
+            type="primary"
+            plain
+            @click="closeDrawer"
+          >取消</el-button>
+          <el-button
+            type="primary"
+            size="normal"
+            @click="submitReport"
+          >确定</el-button>
         </el-row>
       </div>
-      <div slot="default" class="el-body-self">
+      <div
+        slot="default"
+        class="el-body-self"
+      >
         <!-- <div style="position: absolute;left: 5px;top: 50%;width: 50px;height: 50px;cursor: pointer" @click="$refs.addDrawer.closeDrawer()">
           <el-icon class="el-icon-arrow-left" style="font-weight: bold" />
         </div> -->
         <div>
           <div>
-            <el-row :gutter="20" class="mon-el-row">
-              <el-col :span="12" class="self-input-box" style="margin-right:10px">
+            <el-row
+              :gutter="20"
+              class="mon-el-row"
+            >
+              <el-col
+                :span="12"
+                class="self-input-box"
+                style="margin-right:10px"
+              >
                 <div class="self-title">项目名称</div>
-                <el-input v-model="weekForm.proName" :readonly="true" placeholder="请输入内容" size="small" class="self-input self-input-fix" @click.stop="searchProjectList" />
-                <el-button :disabled="editStatus" type="primary" class="self-button" @click.stop="searchProjectList">查询</el-button>
+                <el-input
+                  v-model="weekForm.proName"
+                  :readonly="true"
+                  placeholder="请输入内容"
+                  size="small"
+                  class="self-input self-input-fix"
+                  @click.stop="searchProjectList"
+                />
+                <el-button
+                  :disabled="editStatus"
+                  type="primary"
+                  class="self-button"
+                  @click.stop="searchProjectList"
+                >查询</el-button>
               </el-col>
-              <el-col :span="12" class="self-input-box" style="margin-left:10px">
+              <el-col
+                :span="12"
+                class="self-input-box"
+                style="margin-left:10px"
+              >
                 <div class="self-title">项目代码</div>
-                <el-input v-model="weekForm.proCode" :readonly="true" placeholder="请输入内容" size="small" class="self-input" />
+                <el-input
+                  v-model="weekForm.proCode"
+                  :readonly="true"
+                  placeholder="请输入内容"
+                  size="small"
+                  class="self-input"
+                />
               </el-col>
             </el-row>
-            <el-row :gutter="20" class="mon-el-row">
-              <el-col :span="12" class="self-input-box" style="margin-right:10px">
+            <el-row
+              :gutter="20"
+              class="mon-el-row"
+            >
+              <el-col
+                :span="12"
+                class="self-input-box"
+                style="margin-right:10px"
+              >
                 <div class="self-title">起始时间</div>
-                <el-date-picker v-model="weekForm.startDateStr" :readonly="editStatus" :picker-options="pickerOptions" type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeStartChange" />
+                <el-date-picker
+                  v-model="weekForm.startDateStr"
+                  :readonly="editStatus"
+                  :picker-options="pickerOptions"
+                  type="date"
+                  format="yyyy-MM-dd"
+                  value-format="yyyy-MM-dd"
+                  placeholder="请选择日期"
+                  @change="timeStartChange"
+                />
               </el-col>
               <!--              <el-col :span="12" class="self-input-box" style="margin-left: 10px">-->
               <!--                <div class="self-title">项目角色</div>-->
@@ -248,39 +359,82 @@
               <!--                  />-->
               <!--                </el-select>-->
               <!--              </el-col>-->
-              <el-col :span="12" class="self-input-box" style="margin-left:10px">
+              <el-col
+                :span="12"
+                class="self-input-box"
+                style="margin-left:10px"
+              >
                 <div class="self-title">结束时间</div>
-                <el-date-picker v-model="weekForm.endDateStr" :readonly="editStatus" :picker-options="pickerOptions"  type="date" format="yyyy-MM-dd" value-format="yyyy-MM-dd" placeholder="请选择日期" @change="timeEndChange" />
+                <el-date-picker
+                  v-model="weekForm.endDateStr"
+                  :readonly="editStatus"
+                  :picker-options="pickerOptions"
+                  type="date"
+                  format="yyyy-MM-dd"
+                  value-format="yyyy-MM-dd"
+                  placeholder="请选择日期"
+                  @change="timeEndChange"
+                />
               </el-col>
             </el-row>
-            <el-row :gutter="20" class="mon-el-row">
+            <el-row
+              :gutter="20"
+              class="mon-el-row"
+            >
               <span style="color:red">提示:上周四至本周三为一周</span>
             </el-row>
-            <el-row :gutter="20" class="mon-el-row">
-              <el-col :span="24" class="self-input-box" style="margin-right:10px">
+            <el-row
+              :gutter="20"
+              class="mon-el-row"
+            >
+              <el-col
+                :span="24"
+                class="self-input-box"
+                style="margin-right:10px"
+              >
                 <div class="self-title">主管总工</div>
-                <el-input v-model="weekForm.leaderName" placeholder="请输入主管总工" size="small" class="self-input" />
+                <el-input
+                  v-model="weekForm.leaderName"
+                  placeholder="请输入主管总工"
+                  size="small"
+                  class="self-input"
+                />
               </el-col>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>项目存在问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.problem" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.problem" :is-clear="isClear" @change="change2" />
+                <editor-bar
+                  v-model="weekForm.problem"
+                  :is-clear="isClear"
+                  @change="change2"
+                />
               </div>
             </el-row>
-            <el-row v-if="proType == 1" style="margin-top: 10px">
+            <el-row
+              v-if="proType == 1"
+              style="margin-top: 10px"
+            >
               <h3>需要室所领导、处领导、总工解决的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.toBeSolve" :is-clear="isClear" @change="change4" />
+                <editor-bar
+                  v-model="weekForm.toBeSolve"
+                  :is-clear="isClear"
+                  @change="change4"
+                />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>项目进展情况<span style="color:red;padding-left:10px"> (重要时间节点安排，比如：项目启动、内容部署会、外部审查会、汇报会、勘测、文件送审、结题等)</span></h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.content" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.content" :is-clear="isClear" @change="change1" />
+                <editor-bar
+                  v-model="weekForm.content"
+                  :is-clear="isClear"
+                  @change="change1"
+                />
               </div>
             </el-row>
 
@@ -288,7 +442,11 @@
               <h3>下周工作安排</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.keyPoint" :is-clear="isClear" @change="change3" />
+                <editor-bar
+                  v-model="weekForm.keyPoint"
+                  :is-clear="isClear"
+                  @change="change3"
+                />
               </div>
             </el-row>
 
@@ -313,67 +471,150 @@
       :wrapper-closable="false"
       custom-class="self-drawer"
     >
-      <div slot="title" style="display: flex;justify-content: space-between" class="btns-fix">
+      <div
+        slot="title"
+        style="display: flex;justify-content: space-between"
+        class="btns-fix"
+      >
         <div style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;flex-direction: column">
           <div style="font-size: 18px;color: #000000">新建{{ proType == 1 ? '自揽' : '院控' }}周报</div>
 
         </div>
         <el-row style="display: flex;align-items: flex-start;justify-content: flex-start;margin-bottom: 10px;padding: 0 20px;">
-          <el-button size="normal" type="primary" plain @click="closeDrawer()">取消</el-button>
-          <el-button type="primary" size="normal" :disabled="buttonDisabled" @click="reportUpdate">确定</el-button>
+          <el-button
+            size="normal"
+            type="primary"
+            plain
+            @click="closeDrawer()"
+          >取消</el-button>
+          <el-button
+            type="primary"
+            size="normal"
+            :disabled="buttonDisabled"
+            @click="reportUpdate"
+          >确定</el-button>
         </el-row>
       </div>
-      <div slot="default" style="padding: 0 30px">
+      <div
+        slot="default"
+        style="padding: 0 30px"
+      >
         <!-- <div style="position: absolute;left: 5px;top: 50%;width: 50px;height: 50px;cursor: pointer" @click="$refs.lookDrawer.closeDrawer()">
           <el-icon class="el-icon-arrow-left" style="font-weight: bold" />
         </div> -->
         <div>
           <div>
-            <el-row :gutter="20" style="display: flex;margin-bottom: 20px" class="mon-el-row">
-              <el-col :span="12" class="self-input-box" style="margin-right: 10px">
+            <el-row
+              :gutter="20"
+              style="display: flex;margin-bottom: 20px"
+              class="mon-el-row"
+            >
+              <el-col
+                :span="12"
+                class="self-input-box"
+                style="margin-right: 10px"
+              >
                 <div class="self-title">项目名称</div>
-                <el-input v-model="weekForm.projectName" :readonly="true" placeholder="请输入内容" size="small" class="self-input" />
+                <el-input
+                  v-model="weekForm.projectName"
+                  :readonly="true"
+                  placeholder="请输入内容"
+                  size="small"
+                  class="self-input"
+                />
               </el-col>
-              <el-col :span="12" class="self-input-box" style="margin-left: 10px">
+              <el-col
+                :span="12"
+                class="self-input-box"
+                style="margin-left: 10px"
+              >
                 <div class="self-title">项目代码</div>
-                <el-input v-model="weekForm.projectNo" :readonly="true" placeholder="请输入内容" size="small" class="self-input" />
+                <el-input
+                  v-model="weekForm.projectNo"
+                  :readonly="true"
+                  placeholder="请输入内容"
+                  size="small"
+                  class="self-input"
+                />
               </el-col>
             </el-row>
-            <el-row :gutter="20" style="display: flex" class="mon-el-row">
-              <el-col :span="12" class="self-input-box" style="margin-right: 10px">
+            <el-row
+              :gutter="20"
+              style="display: flex"
+              class="mon-el-row"
+            >
+              <el-col
+                :span="12"
+                class="self-input-box"
+                style="margin-right: 10px"
+              >
                 <div class="self-title">时间</div>
-                <el-input v-model="weekForm.dateLine" :readonly="true" placeholder="请输入内容" size="small" class="self-input" />
+                <el-input
+                  v-model="weekForm.dateLine"
+                  :readonly="true"
+                  placeholder="请输入内容"
+                  size="small"
+                  class="self-input"
+                />
               </el-col>
-              <el-col :span="12" class="self-input-box" style="margin-left: 10px">
+              <el-col
+                :span="12"
+                class="self-input-box"
+                style="margin-left: 10px"
+              >
                 <div class="self-title">项目角色</div>
-                <el-input v-model="weekForm.proRoleName" :readonly="true" size="small" class="self-input" />
+                <el-input
+                  v-model="weekForm.proRoleName"
+                  :readonly="true"
+                  size="small"
+                  class="self-input"
+                />
               </el-col>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>工作情况</h3>
               <div style="width: 100%;">
-                <editor-bar v-model="weekForm.content" :is-clear="isClear" @change="change1" />
+                <editor-bar
+                  v-model="weekForm.content"
+                  :is-clear="isClear"
+                  @change="change1"
+                />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>存在的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.problem" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.problem" :is-clear="isClear" @change="change2" />
+                <editor-bar
+                  v-model="weekForm.problem"
+                  :is-clear="isClear"
+                  @change="change2"
+                />
               </div>
             </el-row>
             <el-row style="margin-top: 10px">
               <h3>工作重点提示</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.keyPoint" :is-clear="isClear" @change="change3" />
+                <editor-bar
+                  v-model="weekForm.keyPoint"
+                  :is-clear="isClear"
+                  @change="change3"
+                />
               </div>
             </el-row>
-            <el-row v-if="proType == 1" style="margin-top: 10px">
+            <el-row
+              v-if="proType == 1"
+              style="margin-top: 10px"
+            >
               <h3>需要室所领导、处领导、总工解决的问题</h3>
               <div style="width: 100%;">
                 <!-- <tinymce v-model="weekForm.keyPoint" :disabled-edit="buttonDisabled" :height="editorHeight" :menubar="menubar" /> -->
-                <editor-bar v-model="weekForm.toBeSolve" :is-clear="isClear" @change="change4" />
+                <editor-bar
+                  v-model="weekForm.toBeSolve"
+                  :is-clear="isClear"
+                  @change="change4"
+                />
               </div>
             </el-row>
             <!--            <el-row style="margin-top: 20px">-->
@@ -398,7 +639,10 @@
       custom-class="project-mobile"
     >
       <p style="width:100%;color:red">提示：没有显示需要的项目就根据项目编号或项目名称查询</p>
-      <div class="self-box2" style="margin: 0">
+      <div
+        class="self-box2"
+        style="margin: 0"
+      >
         <!-- <div class="search-row" style="width:25%;margin-right:0px">
           <div class="search-text" style="width: 80px">项目类型</div>
             <el-select v-model="proType" placeholder="请选择">
@@ -410,9 +654,18 @@
               </el-option>
             </el-select>
         </div> -->
-        <div class="search-row" style="width:25%;margin-right:0px">
-          <div class="search-text" style="width: 80px">查询范围</div>
-          <el-select v-model="isAll" placeholder="请选择">
+        <div
+          class="search-row"
+          style="width:25%;margin-right:0px"
+        >
+          <div
+            class="search-text"
+            style="width: 80px"
+          >查询范围</div>
+          <el-select
+            v-model="isAll"
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in joinList"
               :key="item.value"
@@ -421,23 +674,63 @@
             />
           </el-select>
         </div>
-        <div class="search-row" style="width:25%;margin-right:0px">
-          <div class="search-text" style="width: 80px">项目名称</div>
-          <el-input v-model="projectForm.searchProjectName" placeholder="请输入项目名称" :clearable="true" />
+        <div
+          class="search-row"
+          style="width:25%;margin-right:0px"
+        >
+          <div
+            class="search-text"
+            style="width: 80px"
+          >项目名称</div>
+          <el-input
+            v-model="projectForm.searchProjectName"
+            placeholder="请输入项目名称"
+            :clearable="true"
+          />
         </div>
-        <div class="search-row" style="width:25%;margin-right:0px">
-          <div class="search-text" style="width: 80px">项目编码</div>
-          <el-input v-model="projectForm.searchProjectNo" placeholder="请输入项目编码" :clearable="true" />
+        <div
+          class="search-row"
+          style="width:25%;margin-right:0px"
+        >
+          <div
+            class="search-text"
+            style="width: 80px"
+          >项目编码</div>
+          <el-input
+            v-model="projectForm.searchProjectNo"
+            placeholder="请输入项目编码"
+            :clearable="true"
+          />
         </div>
-        <div class="search-row" style="margin-left:auto">
-          <el-button type="primary" @click="handlerProjectList">查询</el-button>
+        <div
+          class="search-row"
+          style="margin-left:auto"
+        >
+          <el-button
+            type="primary"
+            @click="handlerProjectList"
+          >查询</el-button>
         </div>
       </div>
-      <div v-if="device === 'mobile'" class="listwrap">
-        <el-card v-for="(item,index) in projectDataList" :key="index" class="box-card">
-          <div slot="header" class="clearfix  cardheader">
+      <div
+        v-if="device === 'mobile'"
+        class="listwrap"
+      >
+        <el-card
+          v-for="(item,index) in projectDataList"
+          :key="index"
+          class="box-card"
+        >
+          <div
+            slot="header"
+            class="clearfix  cardheader"
+          >
             <span class="r1">{{ index+1 }}</span>
-            <el-radio v-model="radio" :label="index" @change="handleTableChange(item)">选择</el-radio>
+            <el-radio
+              v-model="radio"
+              :label="index"
+              @change="handleTableChange(item)"
+            >选择</el-radio>
           </div>
           <ul class="itemlist">
             <li><span>项目名称:</span><span>{{ item.proName }}</span></li>
@@ -455,11 +748,12 @@
         @current-change="handleTableChange"
         @cell-click="cellClick"
       >
-        <el-table-column
-          width="50"
-        >
+        <el-table-column width="50">
           <template slot-scope="scope">
-            <el-radio v-model="radio" :label="scope.$index">&nbsp;</el-radio>
+            <el-radio
+              v-model="radio"
+              :label="scope.$index"
+            >&nbsp;</el-radio>
           </template>
         </el-table-column>
         <el-table-column
@@ -467,19 +761,36 @@
           type="index"
           width="50"
         />
-        <el-table-column property="proCode" label="项目编码" width="150" />
-        <el-table-column property="proName" label="项目名称" width="200" />
-        <el-table-column property="proType" label="项目类型">
+        <el-table-column
+          property="proCode"
+          label="项目编码"
+          width="150"
+        />
+        <el-table-column
+          property="proName"
+          label="项目名称"
+          width="200"
+        />
+        <el-table-column
+          property="proType"
+          label="项目类型"
+        >
           <template slot-scope="scope">
             {{ proTypeObj[scope.row.proType] }}
           </template>
         </el-table-column>
-        <el-table-column property="proStatus" label="项目状态">
+        <el-table-column
+          property="proStatus"
+          label="项目状态"
+        >
           <template slot-scope="scope">
             {{ proStatusObj[scope.row.proStatus] }}
           </template>
         </el-table-column>
-        <el-table-column property="createTime" label="创建时间">
+        <el-table-column
+          property="createTime"
+          label="创建时间"
+        >
           <template slot-scope="scope">
             {{ scope.row.createTime | fmtdate }}
           </template>
@@ -495,8 +806,14 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-      <div style="text-align: right;" class="mobile-btns">
-        <el-button type="primary" @click="confirmPersonTable">确定</el-button>
+      <div
+        style="text-align: right;"
+        class="mobile-btns"
+      >
+        <el-button
+          type="primary"
+          @click="confirmPersonTable"
+        >确定</el-button>
         <el-button @click="closePersonTable">取消</el-button>
       </div>
     </el-dialog>
@@ -504,9 +821,22 @@
 </template>
 
 <script>
-import { personWeekList, weekDate, weekAdd, reportView, weekUpdate, projectListPersonx, weeklyDelete, weeklyAddStatus } from '@/api/monthReport'
+import {
+  personWeekList,
+  weekDate,
+  weekAdd,
+  reportView,
+  weekUpdate,
+  projectListPersonx,
+  weeklyDelete,
+  weeklyAddStatus
+} from '@/api/monthReport'
 import EditorBar from '@/components/Edit.vue'
-import { projectList, projectRoleList, projectselectListnormal } from '@/api/dayReportList'
+import {
+  projectList,
+  projectRoleList,
+  projectselectListnormal
+} from '@/api/dayReportList'
 // import Tinymce from '@/components/Tinymce'
 export default {
   name: 'MonthReport',
@@ -600,9 +930,10 @@ export default {
       var _this = this
       return {
         disabledDate(time) {
-
-            return time.getTime() < Date.now() - 777600000 || time.getTime() > Date.now() + 259200000
-          
+          return (
+            time.getTime() < Date.now() - 777600000 ||
+            time.getTime() > Date.now() + 259200000
+          )
         }
       }
     }
@@ -612,11 +943,11 @@ export default {
     var sub = day - 3
     var now = this.dateFormat2(new Date())
     var cdate = ''
-    if(sub > 0){
-      cdate = new Date(now).getTime() - sub*24*60*60*1000
-    }else if(sub < 0){
-      cdate = new Date(now).getTime() + sub*24*60*60*1000
-    }else if(sub == 0){
+    if (sub > 0) {
+      cdate = new Date(now).getTime() - sub * 24 * 60 * 60 * 1000
+    } else if (sub < 0) {
+      cdate = new Date(now).getTime() + sub * 24 * 60 * 60 * 1000
+    } else if (sub == 0) {
       cdate = new Date(now).getTime()
     }
     this.userId = this.$store.state.user.userId
@@ -641,11 +972,46 @@ export default {
     }
   },
   methods: {
-    getTime(){
+    checkTime() {
+      var now = new Date()
+      var nowtime = now.getTime()
+      var day = now.getDay()
+      var nowdate = this.dateFormat2(now)
+      var dateTime = new Date(nowdate).getTime() + 4 * 60 * 60 * 1000
+      console.log(this.dateFormat2(dateTime))
+      //计算周四时间戳
+      if (day == 0) {
+        dateTime = dateTime - 3 * 24 * 60 * 60 * 1000
+      } else if (day == 6) {
+        dateTime = dateTime - 2 * 24 * 60 * 60 * 1000
+      } else if (day == 5) {
+        dateTime = dateTime - 1 * 24 * 60 * 60 * 1000
+      } else if (day == 4) {
+        dateTime = dateTime
+      } else if (day == 3) {
+        dateTime = dateTime + 1 * 24 * 60 * 60 * 1000
+      } else if (day == 2) {
+        dateTime = dateTime + 2 * 24 * 60 * 60 * 1000
+      } else if (day == 1) {
+        dateTime = dateTime + 3 * 24 * 60 * 60 * 1000
+      }
+      var oldDateTime = dateTime - 1*24*60*60*1000 - 12*60*60*1000
+      console.log(this.dateFormat2(oldDateTime))
+      if(nowtime < (dateTime+1) && nowtime > (oldDateTime+1)){
+        return true
+      }else{
+        return false
+      }
+    },
+    getTime() {
       var currentDay = new Date().getDay()
       var s = currentDay - 3
     },
     showReport(e) {
+      if(!this.checkTime()){
+        this.$message.error('系统只允许每周三零点至周四中午12:00新增或修改周报')
+        return
+      }
       this.editStatus = true
       this.weekForm = e
       this.weekForm.startDateStr = this.dateFormat2(e.startDate)
@@ -653,7 +1019,11 @@ export default {
       this.addDrawer = true
     },
     deleteRow(e) {
-      weeklyDelete({ id: e }).then((result) => {
+      if(!this.checkTime()){
+        this.$message.error('系统只允许每周三零点至周四中午12:00新增或修改周报')
+        return
+      }
+      weeklyDelete({ id: e }).then(result => {
         const { status, data } = result
         if (status == 200) {
           this.$message.success('删除成功')
@@ -705,7 +1075,7 @@ export default {
           startDateStr: e,
           proCode: this.weekForm.proCode
         }
-        weeklyAddStatus(data).then((result) => {
+        weeklyAddStatus(data).then(result => {
           if (result.data) {
             this.weekForm.startDateStr = e
           } else {
@@ -719,9 +1089,7 @@ export default {
         return
       }
     },
-    handleSelectionChange() {
-
-    },
+    handleSelectionChange() {},
     change1(val) {
       this.weekForm.content = val
     },
@@ -765,20 +1133,30 @@ export default {
     },
 
     addReport() {
+      if(!this.checkTime()){
+        this.$message.error('系统只允许每周三零点至周四中午12:00新增或修改周报')
+        return
+      }
       this.$set(this, 'weekForm', {})
       this.editStatus = false
       this.addDrawer = true
     },
     showReportDetail(startDate, endDate) {
       // 跳转项目列表
-      this.$router.push({ path: '/monthReport/projectList', query: { startDate: startDate, endDate: endDate }})
+      this.$router.push({
+        path: '/monthReport/projectList',
+        query: { startDate: startDate, endDate: endDate }
+      })
     },
     async lookWeek(row) {
       await reportView({ id: row.id }).then(res => {
         const { status, data } = res
         if (status === 200) {
           this.weekForm = data
-          this.weekForm.dateLine = this.dateFormat2(data.startDate) + '~' + this.dateFormat2(data.endDate)
+          this.weekForm.dateLine =
+            this.dateFormat2(data.startDate) +
+            '~' +
+            this.dateFormat2(data.endDate)
           this.weekForm.projectId = row.projectId
           this.weekForm.projectName = row.proName
           this.weekForm.projectNo = row.proCode
@@ -891,9 +1269,7 @@ export default {
         this.selectedProject = row
       }
     },
-    cellClick() {
-
-    },
+    cellClick() {},
     // 确定
     async confirmPersonTable() {
       if (this.selectedProject === null) {
@@ -917,10 +1293,16 @@ export default {
       this.radio = -1
     },
     toProjectPage(task) {
-      this.$router.push({ path: '/monthReport/projectList2', query: { startDate: task.startDate, endDate: task.endDate }})
+      this.$router.push({
+        path: '/monthReport/projectList2',
+        query: { startDate: task.startDate, endDate: task.endDate }
+      })
     },
     toChoiceProjectPage(val) {
-      this.$router.push({ path: '/monthReport/projectList', query: { projectId: val }})
+      this.$router.push({
+        path: '/monthReport/projectList',
+        query: { projectId: val }
+      })
     },
     changeProject(val) {
       // 清空角色列表
@@ -952,20 +1334,27 @@ export default {
             this.$message.warning('起始时间必须为周四')
             return
           } else {
-            this.searchWeekStrEnd = this.dateFormat2(date.getTime() + 6 * 24 * 60 * 60 * 1000)
+            this.searchWeekStrEnd = this.dateFormat2(
+              date.getTime() + 6 * 24 * 60 * 60 * 1000
+            )
           }
         }
       }
 
-      const params = { startDateStr: this.searchWeekStr, endDateStr: this.searchWeekStrEnd, proNameKeyWord: this.form.searchProject, proCodeKeyWord: this.form.searchProjectPro }
+      const params = {
+        startDateStr: this.searchWeekStr,
+        endDateStr: this.searchWeekStrEnd,
+        proNameKeyWord: this.form.searchProject,
+        proCodeKeyWord: this.form.searchProjectPro
+      }
       if (this.init) {
         params.endDateStr = this.dateFormat2(new Date())
         params.startDateStr = ''
       }
-      projectListPersonx(params).then((result) => {
+      projectListPersonx(params).then(result => {
         const { status, data } = result
         if (status == 200) {
-          data.map((item) => {
+          data.map(item => {
             item.proType = item.proType ? item.proType : 1
           })
           this.taskList = data
@@ -1031,8 +1420,8 @@ export default {
     },
     // 设置 按钮状态
     nextWeekBtnStatus(weekTemp) {
-      const nowTime = (new Date()).getTime()
-      const searchWeekTime = (new Date(this.addDate(weekTemp, 7))).getTime()
+      const nowTime = new Date().getTime()
+      const searchWeekTime = new Date(this.addDate(weekTemp, 7)).getTime()
       if (searchWeekTime > nowTime) {
         this.nextWeekBtnEdit = false
         return false
@@ -1093,485 +1482,496 @@ export default {
       let month = date.getMonth() + 1
       month = month > 9 ? date.getDate() : '0' + month
       const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-      const min = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
-      const sec = date.getSeconds() > 9 ? date.getSeconds() : '0' + date.getSeconds()
+      const min =
+        date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
+      const sec =
+        date.getSeconds() > 9 ? date.getSeconds() : '0' + date.getSeconds()
       // 拼接
-      return year + '-' + month + '-' + day + ' ' + date.getHours() + ':' + min + ':' + sec
+      return (
+        year +
+        '-' +
+        month +
+        '-' +
+        day +
+        ' ' +
+        date.getHours() +
+        ':' +
+        min +
+        ':' +
+        sec
+      )
     }
   }
 }
 </script>
 
 <style scoped>
-   .self-card-item-fix{
-    display:flex;
-    flex:1;
-    width:100%\9;
-    display: inline-block\9;
-   }
-   .self-font-color-fix{
-     line-height:40px\9;
-     display:block\9;
-     font-size:18px;
-     text-align:center\9;
-     margin:0 auto\9;
-   }
-  .mon-el-row {
-    display: flex;
-    margin-bottom: 20px;
-    display: inline-block\9;
-    width:100%\9;
-  }
-  .self-container{
-    padding: 10px 10px 10px 0;
-    display: flex;
-    min-height: calc(100vh - 50px);
-    box-sizing: border-box;
-  }
-  .self-box{
-    flex: 1;
-    width:100%\9;
-    display: inline-block\9;
-    background: white;
-    position: relative;
-    padding: 0 30px;
-    box-sizing: border-box;
-  }
-  .self-box2{
-    position: relative;
-    padding: 20px 0 ;
-    box-sizing: border-box;
-    display: flex;
-    display: inline-block\9;
-    width:100%;
-    align-items: center;
-    /* margin-bottom: 20px; */
-  }
-  .self-content-wrap{
-    display:flex;
-    display: inline-block\9;
-    flex-wrap:wrap;
-    width:100%
-  }
-  .self-circle{
-    position: absolute;
-    background: rgb(32, 160, 255);
-    width: 10px;
-    height: 10px;
-    border-radius: 10px;
-    left: 0;
-  }
+.self-card-item-fix {
+  display: flex;
+  flex: 1;
+  width: 100%\9;
+  display: inline-block\9;
+}
+.self-font-color-fix {
+  line-height: 40px\9;
+  display: block\9;
+  font-size: 18px;
+  text-align: center\9;
+  margin: 0 auto\9;
+}
+.mon-el-row {
+  display: flex;
+  margin-bottom: 20px;
+  display: inline-block\9;
+  width: 100%\9;
+}
+.self-container {
+  padding: 10px 10px 10px 0;
+  display: flex;
+  min-height: calc(100vh - 50px);
+  box-sizing: border-box;
+}
+.self-box {
+  flex: 1;
+  width: 100%\9;
+  display: inline-block\9;
+  background: white;
+  position: relative;
+  padding: 0 30px;
+  box-sizing: border-box;
+}
+.self-box2 {
+  position: relative;
+  padding: 20px 0;
+  box-sizing: border-box;
+  display: flex;
+  display: inline-block\9;
+  width: 100%;
+  align-items: center;
+  /* margin-bottom: 20px; */
+}
+.self-content-wrap {
+  display: flex;
+  display: inline-block\9;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.self-circle {
+  position: absolute;
+  background: rgb(32, 160, 255);
+  width: 10px;
+  height: 10px;
+  border-radius: 10px;
+  left: 0;
+}
 
-  .search-row{
-    display: flex;
-    display: inline-block\9;
-    margin-right: 20px;
-    align-items: center;
-    width:20%;
-    float:left;
+.search-row {
+  display: flex;
+  display: inline-block\9;
+  margin-right: 20px;
+  align-items: center;
+  width: 20%;
+  float: left;
+}
+.search-row-fix {
+  float: right;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+.search-text {
+  font-size: 12px;
+  text-align: right;
+  margin-right: 10px;
+  float: left;
+  line-height: 28px;
+  height: 28px;
+  width: 80px;
+}
+.search-text-fw {
+  width: 40px;
+}
 
-  }
-  .search-row-fix{
-    float:right;
-    text-align: right;
-    display: flex;
-    justify-content: flex-end;
-  }
-  .search-text{
-    font-size: 12px;
-    text-align: right;
-    margin-right: 10px;
-    float:left;
-    line-height: 28px;
-    height:28px;
-    width:80px;
-  }
-  .search-text-fw{
-    width:40px;
-  }
+.self-card-container {
+  padding: 0 10px;
+  margin-bottom: 20px;
+  width: 25%;
+  min-width: 25%;
+  max-width: 25%;
+  flex: 1;
+  cursor: pointer;
+  float: left\9;
+}
 
-  .self-card-container{
-    padding: 0 10px;
-    margin-bottom: 20px;
-    width: 25%;
-    min-width: 25%;
-    max-width: 25%;
-    flex: 1;
-    cursor: pointer;
-    float:left\9;
+.self-box-card {
+  border-top: 3px solid #20a0ff;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.self-card-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  }
+.self-cr-text {
+  font-size: 20px;
+  color: #20a0ff;
+  font-weight: bold;
+}
+.self-cr-desc {
+  font-size: 14px;
+  color: #000000;
+}
 
-  .self-box-card{
-    border-top: 3px solid #20a0ff;
-    height: 90px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.self-input-box {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  width: 50%\9;
+  /* margin-right:20px\9; */
+  float: left\9;
+  border: 1px solid #dcdfe6;
+}
+.self-input-box:last-child {
+  float: right\9;
+  margin-right: -20px\9;
+}
+.self-title {
+  width: 90px;
+  text-align: center;
+  font-size: 14px;
+  display: inline-block\9;
+  float: left\9;
+  height: 32px \9;
+  line-height: 32px\9;
+}
+.self-input {
+  flex: 1;
+  width: calc(100% - 90px) \9;
+  float: right\9;
+}
+.self-input-fix {
+  width: calc(100% - 180px);
+  float: left\9;
+}
+.self-button {
+  width: 90px;
+  float: right\9;
+}
+.search-el-input {
+  width: calc(100% - 90px) \9;
+  float: right\9;
+}
+.self-card-item-ss {
+  display: flex;
+  display: inline-block\9;
+  flex: 1;
+  width: calc(100% - 60px);
+  justify-content: space-between;
+}
+.self-card-item-ss1 {
+  width: 70%;
+  float: left;
+}
+.self-card-item-ss1 > div:first-child {
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  float: left;
+  word-break: break-all;
+  height: 40px;
+  line-height: 20px;
+  overflow: hidden;
+}
+.self-card-item-ss1 > div:last-child {
+  width: 100%;
+  float: left;
+}
+.self-card-item-ss2 {
+  width: 30%;
+  float: right;
+}
+.self-card-icon {
+  width: 40px;
+  height: 40px;
+  background: aliceblue;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  float: left\9;
+}
+h3 {
+  margin: 10px 0;
+}
+</style>
+<style>
+.self-input .el-input__inner {
+  flex: 1;
+  border: none;
+  border-left: 1px solid #3333;
+  border-radius: 0;
+}
+.self-drawer .el-drawer__header {
+  margin-bottom: 0px;
+}
+.self-input .el-button {
+  background: white;
+  border: none;
+  box-shadow: none;
+}
+.self-input .el-input-group__append {
+  border: none;
+  box-shadow: none;
+  background: white;
+}
+.self-drawer .el-row {
+  margin-right: -10px !important;
+  margin-left: -10px !important;
+}
+.btns-fix {
+  display: flex;
+  flex-direction: column;
+}
+.btns-fix .el-row {
+  margin-left: 0px !important;
+}
+.self-card-item-ss2 .el-button {
+  width: 100%;
+  font-size: 11px !important;
+  padding: 6px 0px !important;
+}
+.self-container-title {
+  font-size: 30px;
+  padding-left: 30px;
+  font-weight: bold;
+}
+.self-container-p {
+  color: red;
+  padding-left: 30px;
+  font-size: 16px;
+}
+.search-row-width {
+  width: 10%;
+}
+.search-row-marg {
+  margin-left: auto;
+}
+.self-drawer-btns {
+  display: flex;
+  justify-content: space-between;
+}
+.self-drawer-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  padding: 0 20px;
+  flex-direction: column;
+}
+.flex-drawer-fonts {
+  font-size: 18px;
+  color: #000000;
+}
+.self-drawer-s-btns {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  padding: 0 20px;
+  margin-left: 10px;
+}
+.el-body-self {
+  padding: 0 30px;
+}
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  /* 3. */
+  .self-font-color-fix {
+    margin: 0px !important;
   }
-  .self-card-body{
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+}
+</style>
+<style>
+.el-radio__inner {
+  border: 2px solid #107cee;
+}
+@media only screen and (max-width: 768px) {
+  .self-box {
+    width: 100%;
   }
-
-  .self-cr-text{
-    font-size: 20px;
-    color: #20a0ff;
+  .self-container-title {
+    font-size: 16px;
+    padding-left: 30px;
     font-weight: bold;
   }
-  .self-cr-desc{
-    font-size: 14px;
-    color: #000000;
+  .self-box2-mobile {
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
   }
-
-  .self-input-box{
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    width:50%\9;
-    /* margin-right:20px\9; */
-    float: left\9;
-    border: 1px solid #dcdfe6;
-  }
-  .self-input-box:last-child{
-    float:right\9;
-    margin-right:-20px\9;
-  }
-  .self-title{
-    width: 90px;
-    text-align: center;
-    font-size: 14px;
-    display: inline-block\9;
-    float:left\9;
-    height:32px \9;
-    line-height: 32px\9;
-  }
-  .self-input{
+  .self-box2-mobile .el-date-editor.el-input {
     flex: 1;
-    width:calc(100% - 90px) \9;
-    float:right\9
   }
-  .self-input-fix{
-    width:calc(100% - 180px);
-    float:left\9;
+  .self-input-box {
+    /* padding:0 15px!important; */
   }
-  .self-button{
-    width:90px;
-    float:right\9;
+  .self-box2-mobile .search-row {
+    margin-right: 0px !important;
   }
-  .search-el-input{
-    width:calc(100% - 90px)\9;
-    float:right\9;
+  .self-container-p {
+    color: red;
+    padding-left: 30px;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
-  .self-card-item-ss{
-    display:flex;
-    display: inline-block\9;
-    flex:1;
-    width:calc(100% - 60px);
-    justify-content:space-between;
+  .self-title {
+    width: 70px !important;
   }
-  .self-card-item-ss1{
-    width:70%;
-    float:left;
+  .self-box2-mobile {
+    flex-wrap: wrap;
   }
-  .self-card-item-ss1 > div:first-child{
-     text-overflow: -o-ellipsis-lastline;
-     overflow: hidden;
-     text-overflow: ellipsis;
-     display: -webkit-box;
-     -webkit-line-clamp: 2;
-     -webkit-box-orient: vertical;
-     float: left;
-     word-break: break-all;
-    height: 40px;
-    line-height: 20px;
-    overflow: hidden;
+  .search-text {
+    width: fit-content !important;
   }
-  .self-card-item-ss1 > div:last-child{
-    width:100%;
-    float:left
+  .search-row {
+    width: 100% !important;
+    margin-bottom: 0.15rem !important;
   }
-  .self-card-item-ss2{
-    width:30%;
-    float:right;
+  .search-row-fix {
+    margin-right: 0px !important;
+    width: fit-content !important;
+    justify-content: flex-start !important;
   }
-  .self-card-icon{
-    width: 40px;
-    height: 40px;
-    background: aliceblue;
-    border-radius: 50%;
+  .search-row-width {
+    width: fit-content !important;
+  }
+  .self-drawer-mobile {
+    width: 100% !important;
+  }
+  .self-drawer-mobile .el-dialog__header {
+    padding: 20px !important;
+  }
+  .self-drawer-title {
+    padding: 0px !important;
+  }
+  .self-drawer-s-btns {
+    padding: 0px !important;
+  }
+  .el-dialog__body {
+    padding: 0px !important;
+  }
+  .el-body-self {
+    padding: 0 20px !important;
+    box-sizing: border-box;
+  }
+  .self-drawer .el-row {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+  .mon-el-row {
+    width: 100%;
+    flex-wrap: wrap;
+    margin-bottom: 0px !important;
+  }
+  .self-input-box {
+    width: 100%;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+  .self-input-box:nth-child(1n) {
+    margin-bottom: 20px !important;
+  }
+  .self-input-box:nth-child(2n) {
+    margin-left: 0px !important;
+  }
+  .project-mobile {
+    width: 100%;
+    padding-bottom: 20px;
+  }
+  .project-mobile .el-dialog__body {
+    padding: 0 20px !important;
+    box-sizing: border-box;
+  }
+  .project-mobile .self-box2 {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .project-mobile .el-select,
+  .project-mobile .el-input {
+    flex: 1;
+  }
+  .box-card {
+    margin-bottom: 20px;
+  }
+  .itemlist {
+    padding-left: 0px !important;
+    list-style: none;
+  }
+  .itemlist li span:first-child {
+    font-weight: bold;
+    padding-right: 0.2rem;
+  }
+  .cardheader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .cardheader .r1 {
+    margin-right: auto;
+  }
+  .mobile-btns {
+    display: flex;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
-    margin-right: 10px;
-    float:left\9;
   }
-  h3{
-    margin: 10px 0;
-  }
-</style>
-<style>
-  .self-input .el-input__inner{
-    flex: 1;
-    border: none;
-    border-left: 1px solid #3333;
-    border-radius: 0;
-  }
-  .self-drawer .el-drawer__header{
-    margin-bottom: 0px;
-  }
-  .self-input .el-button{
-    background: white;
-    border: none;
-    box-shadow: none;
-  }
-  .self-input .el-input-group__append{
-    border: none;
-    box-shadow: none;
-    background: white;
-  }
-  .self-drawer .el-row{
-    margin-right:-10px!important;
-    margin-left:-10px!important;
-  }
-  .btns-fix{
+  .mobile-box-card,
+  .mobilecardlist {
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
   }
-  .btns-fix .el-row{
-    margin-left:0px!important;
+  .mobile-box-card {
+    margin-bottom: 20px;
   }
-  .self-card-item-ss2 .el-button{
-    width:100%;
-    font-size: 11px!important;
-    padding:6px 0px!important;
+  .header-title,
+  .tasklist {
+    font-size: 15px;
+    padding-left: 0px;
   }
-    .self-container-title{
-      font-size: 30px;
-      padding-left: 30px;
-      font-weight: bold
-    }
-    .self-container-p{
-      color:red;
-      padding-left:30px;
-      font-size:16px;
-    }
-    .search-row-width{
-      width:10%
-    }
-    .search-row-marg{
-      margin-left:auto
-    }
-    .self-drawer-btns{
-      display: flex;
-      justify-content: space-between
-    }
-    .self-drawer-title{
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      margin-bottom: 10px;
-      padding: 0 20px;
-      flex-direction: column
-    }
-    .flex-drawer-fonts
-    {
-      font-size: 18px;color: #000000
-    }
-    .self-drawer-s-btns{
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      margin-bottom: 10px;
-      padding: 0 20px;
-      margin-left:10px
-    }
-    .el-body-self{
-      padding: 0 30px
-    }
-  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) { /* 3. */
-    .self-font-color-fix{
-      margin:0px!important;
-    }
+  .header-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
   }
-
-</style>
-<style>
- .el-radio__inner{
-    border:2px solid #107cee
+  .header-title span {
+    font-weight: bold;
   }
-  @media only screen and (max-width: 768px){
-    .self-box{
-      width:100%;
-    }
-    .self-container-title{
-      font-size: 16px;
-      padding-left: 30px;
-      font-weight: bold
-    }
-    .self-box2-mobile{
-      margin-bottom: 0px!important;
-      padding-bottom:0px !important;
-    }
-    .self-box2-mobile .el-date-editor.el-input{
-      flex:1;
-    }
-    .self-input-box{
-      /* padding:0 15px!important; */
-    }
-    .self-box2-mobile .search-row{
-      margin-right:0px !important;
-    }
-    .self-container-p{
-      color:red;
-      padding-left:30px;
-      font-size:16px;
-      margin-top:5px;
-      margin-bottom:5px;
-    }
-    .self-title{
-      width:70px!important;
-    }
-    .self-box2-mobile{
-      flex-wrap:wrap;
-    }
-    .search-text{
-      width:fit-content!important;
-    }
-    .search-row{
-      width:100%!important;
-      margin-bottom:0.15rem!important;
-    }
-    .search-row-fix{
-      margin-right:0px!important;
-      width:fit-content!important;
-      justify-content:flex-start!important;
-    }
-    .search-row-width{
-      width:fit-content!important;
-    }
-    .self-drawer-mobile{
-      width:100%!important;
-    }
-    .self-drawer-mobile .el-dialog__header{
-      padding:20px!important;
-    }
-    .self-drawer-title{
-      padding:0px !important;
-    }
-    .self-drawer-s-btns{
-      padding:0px !important;
-    }
-    .el-dialog__body{
-      padding:0px!important;
-    }
-    .el-body-self{
-      padding:0 20px!important;
-      box-sizing:border-box;
-    }
-    .self-drawer .el-row{
-      margin-left:0px !important;
-      margin-right:0px !important;
-    }
-    .mon-el-row{
-      width:100%;
-      flex-wrap:wrap;
-      margin-bottom:0px !important;
-    }
-    .self-input-box{
-      width:100%;
-      margin-left:0px !important;
-      margin-right:0px !important;
-    }
-    .self-input-box:nth-child(1n){
-      margin-bottom:20px !important;
-    }
-    .self-input-box:nth-child(2n){
-      margin-left:0px!important;
-    }
-    .project-mobile{
-      width:100%;
-      padding-bottom:20px;
-    }
-    .project-mobile .el-dialog__body{
-      padding:0 20px!important;
-      box-sizing:border-box;
-    }
-    .project-mobile .self-box2{
-      display:flex;
-      flex-direction:row;
-      flex-wrap:wrap;
-    }
-    .project-mobile .el-select,
-    .project-mobile .el-input{
-      flex:1;
-    }
-    .box-card{
-      margin-bottom:20px;
-    }
-    .itemlist{
-      padding-left:0px!important;
-      list-style:none
-    }
-    .itemlist li span:first-child{
-      font-weight:bold;
-      padding-right:0.2rem;
-    }
-    .cardheader{
-      display: flex;
-      flex-direction:row;
-      justify-content: space-between;
-    }
-    .cardheader .r1{
-      margin-right:auto;
-    }
-    .mobile-btns{
-      display:flex;
-      flex-direction:row;
-      justify-content:center;
-    }
-    .mobile-box-card,
-    .mobilecardlist{
-      display:flex;
-      flex-direction:column;
-    }
-    .mobile-box-card{
-      margin-bottom:20px;
-    }
-    .header-title,
-    .tasklist{
-      font-size:15px;
-      padding-left:0px;
-    }
-    .header-title{
-      display:flex;
-      flex-direction:row;
-      align-items:center;
-    }
-    .header-title span{
-      font-weight:bold;
-    }
-    .op-btns{
-      margin-left:auto;
-    }
-    .tasklist li{
-      padding-top:3px;
-      padding-bottom:3px;
-      display:flex;
-      flex-direction:row;
-    }
-    .tasklist .tasklabel{
-      font-weight:bold;
-      width:80px;
-    }
-    .tasklist .taskvalue{
-      width:calc(100% - 80px);
-    }
-    .el-body-self h3{
-      font-size:15px;
-    }
+  .op-btns {
+    margin-left: auto;
   }
-
+  .tasklist li {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    display: flex;
+    flex-direction: row;
+  }
+  .tasklist .tasklabel {
+    font-weight: bold;
+    width: 80px;
+  }
+  .tasklist .taskvalue {
+    width: calc(100% - 80px);
+  }
+  .el-body-self h3 {
+    font-size: 15px;
+  }
+}
 </style>
