@@ -1468,7 +1468,7 @@ export default {
          * */
       const year = date.getFullYear()
       let month = date.getMonth() + 1
-      month = month > 9 ? date.getDate() : '0' + month
+      month = month > 9 ? month : '0' + month
       const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
       // 拼接
       return year + '-' + month + '-' + day
@@ -1480,7 +1480,7 @@ export default {
          * */
       const year = date.getFullYear()
       let month = date.getMonth() + 1
-      month = month > 9 ? date.getDate() : '0' + month
+      month = month > 9 ? month : '0' + month
       const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
       const min =
         date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
