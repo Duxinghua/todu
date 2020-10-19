@@ -397,6 +397,9 @@ export default {
     this.form.searchDate = this.dateFormat(new Date())
     console.log(this.form.searchDate)
     this.getList()
+    if(this.device == 'mobile'){
+      location.reload();
+    }
   },
   methods: {
     handleDel(e) {
@@ -1018,6 +1021,9 @@ export default {
     .mobilecardlist{
       display:flex;
       flex-direction:column;
+    }
+    .mobilecardlist{
+
     }
     .mobile-box-card{
       margin-bottom:20px;

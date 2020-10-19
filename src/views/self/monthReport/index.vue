@@ -970,6 +970,9 @@ export default {
     if (this.init) {
       this.getWeekList()
     }
+    if(this.device == 'mobile'){
+      location.reload();
+    }
   },
   methods: {
     checkTime() {
