@@ -12,7 +12,7 @@
         />
         <div class="self-container-title">自揽项目周报</div>
       </div>
-      <p class="self-container-p">提示:起始时间必须为周四</p>
+      <p class="self-container-p">提示:周四上午8：00—周五下午3：00之间可以填写自揽项目周报</p>
       <div class="self-box2 self-box2-mobile">
 
         <div class="search-row">
@@ -359,15 +359,16 @@
               <!--                  />-->
               <!--                </el-select>-->
               <!--              </el-col>-->
-              <el-col
+              <!-- <el-col
                 :span="12"
                 class="self-input-box"
                 style="margin-left:10px"
               >
                 <div class="self-title">结束时间</div>
+
                 <el-date-picker
+                  readonly
                   v-model="weekForm.endDateStr"
-                  :readonly="editStatus"
                   :picker-options="pickerOptions"
                   type="date"
                   format="yyyy-MM-dd"
@@ -375,13 +376,27 @@
                   placeholder="请选择日期"
                   @change="timeEndChange"
                 />
+              </el-col> -->
+              <el-col
+                :span="12"
+                class="self-input-box"
+                style="margin-left:10px"
+              >
+                <div class="self-title">结束时间</div>
+                <el-input
+                  v-model="weekForm.endDateStr"
+                  :readonly="true"
+                  placeholder="请选择起始时间"
+                  size="small"
+                  class="self-input"
+                />
               </el-col>
             </el-row>
             <el-row
               :gutter="20"
               class="mon-el-row"
             >
-              <span style="color:red">提示:上周四至本周三为一周</span>
+              <span style="color:red">提示:周四上午8：00—周五下午3：00之间可以填写自揽项目周报</span>
             </el-row>
             <el-row
               :gutter="20"
@@ -977,6 +992,7 @@ export default {
       var nowtime = now.getTime()
       var day = now.getDay()
       var nowdate = this.dateFormat2(now)
+      var nowdateTime = new Date(nowdate).getTime()
       var dateTime = new Date(nowdate).getTime() + 4 * 60 * 60 * 1000
       console.log(this.dateFormat2(dateTime))
       //计算周四时间戳
@@ -995,9 +1011,8 @@ export default {
       } else if (day == 1) {
         dateTime = dateTime + 3 * 24 * 60 * 60 * 1000
       }
-      var oldDateTime = dateTime - 1*24*60*60*1000 - 12*60*60*1000
-      console.log(this.dateFormat2(oldDateTime))
-      if(nowtime < (dateTime+1) && nowtime > (oldDateTime+1)){
+      var oldDateTime = dateTime + 15*60*60*1000
+      if(nowtime >= dateTime && nowtime <= dateTime+15*60*60*1000){
         return true
       }else{
         return false
@@ -1006,10 +1021,11 @@ export default {
     getTime() {
       var currentDay = new Date().getDay()
       var s = currentDay - 3
+      return s
     },
     showReport(e) {
       if(!this.checkTime()){
-        this.$message.error('系统只允许每周三零点至周四中午12:00新增或修改周报')
+        this.$message.error('系统只允许周四上午8:00————周五下午3:00之间可以填写自揽项目周报')
         return
       }
       this.editStatus = true
@@ -1020,7 +1036,7 @@ export default {
     },
     deleteRow(e) {
       if(!this.checkTime()){
-        this.$message.error('系统只允许每周三零点至周四中午12:00新增或修改周报')
+        this.$message.error('系统只允许周四上午8:00————周五下午3:00之间可以填写自揽项目周报')
         return
       }
       weeklyDelete({ id: e }).then(result => {
@@ -1064,28 +1080,44 @@ export default {
       }
     },
     timeStartChange(e) {
+      var that = this
       if (!this.weekForm.proCode) {
         this.$message.error('请选择项目')
         this.weekForm.startDateStr = ''
         return
       }
       var time = new Date(e).getDay()
-      if (time == 4) {
+      var end = new Date(e).getTime()+6*24*60*60*1000
+      this.weekForm.endDateStr = this.dateFormat2(end)
+      if (time == 5) {
         var data = {
           startDateStr: e,
           proCode: this.weekForm.proCode
         }
         weeklyAddStatus(data).then(result => {
           if (result.data) {
-            this.weekForm.startDateStr = e
+            this.$nextTick(()=>{
+              this.weekForm.startDateStr = e
+              this.weekForm.endDateStr = this.dateFormat2(end)
+              this.$forceUpdate()
+            })
+
           } else {
             this.$message.error('该起始时间已写过周报,请重新选择')
-            this.weekForm.startDateStr = ''
+            this.$nextTick(()=>{
+              this.weekForm.startDateStr = ''
+              this.weekForm.endDateStr = ''
+              this.$forceUpdate()
+            })
           }
         })
       } else {
-        this.weekForm.startDateStr = ''
-        this.$message.error('时间必须为周四')
+             this.$nextTick(()=>{
+              this.weekForm.startDateStr = ''
+              this.weekForm.endDateStr = ''
+              this.$forceUpdate()
+            })
+        this.$message.error('时间必须为周五')
         return
       }
     },
@@ -1134,7 +1166,7 @@ export default {
 
     addReport() {
       if(!this.checkTime()){
-        this.$message.error('系统只允许每周三零点至周四中午12:00新增或修改周报')
+        this.$message.error('系统只允许周四上午8：00—周五下午3：00之间可以填写自揽项目周报')
         return
       }
       this.$set(this, 'weekForm', {})
