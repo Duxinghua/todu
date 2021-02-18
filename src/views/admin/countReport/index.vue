@@ -91,7 +91,7 @@
     <el-drawer
       :visible.sync="commitDrawer"
       :direction="direction"
-      size="30%"
+      size="35%"
       custom-class="self-drawer"
     >
       <div slot="title">
@@ -137,7 +137,7 @@
     <el-drawer
       :visible.sync="lackDrawer"
       :direction="direction"
-      size="30%"
+      size="35%"
       custom-class="self-drawer"
     >
       <div slot="title">
