@@ -1012,7 +1012,8 @@ export default {
         dateTime = dateTime + 3 * 24 * 60 * 60 * 1000
       }
       var oldDateTime = dateTime + 15*60*60*1000
-      if(nowtime >= dateTime && nowtime <= dateTime+15*60*60*1000){
+      console.log(this.dateFormat3(nowtime),this.dateFormat3(dateTime+(27)*60*60*1000),nowtime <= dateTime+15*60*60*1000,nowtime >= dateTime)
+      if(nowtime >= dateTime && nowtime <= dateTime+27*60*60*1000){
         return true
       }else{
         return false
