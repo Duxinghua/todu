@@ -1382,7 +1382,7 @@ export default {
       }
       if (this.init) {
         params.endDateStr = this.dateFormat2(new Date())
-        params.startDateStr = ''
+        params.startDateStr = this.dateFormat2(new Date().getTime() - 15*24*60*60*1000)
       }
       projectListPersonx(params).then(result => {
         const { status, data } = result
