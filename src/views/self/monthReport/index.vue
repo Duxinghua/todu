@@ -1033,7 +1033,7 @@ export default {
       if(day == 4 || day == 5){
         if(day == 4){
           return true
-        }else if(day == 5 && hour <= 15 ){
+        }else if(day == 5 && hour < 15 ){
           return true
         }else{
           return false
