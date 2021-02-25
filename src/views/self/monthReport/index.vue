@@ -990,34 +990,55 @@ export default {
     }
   },
   methods: {
+    // 检测时间周四零点到周五下午三点
     checkTime() {
+      //方案一
+      // var now = new Date()
+      // var nowtime = now.getTime()
+      // var day = now.getDay()
+      // var nowdate = this.dateFormat2(now)
+      // var nowdateTime = new Date(nowdate).getTime()
+      // var dateTime = new Date(nowdate).getTime() + 4 * 60 * 60 * 1000
+      // console.log(this.dateFormat2(dateTime))
+      // //计算周四时间戳
+      // if (day == 0) {
+      //   dateTime = dateTime - 3 * 24 * 60 * 60 * 1000
+      // } else if (day == 6) {
+      //   dateTime = dateTime - 2 * 24 * 60 * 60 * 1000
+      // } else if (day == 5) {
+      //   dateTime = dateTime - 1 * 24 * 60 * 60 * 1000
+      // } else if (day == 4) {
+      //   dateTime = dateTime
+      // } else if (day == 3) {
+      //   dateTime = dateTime + 1 * 24 * 60 * 60 * 1000
+      // } else if (day == 2) {
+      //   dateTime = dateTime + 2 * 24 * 60 * 60 * 1000
+      // } else if (day == 1) {
+      //   dateTime = dateTime + 3 * 24 * 60 * 60 * 1000
+      // }
+      // var oldDateTime = dateTime + 15*60*60*1000
+      // console.log(this.dateFormat3(nowtime),this.dateFormat3(dateTime),'====',this.dateFormat3(dateTime+(27)*60*60*1000),nowtime <= dateTime+15*60*60*1000,nowtime >= dateTime)
+      // if(nowtime >= dateTime - 12*60*60*1000  && nowtime <= dateTime+27*60*60*1000){
+      //   return true
+      // }else{
+      //   return false
+      // }
+      //方案二
+      // 检测时间周四零点到周五下午三点
       var now = new Date()
-      var nowtime = now.getTime()
+      // now = new Date().getTime() + 36*60*60*1000
+      // now = new Date(now)
       var day = now.getDay()
-      var nowdate = this.dateFormat2(now)
-      var nowdateTime = new Date(nowdate).getTime()
-      var dateTime = new Date(nowdate).getTime() + 4 * 60 * 60 * 1000
-      console.log(this.dateFormat2(dateTime))
-      //计算周四时间戳
-      if (day == 0) {
-        dateTime = dateTime - 3 * 24 * 60 * 60 * 1000
-      } else if (day == 6) {
-        dateTime = dateTime - 2 * 24 * 60 * 60 * 1000
-      } else if (day == 5) {
-        dateTime = dateTime - 1 * 24 * 60 * 60 * 1000
-      } else if (day == 4) {
-        dateTime = dateTime
-      } else if (day == 3) {
-        dateTime = dateTime + 1 * 24 * 60 * 60 * 1000
-      } else if (day == 2) {
-        dateTime = dateTime + 2 * 24 * 60 * 60 * 1000
-      } else if (day == 1) {
-        dateTime = dateTime + 3 * 24 * 60 * 60 * 1000
-      }
-      var oldDateTime = dateTime + 15*60*60*1000
-      console.log(this.dateFormat3(nowtime),this.dateFormat3(dateTime+(27)*60*60*1000),nowtime <= dateTime+15*60*60*1000,nowtime >= dateTime)
-      if(nowtime >= dateTime && nowtime <= dateTime+27*60*60*1000){
-        return true
+      var hour = now.getHours()
+      if(day == 4 || day == 5){
+        if(day == 4){
+          return true
+        }else if(day == 5 && hour <= 15 ){
+          return true
+        }else{
+          return false
+        }
+
       }else{
         return false
       }
