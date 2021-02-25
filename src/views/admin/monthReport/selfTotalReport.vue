@@ -8,7 +8,7 @@
       </div>
       <div class="self-box2" style="font-size:14px;color:red;">
         <p>提示:1.院控项目周报请在生产经营管理系统填报，这里只填自揽项目周报。</p>
-        <p>2.周四为起始日期。</p>
+        <p>2.周五为起始日期。</p>
       </div>
       <div class="self-box2 self-box2-fix" style="justify-content: space-between">
         <div class="search-row-fix">
@@ -170,7 +170,7 @@ export default {
     }
   },
   mounted() {
-    this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - (new Date().getDay() + 3) * 24 * 60 * 60 * 1000)
+    this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - (new Date().getDay() + 2) * 24 * 60 * 60 * 1000)
     this.getList()
   },
   methods: {
@@ -272,8 +272,8 @@ export default {
     listChange(e) {
       // this.searchWeekStr = e
       // this.getList()
-      if (new Date(e).getDay() != 4) {
-        this.$message.error('时间必须为周四')
+      if (new Date(e).getDay() != 5) {
+        this.$message.error('时间必须为周五')
         this.searchForm.startDateStr = ''
         return
       } else {

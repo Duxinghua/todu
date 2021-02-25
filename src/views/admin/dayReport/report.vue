@@ -162,13 +162,13 @@
       :title="searchTitle"
       :show-close="true"
       :wrapper-closable="false"
-      width="25%"
+      width="30%"
       class="self-drawer report-el-dialog"
     >
       <!-- <div class="self-box3" style="padding: 0 20px;justify-content: space-between">
         <div slot="title" style="font-size: 20px">查询填报率</div>
       </div> -->
-      <p style="color:red">提示：上周五至周四为查询周期</p>
+      <p style="color:red">提示：起始日期请选择周一 </p>
       <el-form ref="editProjectForm" label-position="right" label-width="80px">
         <el-form-item class="self-input-box" label="起始时间">
           <el-date-picker
@@ -284,16 +284,15 @@ export default {
       })
     },
     searchstartChange(e) {
-      if (new Date(e).getDay() != 5) {
-        this.$message.warning('请选择周五')
-        this.form.searchstartDate = ''
-        return
+      if (new Date(e).getDay() != 1) {
+        this.$message.warning('请选择周一')
       }
       if (new Date(e).getTime() > new Date().getTime()) {
         this.$message.warning('请重新选择时间')
         this.form.searchstartDate = ''
         return
       }
+      this.form.searchendDate = this.dateFormat(new Date(e).getTime()+6*24*60*60*1000)
     },
     searchendChange(e) {
       if (new Date(e).getDay() != 4) {
@@ -593,6 +592,8 @@ export default {
   font-size: 14px;
   color:red;
   width:40%!important;
+  white-space: nowrap;
+  padding-left:40px;
 }
   .report-el-dialog-footer{
     display: flex;
@@ -725,7 +726,9 @@ export default {
 </style>
 <style>
   .report-el-dialog .el-form-item__label{
-    width:120px!important
+    width:120px!important;
+    text-align:left;
+    padding-left:20px;
   }
   .report-el-dialog .el-dialog__header{
     display: flex;
