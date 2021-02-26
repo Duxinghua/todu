@@ -941,13 +941,15 @@ export default {
     device() {
       return this.$store.state.app.device
     },
+    //  time.getTime() < Date.now() - 777600000 ||
+    //        time.getTime() > Date.now() + 259200000
     pickerOptions() {
       var _this = this
       return {
         disabledDate(time) {
           return (
             time.getTime() < Date.now() - 777600000 ||
-            time.getTime() > Date.now() + 259200000
+            time.getTime() > Date.now() - 24*60*60*1000
           )
         }
       }
@@ -1399,7 +1401,9 @@ export default {
       }
 
       const params = {
-        startDateStr: this.searchWeekStr,
+        startDateStr: this.dateFormat2(
+              new Date(this.searchWeekStr).getTime() + 1 * 24 * 60 * 60 * 1000
+            ),
         endDateStr: this.searchWeekStrEnd,
         proNameKeyWord: this.form.searchProject,
         proCodeKeyWord: this.form.searchProjectPro
