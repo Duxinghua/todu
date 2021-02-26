@@ -1161,10 +1161,10 @@ export default {
     },
     listChange(e) {
       this.init = false
-      if (new Date(e).getDay() == 4) {
+      if (new Date(e).getDay() == 5) {
         this.searchWeekStr = e
       } else {
-        this.$message.error('时间必须为周四')
+        this.$message.error('时间必须为周五')
         this.searchWeekStr = ''
       }
     },
@@ -1387,12 +1387,12 @@ export default {
         } else {
           var date = new Date(this.searchWeekStr)
           var day = date.getDay()
-          if (day != 4) {
-            this.$message.warning('起始时间必须为周四')
+          if (day != 5) {
+            this.$message.warning('起始时间必须为周五')
             return
           } else {
             this.searchWeekStrEnd = this.dateFormat2(
-              date.getTime() + 6 * 24 * 60 * 60 * 1000
+              date.getTime() + 7 * 24 * 60 * 60 * 1000
             )
           }
         }
