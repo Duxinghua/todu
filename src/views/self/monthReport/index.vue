@@ -1394,12 +1394,12 @@ export default {
             return
           } else {
             this.searchWeekStrEnd = this.dateFormat2(
-              date.getTime() + 7 * 24 * 60 * 60 * 1000
+              date.getTime() + 8 * 24 * 60 * 60 * 1000
             )
           }
         }
       }
-
+    console.log(this.dateFormat2(1614309818000))
       const params = {
         startDateStr: this.dateFormat2(
               new Date(this.searchWeekStr).getTime() + 1 * 24 * 60 * 60 * 1000
