@@ -158,6 +158,7 @@ export default {
         proNameKeyWord: '',
         proText: '',
         startDateStr: '',
+        endDateStr:'',
         userNameKeyWord: '',
         workNumberKeyWord: '',
         userText: ''
@@ -166,11 +167,13 @@ export default {
       searchDate: '',
       nextWeekBtnEdit: true,
       searchWeekStr: '',
-      spanArr: []
+      spanArr: [],
+      init:true
     }
   },
   mounted() {
-    this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - (new Date().getDay() + 2) * 24 * 60 * 60 * 1000)
+    this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - 15 *60*60* 24 *1000)
+    this.searchForm.endDateStr = this.dateFormat2(new Date().getTime())
     this.getList()
   },
   methods: {
@@ -239,12 +242,25 @@ export default {
           this.searchForm.userNameKeyWord = ''
         }
       }
+      this.init = false
       this.getList()
     },
     getList() {
       this.spanArr = []
       this.tableData = []
-      weeklyProjectListAdmin(this.searchForm).then(res => {
+      var {startDateStr,endDateStr,...data} = this.searchForm
+      console.log(JSON.stringify(data))
+      if(!this.init){
+        data.startDateStr =  this.dateFormat2(new Date(startDateStr).getTime() + 24 *60*60*1000)
+        data.endDateStr = this.dateFormat2(new Date(startDateStr).getTime() + 8*24*60*60*1000)
+      }else{
+        data.endDateStr = endDateStr
+        data.startDateStr = startDateStr
+      }
+       console.log(JSON.stringify(data))
+
+
+    weeklyProjectListAdmin(data).then(res => {
         const { status, data } = res
         if (status === 200) {
           var result = data
@@ -317,6 +333,7 @@ export default {
       } else {
         this.searchForm.startDateStr = this.dateFormat2(new Date(this.searchForm.startDateStr).getTime() - 7 * 24 * 60 * 60 * 1000)
       }
+      this.init = false
       this.getList()
     },
     // 下一周
@@ -330,6 +347,7 @@ export default {
           this.$message.error('起始时间不能超过本周范围')
           return
         } else {
+          this.init = false
           this.searchForm.startDateStr = this.dateFormat2(new Date(this.searchForm.startDateStr).getTime() + 7 * 24 * 60 * 60 * 1000)
           this.getList()
         }

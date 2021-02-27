@@ -387,6 +387,7 @@ export default {
         date1 = this.searchDateLine[0]
         date2 = this.searchDateLine[1]
       }
+      console.log(date1,date2,'data')
       weeklyPersonList({ pageSize: this.pageSize, pageNum: this.currentPage, startDateStr: date1, endDateStr: date2, proNameKeyWord: this.form.searchProject }).then(res => {
         const { status, data, count } = res
         if (status === 200) {
