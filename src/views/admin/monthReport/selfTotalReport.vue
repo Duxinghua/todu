@@ -172,11 +172,34 @@ export default {
     }
   },
   mounted() {
-    this.searchForm.startDateStr = this.dateFormat2(new Date().getTime() - 15 *60*60* 24 *1000)
-    this.searchForm.endDateStr = this.dateFormat2(new Date().getTime())
+    this.searchForm.startDateStr = this.getWeekTime()
     this.getList()
   },
   methods: {
+    getWeekTime(){
+      var now = new Date()
+      var nowtime = now.getTime()
+      var nowdate = this.dateFormat2(now)
+      var nowdateTime = new Date(nowdate).getTime()
+      var dateTime = new Date(nowdate).getTime()
+      var day = new Date(dateTime).getDay()
+      if (day == 0) {
+        dateTime = dateTime - 9 * 24 * 60 * 60 * 1000
+      } else if (day == 6) {
+        dateTime = dateTime - 8 * 24 * 60 * 60 * 1000
+      } else if (day == 5) {
+        dateTime = dateTime - 7 * 24 * 60 * 60 * 1000
+      } else if (day == 4) {
+        dateTime = dateTime - 6 * 24 * 60 * 60 * 1000
+      } else if (day == 3) {
+        dateTime = dateTime - 5 * 24 * 60 * 60 * 1000
+      } else if (day == 2) {
+        dateTime = dateTime - 4  * 24 * 60 * 60 * 1000
+      } else if (day == 1) {
+        dateTime = dateTime - 3 * 24 * 60 * 60 * 1000
+      }
+      return this.dateFormat2(new Date(dateTime))
+    },
     userClear() {
       this.searchForm.userText = ''
       this.searchForm.userNameKeyWord = ''
@@ -242,7 +265,7 @@ export default {
           this.searchForm.userNameKeyWord = ''
         }
       }
-      this.init = false
+      // this.init = false
       this.getList()
     },
     getList() {
@@ -250,13 +273,13 @@ export default {
       this.tableData = []
       var {startDateStr,endDateStr,...data} = this.searchForm
       console.log(JSON.stringify(data))
-      if(!this.init){
+      // if(!this.init){
         data.startDateStr =  this.dateFormat2(new Date(startDateStr).getTime() + 24 *60*60*1000)
         data.endDateStr = this.dateFormat2(new Date(startDateStr).getTime() + 8*24*60*60*1000)
-      }else{
-        data.endDateStr = endDateStr
-        data.startDateStr = startDateStr
-      }
+      // }else{
+      //   data.endDateStr = endDateStr
+      //   data.startDateStr = startDateStr
+      // }
        console.log(JSON.stringify(data))
 
 
