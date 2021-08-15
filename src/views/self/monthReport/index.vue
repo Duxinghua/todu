@@ -12,7 +12,7 @@
         />
         <div class="self-container-title">自揽项目周报</div>
       </div>
-      <p class="self-container-p">提示:周四至周五下午3：00之间可以填写自揽项目周报</p>
+      <p class="self-container-p">提示:周三至周四下午3：00之间可以填写自揽项目周报</p>
       <div class="self-box2 self-box2-mobile">
 
         <div class="search-row">
@@ -56,7 +56,7 @@
             @click="searchForm"
           >查询</el-button>
         </div>
-        <div class="search-row search-row-fix search-row-marg">
+        <div class="search-row search-row-fix search-row-marg" >
           <el-button
             type="primary"
             icon="el-icon-plus"
@@ -396,7 +396,7 @@
               :gutter="20"
               class="mon-el-row"
             >
-              <span style="color:red">提示:周四至周五下午3：00之间可以填写自揽项目周报</span>
+              <span style="color:red">提示:周三至周四下午3：00之间可以填写自揽项目周报</span>
             </el-row>
             <el-row
               :gutter="20"
@@ -1025,17 +1025,19 @@ export default {
       // }else{
       //   return false
       // }
+      // 现在是周三至周四下午三点半截止
       //方案二
-      // 检测周四至周五下午3点可以填写
+      // 检测周三至周四下午3点可以填写
       var now = new Date()
       // now = new Date().getTime() + 36*60*60*1000
       // now = new Date(now)
       var day = now.getDay()
       var hour = now.getHours()
-      if(day == 4 || day == 5){
-        if(day == 4){
+      console.log(day,'day')
+      if(day == 3 || day == 4){
+        if(day == 3){
           return true
-        }else if(day == 5 && hour < 15 ){
+        }else if(day == 4 && hour < 15 ){
           return true
         }else{
           return false
@@ -1052,7 +1054,7 @@ export default {
     },
     showReport(e) {
       if(!this.checkTime()){
-        this.$message.error('系统只允许周四至周五下午3:00之间可以填写自揽项目周报')
+        this.$message.error('系统只允许周三至周四下午3:00之间可以填写自揽项目周报')
         return
       }
       this.editStatus = true
@@ -1063,7 +1065,7 @@ export default {
     },
     deleteRow(e) {
       if(!this.checkTime()){
-        this.$message.error('系统只允许周四至周五下午3:00之间可以填写自揽项目周报')
+        this.$message.error('系统只允许周三至周四下午3:00之间可以填写自揽项目周报')
         return
       }
       weeklyDelete({ id: e }).then(result => {
@@ -1116,7 +1118,7 @@ export default {
       var time = new Date(e).getDay()
       var end = new Date(e).getTime()+6*24*60*60*1000
       this.weekForm.endDateStr = this.dateFormat2(end)
-      if (time == 5) {
+      if (time == 4) {
         var data = {
           startDateStr: e,
           proCode: this.weekForm.proCode
@@ -1144,7 +1146,7 @@ export default {
               this.weekForm.endDateStr = ''
               this.$forceUpdate()
             })
-        this.$message.error('时间必须为周五')
+        this.$message.error('时间必须为周四')
         return
       }
     },
@@ -1192,8 +1194,9 @@ export default {
     },
 
     addReport() {
+      console.log('aaaaa')
       if(!this.checkTime()){
-        this.$message.error('系统只允许周四至周五下午3：00之间可以填写自揽项目周报')
+        this.$message.error('系统只允许周三至周四下午3：00之间可以填写自揽项目周报')
         return
       }
       this.$set(this, 'weekForm', {})

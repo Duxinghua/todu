@@ -8,7 +8,7 @@
       </div>
       <div class="self-box2" style="font-size:14px;color:red;">
         <p>提示:1.院控项目周报请在生产经营管理系统填报，这里只填自揽项目周报。</p>
-        <p>2.周五为起始日期。</p>
+        <p>2.周四为起始日期。</p>
       </div>
       <div class="self-box2 self-box2-fix" style="justify-content: space-between">
         <div class="search-row-fix">
@@ -184,19 +184,19 @@ export default {
       var dateTime = new Date(nowdate).getTime()
       var day = new Date(dateTime).getDay()
       if (day == 0) {
-        dateTime = dateTime - 9 * 24 * 60 * 60 * 1000
+        dateTime = dateTime - 10 * 24 * 60 * 60 * 1000
       } else if (day == 6) {
-        dateTime = dateTime - 8 * 24 * 60 * 60 * 1000
+        dateTime = dateTime - 9 * 24 * 60 * 60 * 1000
       } else if (day == 5) {
-        dateTime = dateTime - 7 * 24 * 60 * 60 * 1000
+        dateTime = dateTime - 8 * 24 * 60 * 60 * 1000
       } else if (day == 4) {
-        dateTime = dateTime - 6 * 24 * 60 * 60 * 1000
+        dateTime = dateTime - 7 * 24 * 60 * 60 * 1000
       } else if (day == 3) {
-        dateTime = dateTime - 5 * 24 * 60 * 60 * 1000
+        dateTime = dateTime - 6 * 24 * 60 * 60 * 1000
       } else if (day == 2) {
-        dateTime = dateTime - 4  * 24 * 60 * 60 * 1000
+        dateTime = dateTime - 5  * 24 * 60 * 60 * 1000
       } else if (day == 1) {
-        dateTime = dateTime - 3 * 24 * 60 * 60 * 1000
+        dateTime = dateTime - 4 * 24 * 60 * 60 * 1000
       }
       return this.dateFormat2(new Date(dateTime))
     },
@@ -272,14 +272,17 @@ export default {
       this.spanArr = []
       this.tableData = []
       var {startDateStr,endDateStr,...data} = this.searchForm
+      console.log( this.searchForm,' this.searchForm')
       console.log(JSON.stringify(data))
       // if(!this.init){
-        data.startDateStr =  this.dateFormat2(new Date(startDateStr).getTime() + 24 *60*60*1000)
-        data.endDateStr = this.dateFormat2(new Date(startDateStr).getTime() + 8*24*60*60*1000)
+        // data.startDateStr =  this.dateFormat2(new Date(startDateStr).getTime() + 24 *60*60*1000)
+        // data.endDateStr = this.dateFormat2(new Date(startDateStr).getTime() + 8*24*60*60*1000)
       // }else{
       //   data.endDateStr = endDateStr
       //   data.startDateStr = startDateStr
       // }
+        data.startDateStr =  this.dateFormat2(new Date(startDateStr).getTime())
+        data.endDateStr = this.dateFormat2(new Date(startDateStr).getTime() + 7*24*60*60*1000)
        console.log(JSON.stringify(data))
 
 
@@ -349,6 +352,9 @@ export default {
         })
       }
     },
+    // 现在是周三至周四下午三点半截止
+    //方案二
+    // 检测周四至周五下午3点可以填写
     // 上一周
     prevWeek() {
       if (!this.searchForm.startDateStr) {
@@ -365,7 +371,12 @@ export default {
         this.$message.error('请输入起始时间')
         return
       } else {
-        var news = new Date().getTime() + 3 * 24 * 60 * 60 * 1000
+          var timestamp = Date.parse(new Date());
+          var serverDate = new Date(timestamp);
+          var sundayTiem = timestamp + ((7 - serverDate.getDay())* 24 * 60 * 60 * 1000)
+
+
+        var news = new Date().getTime() + 4 * 24 * 60 * 60 * 1000
         if (new Date(this.searchForm.startDateStr).getTime() > news) {
           this.$message.error('起始时间不能超过本周范围')
           return
