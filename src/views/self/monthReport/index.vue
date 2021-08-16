@@ -1165,10 +1165,10 @@ export default {
     },
     listChange(e) {
       this.init = false
-      if (new Date(e).getDay() == 5) {
+      if (new Date(e).getDay() == 4) {
         this.searchWeekStr = e
       } else {
-        this.$message.error('时间必须为周五')
+        this.$message.error('时间必须为周四')
         this.searchWeekStr = ''
       }
     },

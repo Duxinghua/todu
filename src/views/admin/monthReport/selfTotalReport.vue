@@ -314,10 +314,9 @@ export default {
     listChange(e) {
       // this.searchWeekStr = e
       // this.getList()
-      if (new Date(e).getDay() != 5) {
-        this.$message.error('时间必须为周五')
-        this.searchForm.startDateStr = ''
-        return
+      if (new Date(e).getDay() != 4) {
+        this.$message.error('时间必须为周四')
+        this.searchForm.startDateStr = e
       } else {
         this.searchForm.startDateStr = e
       }
