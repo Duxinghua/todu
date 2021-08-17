@@ -8,7 +8,7 @@
       </div>
       <div class="self-box2" style="font-size:14px;color:red;">
         <p>提示:1.院控项目周报请在生产经营管理系统填报，这里只填自揽项目周报。</p>
-        <p>2.周四为起始日期。</p>
+        <p>2.周五为起始日期。</p>
       </div>
       <div class="self-box2 self-box2-fix" style="justify-content: space-between">
         <div class="search-row-fix">
