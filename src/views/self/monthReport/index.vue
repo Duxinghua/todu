@@ -56,7 +56,7 @@
             @click="searchForm"
           >查询</el-button>
         </div>
-        <div class="search-row search-row-fix search-row-marg">
+        <div class="search-row search-row-fix search-row-marg" >
           <el-button
             type="primary"
             icon="el-icon-plus"
@@ -1025,8 +1025,9 @@ export default {
       // }else{
       //   return false
       // }
+      // 现在是周三至周四下午三点半截止
       //方案二
-      // 检测周四至周五下午3点可以填写
+      // 检测周三至周四下午3点可以填写
       var now = new Date()
       // now = new Date().getTime() + 36*60*60*1000
       // now = new Date(now)
@@ -1063,7 +1064,7 @@ export default {
     },
     deleteRow(e) {
       if(!this.checkTime()){
-        this.$message.error('系统只允许周四至周五下午3:00之间可以填写自揽项目周报')
+        this.$message.error('系统只允许周三至周四下午3:00之间可以填写自揽项目周报')
         return
       }
       weeklyDelete({ id: e }).then(result => {
@@ -1192,6 +1193,7 @@ export default {
     },
 
     addReport() {
+      console.log('aaaaa')
       if(!this.checkTime()){
         this.$message.error('系统只允许周三至周四下午3：00之间可以填写自揽项目周报')
         return
