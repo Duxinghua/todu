@@ -12,7 +12,7 @@
         />
         <div class="self-container-title">自揽项目周报</div>
       </div>
-      <p class="self-container-p">提示:周四至周五下午3：00之间可以填写自揽项目周报</p>
+      <p class="self-container-p">提示:周三至周四下午3：00之间可以填写自揽项目周报</p>
       <div class="self-box2 self-box2-mobile">
 
         <div class="search-row">
@@ -396,7 +396,7 @@
               :gutter="20"
               class="mon-el-row"
             >
-              <span style="color:red">提示:周四至周五下午3：00之间可以填写自揽项目周报</span>
+              <span style="color:red">提示:周三至周四下午3：00之间可以填写自揽项目周报</span>
             </el-row>
             <el-row
               :gutter="20"
@@ -1032,10 +1032,10 @@ export default {
       // now = new Date(now)
       var day = now.getDay()
       var hour = now.getHours()
-      if(day == 4 || day == 5){
-        if(day == 4){
+      if(day == 3 || day == 4){
+        if(day == 3){
           return true
-        }else if(day == 5 && hour < 15 ){
+        }else if(day == 4 && hour < 15 ){
           return true
         }else{
           return false
@@ -1052,7 +1052,7 @@ export default {
     },
     showReport(e) {
       if(!this.checkTime()){
-        this.$message.error('系统只允许周四至周五下午3:00之间可以填写自揽项目周报')
+        this.$message.error('系统只允许周三至周四下午3:00之间可以填写自揽项目周报')
         return
       }
       this.editStatus = true
@@ -1193,7 +1193,7 @@ export default {
 
     addReport() {
       if(!this.checkTime()){
-        this.$message.error('系统只允许周四至周五下午3：00之间可以填写自揽项目周报')
+        this.$message.error('系统只允许周三至周四下午3：00之间可以填写自揽项目周报')
         return
       }
       this.$set(this, 'weekForm', {})
